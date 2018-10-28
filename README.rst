@@ -104,10 +104,10 @@ If too much work, start with just supporting --color to explicitly trigger color
 other names
 -----------
 
-slurmbot
-sinfobot
-hpcbot?
-bofhbot - yeah, i like this!
+* slurmbot
+* sinfobot
+* hpcbot?
+* bofhbot - yeah, i like this!
 
 
 Motivation
@@ -116,29 +116,28 @@ Motivation
 a bot that fixes slurm problem reported by sinfo -R
 (and possibly other source of complains).
 
-
 some problems should be fairly non-harmful to fix.
 
-	- resume node.
-	- login to node, do a few sanity check.
-		- nhc
-		- expected mounts (esp those not checked by nhc)
-		- df /global/software
-		- ibstat
-		- df /global/scratch
-	- if pass check, can resume.
+- resume node.
+- login to node, do a few sanity check.
+	- nhc
+	- expected mounts (esp those not checked by nhc)
+	- df /global/software
+	- ibstat
+	- df /global/scratch
+- if pass check, can resume.
 
 
 Infrastructure:
 
-  - history check for each node.
+- history check for each node.
 	- if repeatedly needing same fix, say within last 24 hours.  then get sys admin help
 	- this also allow for query history of repair of each node
 	  bofh node=n0000.testbed history...
 	  something after wwsh :)
 
-  - state machine of each node's health
-	* to help determine if reboot, etc action would impact user.
+- state machine of each node's health
+	- to help determine if reboot, etc action would impact user.
 	- similar to nhc?
 		- checked ib
 		- checked eth
@@ -146,9 +145,9 @@ Infrastructure:
 	
 
 - history of (recommended/emailed) fixes:
-  email report at first with recomended action for sys admin
-  exact cmd for cut-n-paste (prefixed with sudo when needed)
-  email cannot nag.  send out only once
+   - email report at first with recomended action for sys admin
+   - exact cmd for cut-n-paste (prefixed with sudo when needed)
+   - email cannot nag.  send out only once
  	- setting to remember 4 days? 7 days?
 		- do not nag about a problem if reported before 
 		- reminder of old problems if not fixed after X remembered days?
@@ -163,14 +162,14 @@ EXAMPLE cmd
 
 bofhbot -R
 	a better output than sinfo -R
-    add basic troublshoot info as extra columns as defined above
+	add basic troublshoot info as extra columns as defined above
 
 
 bofhbot --list
 	show more extensive problem.  eg, 
-		NHC: check_fs_mount:
+		``NHC: check_fs_mount``
 	becomes
-		/tmp not mounted.  sda missing.
+		``/tmp not mounted.  sda missing.``
 	but nhc may have the info?
 	or need more extensive config than nhc?
 		no, can look at fstab, just do things sys admin would do...
@@ -185,19 +184,22 @@ example of sinfo -R that are easy to fix:
 
 
 Node unexpectedly re slurm     2017-11-21T09:23:16 n0012.etna0,n0016.etna0,n0017.etna0
-        scontrol update node=... state=resume
+
+scontrol update node=... state=resume
 
 
 batch job complete f root      2018-07-22T15:10:04 n0032.savio2
-        scontrol update node=n0032.savio2 state=resume
+
+- scontrol update node=n0032.savio2 state=resume
 
 
 Not responding       root      2018-07-24T10:48:02 n0283.savio2
-	if not pingable (param to set CanRelyOnPing=True)
-	not ssh-able
-	can then ipmi power cycle the node
-	NodeBootWaitTime=180 (seconds)
-	beyond this, email sys admin and ask for manual intervention.
+
+- if not pingable (param to set CanRelyOnPing=True)
+- not ssh-able
+- can then ipmi power cycle the node
+- NodeBootWaitTime=180 (seconds)
+- beyond this, email sys admin and ask for manual intervention.
 
 
 ~~~~
