@@ -200,6 +200,17 @@ example of sinfo -R that are easy to fix:
 - beyond this, email sys admin and ask for manual intervention.
 
 
+
+API vs CLI
+==========
+
+* Programmatically, getting input data from API provided by Slurm or DRMAA should provide for a more stable input interface.
+* But I want to minimize on requirement needed to run tool, thus handling output from cli tool like "sinfo -RSE" is easier on the user
+* Would be nice if sinfo or qhost can output in machne format like json, xml or even comma- or pipe- delimited.
+
+* since using cli output, may need a way to specify what input tool and version is using.  may need to handle --input-format="slurm_17.1" and the like in case format changes.  things to worry when that problem arises...
+
+
 ~~~~
 
 
