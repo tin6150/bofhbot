@@ -26,6 +26,8 @@ such as see if node:
 Example output
 --------------
 
+::
+
 	sinfo -R -S %E --format="%9u %19H %6t %N %E"    				# + extra columns
 
 
