@@ -26,35 +26,35 @@ such as see if node:
 Example output
 --------------
 
-sinfo -R -S %E --format="%9u %19H %6t %N %E"    				# + extra columns
+	sinfo -R -S %E --format="%9u %19H %6t %N %E"    				# + extra columns
 
 
-USER      TIMESTAMP           STATE  NODELIST REASON				# fixid ping  ssh nhc slurm-pid ipmi-powerstatus recommendation  confidence
-Node unexpectedly re root      2018-07-31T20:06:16 n0181.savio2			  hash1 ok    ok  ok  nnnn      on               scontrol... state=resume 80%
+	USER      TIMESTAMP           STATE  NODELIST REASON				# fixid ping  ssh nhc slurm-pid ipmi-powerstatus recommendation  confidence
+	Node unexpectedly re root      2018-07-31T20:06:16 n0181.savio2			  hash1 ok    ok  ok  nnnn      on               scontrol... state=resume 80%
 
-### this last one would benefit from historical record of how many times node upped to avoid getting stuck in a loop.
+	### this last one would benefit from historical record of how many times node upped to avoid getting stuck in a loop.
 
-root      2018-08-11T10:22:31 down*  n0152.savio1 Not responding                # hashB no    no  na  na        on               ipmi cycle 99%
-root      2018-07-24T09:38:02 down*  n0165.savio1 Not responding                # hashC ok    cant login na     not responding   wwsh ipmi cycle  80%
+	root      2018-08-11T10:22:31 down*  n0152.savio1 Not responding                # hashB no    no  na  na        on               ipmi cycle 99%
+	root      2018-07-24T09:38:02 down*  n0165.savio1 Not responding                # hashC ok    cant login na     not responding   wwsh ipmi cycle  80%
 
-root      2018-05-21T10:20:52 down*  n0030.savio1 HW. Tin. need open case.   wont power on, even after reseating blade
-root      2018-06-26T10:08:33 down*  n0107.savio2 HW.ReseatedManyTime_WontPowerOn.Tin
-root      2018-05-21T10:48:18 down*  n0000.savio2 HW: Tin. check console/bios boot settings.  when boot again check hw health/wonkiness
-root      2018-05-21T11:20:32 drain* n0096.savio2 HW: need HT off. Tin
-root      2018-06-26T10:50:56 down*  n0114.savio2 HW:54gRAMonly
-root      2018-07-30T15:57:35 drain* n0133.savio1 HW:replace sda,io err-Sn
-root      2018-07-30T12:26:45 drain* n0108.savio2 HW:sda missing after reseat-Sn
-root      2018-06-26T10:44:57 down*  n0113.savio2 HW:shutdownAgainWontPowerOn_openCase
-root      2018-05-11T14:44:33 down   n0166.savio2 INC0661212_nick
-root      2018-07-26T15:53:16 drain  n0124.savio2 NHC: check_fs_mount:  /global/scratch not mounted
-root      2018-07-26T15:53:16 drain  n0117.savio2 NHC: check_hw_physmem:  Actual RAM size (57459408 kB) less than minimum allowed (67108864 kB).
-root      2018-04-06T13:04:50 down*  n0234.savio2 NoBootDev_Tin
-root      2018-03-15T18:37:30 drain  n0182.savio2 NoIB_Tin 
+	root      2018-05-21T10:20:52 down*  n0030.savio1 HW. Tin. need open case.   wont power on, even after reseating blade
+	root      2018-06-26T10:08:33 down*  n0107.savio2 HW.ReseatedManyTime_WontPowerOn.Tin
+	root      2018-05-21T10:48:18 down*  n0000.savio2 HW: Tin. check console/bios boot settings.  when boot again check hw health/wonkiness
+	root      2018-05-21T11:20:32 drain* n0096.savio2 HW: need HT off. Tin
+	root      2018-06-26T10:50:56 down*  n0114.savio2 HW:54gRAMonly
+	root      2018-07-30T15:57:35 drain* n0133.savio1 HW:replace sda,io err-Sn
+	root      2018-07-30T12:26:45 drain* n0108.savio2 HW:sda missing after reseat-Sn
+	root      2018-06-26T10:44:57 down*  n0113.savio2 HW:shutdownAgainWontPowerOn_openCase
+	root      2018-05-11T14:44:33 down   n0166.savio2 INC0661212_nick
+	root      2018-07-26T15:53:16 drain  n0124.savio2 NHC: check_fs_mount:  /global/scratch not mounted
+	root      2018-07-26T15:53:16 drain  n0117.savio2 NHC: check_hw_physmem:  Actual RAM size (57459408 kB) less than minimum allowed (67108864 kB).
+	root      2018-04-06T13:04:50 down*  n0234.savio2 NoBootDev_Tin
+	root      2018-03-15T18:37:30 drain  n0182.savio2 NoIB_Tin 
 
 
-root      2018-08-06T07:47:26 down*  n0035.savio2,
-n0087.savio2,
-n0091.savio2 Not responding
+	root      2018-08-06T07:47:26 down*  n0035.savio2,
+	n0087.savio2,
+	n0091.savio2 Not responding
 
 
 
