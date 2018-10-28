@@ -73,6 +73,7 @@ Future output possibilities
 append several columns to it:
 
 :: 
+
 	ping  ssh   nhc   slurm-pid  ipmi-powerStatus   recommed-action
 	ok    no    na    na         on/time-out        wwsh ipmi cycle
 
@@ -118,24 +119,25 @@ a bot that fixes slurm problem reported by sinfo -R
 
 some problems should be fairly non-harmful to fix.
 
-	resume node.
-	login to node, do a few sanity check.
+	- resume node.
+	- login to node, do a few sanity check.
 		- nhc
 		- expected mounts (esp those not checked by nhc)
 		- df /global/software
 		- ibstat
 		- df /global/scratch
-	if pass check, can resume.
+	- if pass check, can resume.
 
 
 Infrastructure:
-- history check for each node.
+
+  - history check for each node.
 	- if repeatedly needing same fix, say within last 24 hours.  then get sys admin help
 	- this also allow for query history of repair of each node
 	  bofh node=n0000.testbed history...
 	  something after wwsh :)
 
-- state machine of each node's health
+  - state machine of each node's health
 	* to help determine if reboot, etc action would impact user.
 	- similar to nhc?
 		- checked ib
