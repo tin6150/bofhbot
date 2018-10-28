@@ -1,5 +1,0 @@
-# sinfo -R -S %E --format="%9u %19H %6t %N %E"  # with some manual edit like this line here.
-USER      TIMESTAMP           STATE  NODELIST REASON
-root      2018-08-06T07:47:26 down*  n0035.savio2,n0087.savio2,n0091.savio2 Not responding
-
-root      2018-05-21T10:20:52 down*  n0030.savio1 HW. Tin. need open case.   wont power on, even after reseating blade
