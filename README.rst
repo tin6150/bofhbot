@@ -133,8 +133,8 @@ Infrastructure:
 - history check for each node.
 	- if repeatedly needing same fix, say within last 24 hours.  then get sys admin help
 	- this also allow for query history of repair of each node
-	  bofh node=n0000.testbed history...
-	  something after wwsh :)
+	  	- bofh node=n0000.testbed history...
+	  	- something after wwsh :)
 
 - state machine of each node's health
 	- to help determine if reboot, etc action would impact user.
@@ -184,11 +184,11 @@ example of sinfo -R that are easy to fix:
 
 
 ``Node unexpectedly re slurm     2017-11-21T09:23:16 n0012.etna0,n0016.etna0,n0017.etna0``
-scontrol update node=... state=resume
+	scontrol update node=... state=resume
 
 
 ``batch job complete f root      2018-07-22T15:10:04 n0032.savio2``
-scontrol update node=n0032.savio2 state=resume
+	scontrol update node=n0032.savio2 state=resume
 
 
 ``Not responding       root      2018-07-24T10:48:02 n0283.savio2``
