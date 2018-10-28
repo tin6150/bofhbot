@@ -179,6 +179,10 @@ Division of labors
 - history of recommended actions db (as sqlite db file?  in a high level $HOME/.bofhbot/ dir??)
 -  
 
+Branches
+========
+
+Don't know... I suppose should have a dev branch that is less stable than master...
 
 
 
