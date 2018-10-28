@@ -239,3 +239,8 @@ other names
 * bofhbot - yeah, i like this!
 
 
+.rst quick reference
+====================
+
+- http://docutils.sourceforge.net/docs/user/rst/quickref.html
+
