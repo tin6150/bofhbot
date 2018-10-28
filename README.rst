@@ -235,7 +235,7 @@ other names
 
 * slurmbot
 * sinfobot
-* hpcbot?
+* hpcbot
 * bofhbot - yeah, i like this!
 
 
