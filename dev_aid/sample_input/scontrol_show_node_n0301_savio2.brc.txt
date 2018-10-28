@@ -1,0 +1,18 @@
+NodeName=n0301.savio2 Arch=x86_64 CoresPerSocket=4
+   CPUAlloc=0 CPUErr=0 CPUTot=8 CPULoad=0.01
+   AvailableFeatures=savio2_1080ti
+   ActiveFeatures=savio2_1080ti
+   Gres=gpu:GTX1080TI:4
+   NodeAddr=10.0.6.46 NodeHostName=n0301.savio2 Version=17.11
+   OS=Linux 3.10.0-693.11.6.el7.x86_64 #1 SMP Wed Jan 3 18:09:42 CST 2018 
+   RealMemory=64320 AllocMem=0 FreeMem=61353 Sockets=2 Boards=1
+   State=MAINT ThreadsPerCore=1 TmpDisk=7935 Weight=1 Owner=N/A MCS_label=N/A
+   Partitions=savio2_1080ti 
+   BootTime=2018-10-20T20:15:32 SlurmdStartTime=2018-10-20T20:39:45
+   CfgTRES=cpu=8,mem=64320M,billing=8,gres/gpu=4
+   AllocTRES=
+   CapWatts=n/a
+   CurrentWatts=0 LowestJoules=0 ConsumedJoules=0
+   ExtSensorsJoules=n/s ExtSensorsWatts=0 ExtSensorsTemp=n/s
+   
+

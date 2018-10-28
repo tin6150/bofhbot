@@ -1,0 +1,51 @@
+REASON               USER      TIMESTAMP           NODELIST
+HW. Tin. need open c root      2018-05-21T10:20:52 n0030.savio1
+no post, failed mb - root      2018-01-23T12:37:21 n0050.savio1
+Not responding       root      2018-10-22T18:20:50 n0080.savio1
+batch job complete f root      2018-10-20T02:22:49 n0031.savio1
+batch job complete f root      2018-10-20T02:26:51 n0034.savio1,n0078.savio1,n0090.savio1,n0116.savio1
+batch job complete f root      2018-10-09T13:49:01 n0048.savio1
+batch job complete f root      2018-10-20T02:25:52 n0049.savio1,n0064.savio1
+batch job complete f root      2018-10-20T02:26:49 n0051.savio1,n0102.savio1
+batch job complete f root      2018-10-26T16:13:51 n0068.savio1
+batch job complete f root      2018-10-20T02:24:50 n0083.savio1
+batch job complete f root      2018-10-20T02:25:50 n0088.savio1,n0142.savio1
+batch job complete f root      2018-10-20T02:26:53 n0124.savio1
+batch job complete f root      2018-10-23T15:37:20 n0126.savio1
+Epilog error         root      2018-10-22T13:09:27 n0141.savio1
+needs new dimms -kmw root      2018-01-23T12:39:54 n0042.savio2
+HW: need HT off. Tin root      2018-05-21T11:20:32 n0096.savio2
+HW:sda missing after root      2018-07-30T12:26:45 n0108.savio2
+Not responding       root      2018-10-25T12:29:02 n0095.savio2
+HW.ReseatedManyTime_ root      2018-06-26T10:08:33 n0107.savio2
+Not responding       root      2018-10-12T02:12:08 n0110.savio2
+HW:shutdownAgainWont root      2018-06-26T10:44:57 n0113.savio2
+HW:54gRAMonly        root      2018-06-26T10:50:56 n0114.savio2
+Not responding       root      2018-10-27T22:18:38 n0122.savio2
+Not responding       root      2018-10-26T03:04:35 n0197.savio2
+NoBootDev_Tin        root      2018-04-06T13:04:50 n0234.savio2
+Not responding       root      2018-10-27T20:32:53 n0238.savio2
+batch job complete f root      2018-10-12T12:17:56 n0030.savio2
+batch job complete f root      2018-10-09T21:00:55 n0044.savio2,n0104.savio2,n0160.savio2
+batch job complete f root      2018-10-24T16:09:01 n0079.savio2
+batch job complete f root      2018-10-13T23:25:00 n0085.savio2
+batch job complete f root      2018-10-25T16:35:53 n0091.savio2
+MPI HUNG behaviour O root      2018-10-19T11:44:58 n0093.savio2
+MPI HUNG behaviour O root      2018-10-19T11:46:50 n0094.savio2
+batch job complete f root      2018-10-24T17:00:07 n0146.savio2
+batch job complete f slurm     2018-10-28T11:05:02 n0185.savio2
+batch job complete f root      2018-10-24T15:21:58 n0231.savio2
+batch job complete f root      2018-10-20T01:00:37 n0290.savio2
+see hung mpirun for  root      2018-07-16T11:52:41 n0068.savio2
+no ib                root      2018-10-18T16:57:39 n0124.savio2
+ib card replaced, bu root      2018-04-25T12:18:01 n0109.savio2
+Node unexpectedly re root      2018-10-22T17:12:24 n0117.savio2
+HW: Tin. check conso root      2018-05-21T10:48:18 n0000.savio2
+dead disk -jwhite    root      2018-01-23T10:34:33 n0218.savio2
+NoIB_Tin             root      2018-03-15T18:37:30 n0182.savio2
+batch job complete f root      2018-10-20T07:33:53 n0227.savio2
+batch job complete f root      2018-10-20T07:45:57 n0228.savio2
+batch job complete f root      2018-10-11T17:36:50 n0229.savio2
+hungAtBios_Tin       root      2018-01-31T11:19:51 n0281.savio2
+Not responding       root      2018-10-20T20:53:29 n0012.cortex0
+badGPU1_tin          root      2018-04-05T10:06:56 n0013.cortex0

@@ -1,0 +1,64 @@
+## sinfo enhanced by bofhbot ##
+n0141.savio1 drain  2018-10-22T13:09:27 root      Epilog error                                                           ## ssh:DOWN
+n0030.savio1 down*  2018-05-21T10:20:52 root      HW. Tin. need open case.   wont power on, even after reseating blade   ## ssh:DOWN
+n0107.savio2 down*  2018-06-26T10:08:33 root      HW.ReseatedManyTime_WontPowerOn.Tin                                    ## ssh:DOWN
+n0000.savio2 down*  2018-05-21T10:48:18 root      HW: Tin. check console/bios boot settings.  when boot again check hw health/wonkiness ## ssh:DOWN
+n0096.savio2 drain* 2018-05-21T11:20:32 root      HW: need HT off. Tin                                                   ## ssh:DOWN
+n0114.savio2 down*  2018-06-26T10:50:56 root      HW:54gRAMonly                                                          ## ssh:DOWN
+n0108.savio2 drain* 2018-07-30T12:26:45 root      HW:sda missing after reseat-Sn                                         ## ssh:DOWN
+n0113.savio2 down*  2018-06-26T10:44:57 root      HW:shutdownAgainWontPowerOn_openCase                                   ## ssh:DOWN
+<!--dbg1: This case likely have ssh asking for password-->
+b''
+n0093.savio2 drain  2018-10-19T11:44:58 root      MPI HUNG behaviour Oct 18                                              ## ssh:TimedOut
+n0094.savio2 drain  2018-10-19T11:46:50 root      MPI HUNG behaviour Oct 18                                              ## ssh:  up
+n0234.savio2 down*  2018-04-06T13:04:50 root      NoBootDev_Tin                                                          ## ssh:DOWN
+n0182.savio2 drain  2018-03-15T18:37:30 root      NoIB_Tin                                                               ## ssh:  up
+n0117.savio2 down   2018-10-22T17:12:24 root      Node unexpectedly rebooted                                             ## ssh:  up
+n0080.savio1 down*  2018-10-22T18:20:50 root      Not responding                                                         ## ssh:DOWN
+n0095.savio2 down*  2018-10-25T12:29:02 root      Not responding                                                         ## ssh:  up
+n0110.savio2 down*  2018-10-12T02:12:08 root      Not responding                                                         ## ssh:DOWN
+<!--dbg1: This case likely have ssh asking for password-->
+b''
+n0122.savio2 down*  2018-10-27T22:18:38 root      Not responding                                                         ## ssh:TimedOut
+n0197.savio2 down*  2018-10-26T03:04:35 root      Not responding                                                         ## ssh:  up
+n0238.savio2 down*  2018-10-27T20:32:53 root      Not responding                                                         ## ssh:DOWN
+n0012.cortex0 down*  2018-10-20T20:53:29 root      Not responding                                                        ## ssh:DOWN
+n0013.cortex0 down*  2018-04-05T10:06:56 root      badGPU1_tin                                                           ## ssh:DOWN
+n0031.savio1 drain  2018-10-20T02:22:49 root      batch job complete failure                                             ## ssh:  up
+n0034.savio1 drain  2018-10-20T02:26:51 root      batch job complete failure                                             ## ssh:  up
+n0048.savio1 drain  2018-10-09T13:49:01 root      batch job complete failure                                             ## ssh:  up
+n0049.savio1 drain  2018-10-20T02:25:52 root      batch job complete failure                                             ## ssh:  up
+n0051.savio1 drain  2018-10-20T02:26:49 root      batch job complete failure                                             ## ssh:  up
+n0064.savio1 drain  2018-10-20T02:25:52 root      batch job complete failure                                             ## ssh:  up
+n0068.savio1 drain  2018-10-26T16:13:51 root      batch job complete failure                                             ## ssh:  up
+n0078.savio1 drain  2018-10-20T02:26:51 root      batch job complete failure                                             ## ssh:  up
+n0083.savio1 drain  2018-10-20T02:24:50 root      batch job complete failure                                             ## ssh:  up
+n0088.savio1 drain  2018-10-20T02:25:50 root      batch job complete failure                                             ## ssh:  up
+n0090.savio1 drain  2018-10-20T02:26:51 root      batch job complete failure                                             ## ssh:  up
+n0102.savio1 drain  2018-10-20T02:26:49 root      batch job complete failure                                             ## ssh:  up
+n0116.savio1 drain  2018-10-20T02:26:51 root      batch job complete failure                                             ## ssh:  up
+n0124.savio1 drain  2018-10-20T02:26:53 root      batch job complete failure                                             ## ssh:  up
+n0126.savio1 drain  2018-10-23T15:37:20 root      batch job complete failure                                             ## ssh:  up
+n0142.savio1 drain  2018-10-20T02:25:50 root      batch job complete failure                                             ## ssh:  up
+n0030.savio2 drain  2018-10-12T12:17:56 root      batch job complete failure                                             ## ssh:  up
+n0044.savio2 drain  2018-10-09T21:00:55 root      batch job complete failure                                             ## ssh:  up
+n0079.savio2 drain  2018-10-24T16:09:01 root      batch job complete failure                                             ## ssh:  up
+n0085.savio2 drain  2018-10-13T23:25:00 root      batch job complete failure                                             ## ssh:  up
+n0091.savio2 drain  2018-10-25T16:35:53 root      batch job complete failure                                             ## ssh:  up
+n0104.savio2 drain  2018-10-09T21:00:55 root      batch job complete failure                                             ## ssh:  up
+n0146.savio2 drain  2018-10-24T17:00:07 root      batch job complete failure                                             ## ssh:  up
+n0160.savio2 drain  2018-10-09T21:00:55 root      batch job complete failure                                             ## ssh:  up
+n0185.savio2 drain  2018-10-28T11:05:02 slurm     batch job complete failure                                             ## ssh:  up
+n0231.savio2 drain  2018-10-24T15:21:58 root      batch job complete failure                                             ## ssh:  up
+n0290.savio2 drain  2018-10-20T01:00:37 root      batch job complete failure                                             ## ssh:  up
+n0227.savio2 drain  2018-10-20T07:33:53 root      batch job complete failure                                             ## ssh:  up
+n0228.savio2 drain  2018-10-20T07:45:57 root      batch job complete failure                                             ## ssh:  up
+n0229.savio2 drain  2018-10-11T17:36:50 root      batch job complete failure                                             ## ssh:  up
+n0218.savio2 drain  2018-01-23T10:34:33 root      dead disk -jwhite                                                      ## ssh:  up
+n0281.savio2 down*  2018-01-31T11:19:51 root      hungAtBios_Tin                                                         ## ssh:DOWN
+n0109.savio2 down   2018-04-25T12:18:01 root      ib card replaced, but now has memory error per nhc.  tin.              ## ssh:  up
+n0042.savio2 drain* 2018-01-23T12:39:54 root      needs new dimms -kmwf                                                  ## ssh:DOWN
+n0124.savio2 drain  2018-10-18T16:57:39 root      no ib                                                                  ## ssh:  up
+n0050.savio1 down*  2018-01-23T12:37:21 root      no post, failed mb -kmwf                                               ## ssh:DOWN
+n0068.savio2 drain  2018-07-16T11:52:41 root      see hung mpirun for jhlee84--Tin                                       ## ssh:  up
+## Run 'reset' if terminal is messed up

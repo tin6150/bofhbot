@@ -101,15 +101,6 @@ If too much work, start with just supporting --color to explicitly trigger color
 
 
 
-other names
------------
-
-* slurmbot
-* sinfobot
-* hpcbot?
-* bofhbot - yeah, i like this!
-
-
 Motivation
 ----------
 
@@ -177,6 +168,15 @@ EXAMPLE cmd
 	show recommended actions from its history db
   
 
+``bofhbot -i sinfo-RSE.txt``
+	Use input file containing list of problem nodes.
+	This allow for offline development without needing a cluster
+	Also allow new user to have a 'safe mode' to run bofhbot to 
+	gain familiarity to its functioning
+	without worry of it wrecking havoc on the production HPC.
+
+	
+
 Low hanging fruits
 ------------------
 
@@ -228,4 +228,14 @@ Don't know... I suppose should have a dev branch that is less stable than master
 License
 =======
 BSD 3-clause, as indicated in the github license choice for this project.
+
+
+other names
+===========
+
+* slurmbot
+* sinfobot
+* hpcbot?
+* bofhbot - yeah, i like this!
+
 
