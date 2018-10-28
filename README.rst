@@ -13,6 +13,7 @@ Laziness is a virtue.  which is why a bot is born to do the job for BOFH.
 In this case, look at sinfo -R and help repair slurm nodes that are sick.
 At first it would just help with some of the initial troubleshooting manial work, 
 such as see if node:
+
 - is pingable
 - can be ssh to
 - nhc report status
