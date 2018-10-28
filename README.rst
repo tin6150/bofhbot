@@ -160,12 +160,12 @@ Infrastructure:
 EXAMPLE cmd
 -----------
 
-bofhbot -R
+``bofhbot -R``
 	a better output than sinfo -R
 	add basic troublshoot info as extra columns as defined above
 
 
-bofhbot --list
+``bofhbot --list``
 	show more extensive problem.  eg, 
 		``NHC: check_fs_mount``
 	becomes
@@ -183,17 +183,15 @@ Low hanging fruits
 example of sinfo -R that are easy to fix:
 
 
-Node unexpectedly re slurm     2017-11-21T09:23:16 n0012.etna0,n0016.etna0,n0017.etna0
-
+``Node unexpectedly re slurm     2017-11-21T09:23:16 n0012.etna0,n0016.etna0,n0017.etna0``
 scontrol update node=... state=resume
 
 
-batch job complete f root      2018-07-22T15:10:04 n0032.savio2
+``batch job complete f root      2018-07-22T15:10:04 n0032.savio2``
+scontrol update node=n0032.savio2 state=resume
 
-- scontrol update node=n0032.savio2 state=resume
 
-
-Not responding       root      2018-07-24T10:48:02 n0283.savio2
+``Not responding       root      2018-07-24T10:48:02 n0283.savio2``
 
 - if not pingable (param to set CanRelyOnPing=True)
 - not ssh-able
@@ -218,7 +216,7 @@ Division of labors
     - maybe needed before can create a recommended fix action
     - confidence level.  should actually start out small, not very confident :)
 - history of recommended actions db (as sqlite db file?  in a high level $HOME/.bofhbot/ dir??)
--  
+  
 
 Branches
 ========
