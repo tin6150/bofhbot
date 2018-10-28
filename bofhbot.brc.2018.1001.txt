@@ -1,0 +1,42 @@
+## sinfo enhanced by bofhbot ##
+n0030.savio1 down*  2018-05-21T10:20:52 root      HW. Tin. need open case.   wont power on, even after reseating blade   ## ssh:DOWN
+n0107.savio2 down*  2018-06-26T10:08:33 root      HW.ReseatedManyTime_WontPowerOn.Tin                                    ## ssh:DOWN
+n0000.savio2 down*  2018-05-21T10:48:18 root      HW: Tin. check console/bios boot settings.  when boot again check hw health/wonkiness ## ssh:DOWN
+n0096.savio2 drain* 2018-05-21T11:20:32 root      HW: need HT off. Tin                                                   ## ssh:DOWN
+n0114.savio2 down*  2018-06-26T10:50:56 root      HW:54gRAMonly                                                          ## ssh:DOWN
+n0133.savio1 drain* 2018-07-30T15:57:35 root      HW:replace sda,io err-Sn                                               ## ssh:DOWN
+n0108.savio2 drain* 2018-07-30T12:26:45 root      HW:sda missing after reseat-Sn                                         ## ssh:DOWN
+n0113.savio2 down*  2018-06-26T10:44:57 root      HW:shutdownAgainWontPowerOn_openCase                                   ## ssh:DOWN
+n0166.savio2 down   2018-05-11T14:44:33 root      INC0661212_nick                                                        ## ssh:  up
+n0124.savio2 drain  2018-07-26T15:53:16 root      NHC: check_fs_mount:  /global/scratch not mounted                      ## ssh:  up
+n0117.savio2 drain  2018-07-26T15:53:16 root      NHC: check_hw_physmem:  Actual RAM size (57459408 kB) less than minimum allowed (67108864 kB). ## ssh:  up
+n0234.savio2 down*  2018-04-06T13:04:50 root      NoBootDev_Tin                                                          ## ssh:DOWN
+n0182.savio2 drain* 2018-03-15T18:37:30 root      NoIB_Tin                                                               ## ssh:DOWN
+n0141.savio1 down*  2018-09-13T04:18:28 root      Not responding                                                         ## ssh:  up
+n0034.savio2 down*  2018-09-19T08:14:32 root      Not responding                                                         ## ssh:  up
+n0192.savio2 down*  2018-09-12T17:15:06 root      Not responding                                                         ## ssh:DOWN
+<!--dbg1: This case likely have ssh asking for password-->
+b''
+n0195.savio2 down*  2018-09-13T09:47:51 root      Not responding                                                         ## ssh:TimedOut
+n0096.savio1 down*  2018-09-16T13:26:16 root      Not responding                                                         ## ssh:DOWN
+n0024.savio1 drain  2018-09-29T08:52:17 root      Prolog error                                                           ## ssh:DOWN
+n0292.savio2 drng   2018-09-30T23:18:48 slurm     Prolog error                                                           ## ssh:DOWN
+n0013.cortex0 down*  2018-04-05T10:06:56 root      badGPU1_tin                                                           ## ssh:DOWN
+n0088.savio1 drain  2018-09-28T14:34:19 root      batch job complete failure                                             ## ssh:  up
+n0130.savio1 drain  2018-09-20T04:07:33 root      batch job complete failure                                             ## ssh:  up
+n0132.savio1 drain  2018-09-20T04:07:33 root      batch job complete failure                                             ## ssh:  up
+n0030.savio2 drain  2018-09-30T02:55:45 root      batch job complete failure                                             ## ssh:  up
+n0161.savio2 drain  2018-09-28T14:42:16 root      batch job complete failure                                             ## ssh:  up
+n0202.savio2 drain  2018-09-28T14:42:15 root      batch job complete failure                                             ## ssh:  up
+n0283.savio2 drain  2018-09-28T19:48:14 root      batch job complete failure                                             ## ssh:  up
+n0284.savio2 drain  2018-09-28T19:48:14 root      batch job complete failure                                             ## ssh:  up
+n0218.savio2 drain* 2018-01-23T10:34:33 root      dead disk -jwhite                                                      ## ssh:DOWN
+n0281.savio2 down*  2018-01-31T11:19:51 root      hungAtBios_Tin                                                         ## ssh:DOWN
+n0109.savio2 down   2018-04-25T12:18:01 root      ib card replaced, but now has memory error per nhc.  tin.              ## ssh:  up
+n0042.savio2 drain* 2018-01-23T12:39:54 root      needs new dimms -kmwf                                                  ## ssh:DOWN
+n0050.savio1 down*  2018-01-23T12:37:21 root      no post, failed mb -kmwf                                               ## ssh:DOWN
+n0068.savio2 drain  2018-07-16T11:52:41 root      see hung mpirun for jhlee84--Tin                                       ## ssh:  up
+<!--dbg1: This case likely have ssh asking for password-->
+b''
+n0097.savio1 drain  2018-06-12T13:36:33 root      vnfs testing -jwhite                                                   ## ssh:TimedOut
+## Run 'reset' if terminal is messed up
