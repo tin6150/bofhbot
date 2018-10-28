@@ -1,4 +1,7 @@
 
+.. figure:: doc/bofhbot_screenshot.png
+	:align: center
+	:alt: bofhbot output screenshot
 
 BofhBot
 =======
