@@ -60,10 +60,41 @@ Example output
 
 
 
-
-
 TL;DR
 =====
+
+Future output possibilities
+---------------------------
+
+append several columns to it:
+
+:: 
+	ping  ssh   nhc   slurm-pid  ipmi-powerStatus   recommed-action
+	ok    no    na    na         on/time-out        wwsh ipmi cycle
+
+
+output as quickly as node responses are gathered.
+probably avoid ncurses/top interface, so easier to capture output to file.
+
+each row add an index number? short hash?
+so that future can do --fixit option to such record?
+
+this for now don't have a database of recommended actions.
+but still allow for cron every few hours to see its recommended action.
+
+
+add an action confidence% :)
+
+colored output maybe nice.
+future default to --color
+best if output to console and TERM support color, automatically do it.
+But if redirecting or piping, then color is off automagically.
+If too much work, start with just supporting --color to explicitly trigger coloring of output
+(think of ls and grep)
+
+
+
+
 
 other names
 -----------
