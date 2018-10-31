@@ -191,6 +191,10 @@ def cleanUp() :
     #os.system( "reset") # terminal maybe messed up due to bad ssh, but reset clears the screen :(
 # cleanUp()-end
 
+def processLine(data):
+    node, line = data
+    sshStatus = checkSsh(node)
+    print("%-120s ## ssh:%4s" % (line, sshStatus))
 
 def main(): 
     dbg(5, "bofhbot I am")
@@ -202,17 +206,9 @@ def main():
 
     # ++ OOP gather all info
     # have diff fn to format output
-    for line in sinfoList : 
-        #print( line )
-        nodeList = getNodeList( line ) # 
-        dbg(3, nodeList )
-        for node in nodeList : 
-            ##sshStatus = "tmpDisabled"
-            sshStatus = checkSsh( node )
-            #dbg(2, "%s has sshStatus of %s" % (node, sshStatus) )
-            #print( "     # %s ssh: %s" % (node, sshStatus) )
-            print( "%-120s ## ssh:%4s" % (line, sshStatus) )
-            #print( "\t\t\t\t##   %s has sshStatus of %s" % (node, sshStatus) )
+    pool = Pool(20)
+    nodes = [ (node, line) for line in sinfoList for node in getNodeList(line) ]
+    pool.map(processLine, nodes)
     cleanUp()
 # main()-end
 
