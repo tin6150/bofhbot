@@ -155,6 +155,22 @@ def checkSsh( node ) :
     return "Ssh_unexpected_problem"
 # checkSsh()-end 
 
+def executeCommand(node, command, timeout=5):
+    sshCommand = "ssh {node} \"{command}\"".format(node=node, command=command)
+    try:
+        with open(os.devnull, 'w') as devnull:
+            sshStdOut = subprocess.check_output(shlex.split(sshCommand), timeout=timeout, stderr=devnull)
+            return sshStdOut.decode('utf-8').strip()
+    except:
+        return None # Might want to add specific error handling later
+# executeCommand()-end
+
+def checkMountUsage(node, mount):
+    command = "df -h {mount} --output=target,used | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
+    usage = executeCommand(node, command)
+    return usage or "NotFound"
+# checkMountUsage()-end
+
 # https://stackoverflow.com/questions/14236346/elegant-way-to-test-ssh-availability
 # but paramiko seems to req lot of username/key setup, too variable for generic user to use :(
 def checkSshParamiko_Abandoned( node ) :
@@ -178,7 +194,6 @@ def checkSshParamiko_Abandoned( node ) :
     #return "TimeOut"
 # checkSsh()-end 
 
-
 # other checks to add
 # checkNhc()
 # checkMounts() # custom list of mounts to check eg /global/software, /global/scratch (esp those not configured in nhc)
@@ -194,7 +209,8 @@ def cleanUp() :
 def processLine(data):
     node, line = data
     sshStatus = checkSsh(node)
-    print("%-120s ## ssh:%4s" % (line, sshStatus))
+    scratchStatus = checkMountUsage(node, "/global/scratch") if sshStatus == 'up' else "(skipped)"
+    print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus))
 
 def main(): 
     dbg(5, "bofhbot I am")
