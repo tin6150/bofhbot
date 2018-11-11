@@ -196,7 +196,6 @@ def checkSshParamiko_Abandoned( node ) :
 
 # other checks to add
 # checkNhc()
-# checkMounts() # custom list of mounts to check eg /global/software, /global/scratch (esp those not configured in nhc)
 # (see README)
 
 
@@ -209,8 +208,12 @@ def cleanUp() :
 def processLine(data):
     node, line = data
     sshStatus = checkSsh(node)
-    scratchStatus = checkMountUsage(node, "/global/scratch") if sshStatus == 'up' else "(skipped)"
-    print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus))
+    scratchStatus = checkMountUsage(node, "/global/scratch") 	if sshStatus == 'up' else "(skip)"
+    swStatus      = checkMountUsage(node, "/global/software") 	if sshStatus == 'up' else "(skip)"
+    tmpStatus     = checkMountUsage(node, "/tmp") 		if sshStatus == 'up' else "(skip)"
+    #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
+    print("%-80s ## ssh:%4s scratch:%7s sw:%7s tmp:%7s" % (line, sshStatus, scratchStatus, swStatus,tmpStatus))
+#processLine()-end
 
 def main(): 
     dbg(5, "bofhbot I am")
