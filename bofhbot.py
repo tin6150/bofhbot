@@ -177,6 +177,22 @@ def checkSsh( node ) :
     return "Ssh_unexpected_problem"
 # checkSsh()-end 
 
+def executeCommand(node, command, timeout=5):
+    sshCommand = "ssh {node} \"{command}\"".format(node=node, command=command)
+    try:
+        with open(os.devnull, 'w') as devnull:
+            sshStdOut = subprocess.check_output(shlex.split(sshCommand), timeout=timeout, stderr=devnull)
+            return sshStdOut.decode('utf-8').strip()
+    except:
+        return None # Might want to add specific error handling later
+# executeCommand()-end
+
+def checkMountUsage(node, mount):
+    command = "df -h {mount} --output=target,used | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
+    usage = executeCommand(node, command)
+    return usage or "NotFound"
+# checkMountUsage()-end
+
 # https://stackoverflow.com/questions/14236346/elegant-way-to-test-ssh-availability
 # but paramiko seems to req lot of username/key setup, too variable for generic user to use :(
 def checkSshParamiko_Abandoned( node ) :
@@ -200,10 +216,8 @@ def checkSshParamiko_Abandoned( node ) :
     #return "TimeOut"
 # checkSsh()-end 
 
-
 # other checks to add
 # checkNhc()
-# checkMounts() # custom list of mounts to check eg /global/software, /global/scratch (esp those not configured in nhc)
 # (see README)
 
 
@@ -213,6 +227,15 @@ def cleanUp() :
     #os.system( "reset") # terminal maybe messed up due to bad ssh, but reset clears the screen :(
 # cleanUp()-end
 
+def processLine(data):
+    node, line = data
+    sshStatus = checkSsh(node)
+    scratchStatus = checkMountUsage(node, "/global/scratch") 	if sshStatus == 'up' else "(skip)"
+    swStatus      = checkMountUsage(node, "/global/software") 	if sshStatus == 'up' else "(skip)"
+    tmpStatus     = checkMountUsage(node, "/tmp") 		if sshStatus == 'up' else "(skip)"
+    #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
+    print("%-80s ## ssh:%4s scratch:%7s sw:%7s tmp:%7s" % (line, sshStatus, scratchStatus, swStatus,tmpStatus))
+#processLine()-end
 
 def main(): 
     args = process_cli()
@@ -231,17 +254,9 @@ def main():
 
     # ++ OOP gather all info
     # have diff fn to format output
-    for line in sinfoList : 
-        #print( line )
-        nodeList = getNodeList( line ) # 
-        dbg(3, nodeList )
-        for node in nodeList : 
-            ##sshStatus = "tmpDisabled"
-            sshStatus = checkSsh( node )
-            #dbg(2, "%s has sshStatus of %s" % (node, sshStatus) )
-            #print( "     # %s ssh: %s" % (node, sshStatus) )
-            print( "%-120s ## ssh:%4s" % (line, sshStatus) )
-            #print( "\t\t\t\t##   %s has sshStatus of %s" % (node, sshStatus) )
+    pool = Pool(20)
+    nodes = [ (node, line) for line in sinfoList for node in getNodeList(line) ]
+    pool.map(processLine, nodes)
     cleanUp()
 # main()-end
 
