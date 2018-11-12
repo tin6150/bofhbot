@@ -39,6 +39,7 @@ def dbg( level, strg ):
     if( dbgLevel >= level ) : 
         print( "<!--dbg%s: %s-->" % (level, strg) )
 
+# -v add verbose output.  not sure if ever would need it
 def vprint( level, strg ):
     if( verboseLevel >= level ) : 
         print( "%s" % strg )
@@ -52,7 +53,8 @@ def vprint( level, strg ):
 def process_cli() :
         # https://docs.python.org/2/howto/argparse.html#id1
         parser = argparse.ArgumentParser( description='This script give enhanced status of problem nodes reported by eg sinfo -R')
-        parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file",  required=False, default="/etc/pdsh/all" ) 
+        parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file",  required=False, default="" ) 
+        parser.add_argument('-s', '--sfile',  help='Use a file containing output of sinfo -N -R -S %E --format="%N %6t %19H %9u %E"', required=False, default="" ) 
         parser.add_argument('-v', '--verboselevel', help="Add verbose output. Up to -vv maybe useful. ", action="count", default=0)
         parser.add_argument('-d', '--debuglevel', help="Debug mode. Up to -ddd useful for troubleshooting input file parsing. -ddddd intended for coder. ", action="count", default=0)
         parser.add_argument('--version', action='version', version='%(prog)s 0.2.  ')
