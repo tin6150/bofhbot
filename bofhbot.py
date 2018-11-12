@@ -63,6 +63,8 @@ def process_cli() :
         global verboseLevel 
         dbgLevel = args.debuglevel
         verboseLevel = args.verboselevel
+        if args.sfile != '' :
+            sinfoRSfile = args.sfile
         return args
 # end process_cli() 
 
@@ -88,9 +90,13 @@ def generateSinfo() :
 
 #def getSinfo():
 def buildSinfoList():
+#def buildSinfoList(infoRS=sinfoRSfile):
+    # sinfoRSfile is currently global, i guess OOP would be very similar...
+    # ++ consider changing to use fn arg for the file
     sinfoRS = open( sinfoRSfile,'r')
     #print( sinfoRS )
     #linelist = sinfoRS.split('\s')
+    # need to do some cleansing... just in case of hacking... but what to clean?  ; ?
     sinfoList = [ ] 
     for line in sinfoRS :
         dbg(4, "processing '%s'" % line.rstrip() )
@@ -108,7 +114,9 @@ def buildSinfoList():
 
 # Input: array list of lines with output of sinfo -R -S ...
 # OUTPUT: array list of nodes (maybe empty)
-# may not use this fn anymore
+# this was first coded up for offline development with saved sinfo ... output
+# but useful for new user to call it, in case they want to dry run the script
+# in non production environment :)
 def sinfoList2nodeList( sinfoList ):
     #--linenum = 0 
     #--item = 0
@@ -224,7 +232,7 @@ def checkSshParamiko_Abandoned( node ) :
 
 
 def cleanUp() :
-    os.remove( sinfoRSfile )
+    #-- os.remove( sinfoRSfile ) # could be user provided now, don't remove!
     print( "## Run 'reset' if terminal is messed up" )
     #os.system( "reset") # terminal maybe messed up due to bad ssh, but reset clears the screen :(
 # cleanUp()-end
@@ -252,18 +260,28 @@ def main():
 
     if( args.nodelist != "" ) :
         # used --nodelist option, 
-        # ++ cleanse input before reading file
+        # ++ cleanse input before reading file, may do that in parseCli()
         nodelistFile = args.nodelist
         dbg(2, "nodelistFile is %s" % nodelistFile )
         # need more work to create nodes ...
+    elif (args.sinfo != "" ) :
+        # used --sfile option, 
+        # ++ cleanse input before reading file, may do that in parseCli()
+        sinfoFile = args.sfile
+        dbg(2, "sinfoFile is %s" % sinfoFile )
+        # can skip generateSinfo() in this case
+        # ++ TODO 
+        # just call prev debug use fn: ??
+        # sinfoList = buildSinfoList()
+        #sinfoNodeList = sinfoList2nodeList( sinfoList )  # OOP would be nice not having to pass whole array as fn param
+        # need more work to trace thru what seq of fn to call, but most coding in  there already
     else :
         generateSinfo()
         sinfoList = buildSinfoList()
     #endif 
-    #sinfoNodeList = sinfoList2nodeList( sinfoList )  # OOP would be nice not having to pass whole array as fn param
 
     # ++ OOP gather all info
-    # have diff fn to format output
+    # ++ TODO consider have diff option and invoke alternate fn to format output
     pool = Pool(20)
     nodes = [ (node, line) for line in sinfoList for node in getNodeList(line) ]
     pool.map(processLine, nodes)
