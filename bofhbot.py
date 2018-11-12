@@ -52,10 +52,10 @@ def vprint( level, strg ):
 def process_cli() :
         # https://docs.python.org/2/howto/argparse.html#id1
         parser = argparse.ArgumentParser( description='This script give enhanced status of problem nodes reported by eg sinfo -R')
-        parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file",  required=False, default="/etc/pdsh/all" ) 
+        parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file, eg /etc/pdsh/all",  required=False, default="" ) 
         parser.add_argument('-v', '--verboselevel', help="Add verbose output. Up to -vv maybe useful. ", action="count", default=0)
         parser.add_argument('-d', '--debuglevel', help="Debug mode. Up to -ddd useful for troubleshooting input file parsing. -ddddd intended for coder. ", action="count", default=0)
-        parser.add_argument('--version', action='version', version='%(prog)s 0.2.  ')
+        parser.add_argument('--version', action='version', version='%(prog)s 0.2')
         args = parser.parse_args()
         global dbgLevel 
         global verboseLevel 
@@ -248,8 +248,16 @@ def main():
     # add code to handle --nodelist (from pdsh as template)
     # substitude the nodelist instead of running commands below
 
-    generateSinfo()
-    sinfoList = buildSinfoList()
+    if( args.nodelist != "" ) :
+        # used --nodelist option, 
+        # ++ cleanse input before reading file
+        nodelistFile = args.nodelist
+        dbg(2, "nodelistFile is %s" % nodelistFile )
+        # need more work to create nodes ...
+    else :
+        generateSinfo()
+        sinfoList = buildSinfoList()
+    #endif 
     #sinfoNodeList = sinfoList2nodeList( sinfoList )  # OOP would be nice not having to pass whole array as fn param
 
     # ++ OOP gather all info
