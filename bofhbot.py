@@ -34,15 +34,37 @@ nodeColumnIndex=0
 # dbgLevel 3 (ie -ddd) is expected by user troubleshooting problem parsing input file
 # currently most detailed output is at level 5 (ie -ddddd) and it is eye blurry even for programmer
 #dbgLevel = 0  
-dbgLevel = 1  
+##dbgLevel = 1   use -ddddd now
 def dbg( level, strg ):
     if( dbgLevel >= level ) : 
         print( "<!--dbg%s: %s-->" % (level, strg) )
 
+def vprint( level, strg ):
+    if( verboseLevel >= level ) : 
+        print( "%s" % strg )
 
-def parseCliArg():
-    optino1 = sys.argv[1]
+#def parseCliArg():
+#    optino1 = sys.argv[1]
 # parseCliArg()-end
+# Sorry Nick, I much rather use argparse. -Tin
+
+
+def process_cli() :
+        # https://docs.python.org/2/howto/argparse.html#id1
+        parser = argparse.ArgumentParser( description='This script give enhanced status of problem nodes reported by eg sinfo -R')
+        parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file",  required=False, default="/etc/pdsh/all" ) 
+        parser.add_argument('-v', '--verboselevel', help="Add verbose output. Up to -vv maybe useful. ", action="count", default=0)
+        parser.add_argument('-d', '--debuglevel', help="Debug mode. Up to -ddd useful for troubleshooting input file parsing. -ddddd intended for coder. ", action="count", default=0)
+        parser.add_argument('--version', action='version', version='%(prog)s 0.2.  ')
+        args = parser.parse_args()
+        global dbgLevel 
+        global verboseLevel 
+        dbgLevel = args.debuglevel
+        verboseLevel = args.verboselevel
+        return args
+# end process_cli() 
+
+
 
 
 # get ouptupt of sinfo -R -S ... 
@@ -196,7 +218,6 @@ def checkSshParamiko_Abandoned( node ) :
 
 # other checks to add
 # checkNhc()
-# checkMounts() # custom list of mounts to check eg /global/software, /global/scratch (esp those not configured in nhc)
 # (see README)
 
 
@@ -209,16 +230,27 @@ def cleanUp() :
 def processLine(data):
     node, line = data
     sshStatus = checkSsh(node)
-    scratchStatus = checkMountUsage(node, "/global/scratch") if sshStatus == 'up' else "(skipped)"
-    print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus))
+    scratchStatus = checkMountUsage(node, "/global/scratch") 	if sshStatus == 'up' else "(skip)"
+    swStatus      = checkMountUsage(node, "/global/software") 	if sshStatus == 'up' else "(skip)"
+    tmpStatus     = checkMountUsage(node, "/tmp") 		if sshStatus == 'up' else "(skip)"
+    #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
+    print("%-80s ## ssh:%4s scratch:%7s sw:%7s tmp:%7s" % (line, sshStatus, scratchStatus, swStatus,tmpStatus))
+#processLine()-end
 
 def main(): 
+    args = process_cli()
     dbg(5, "bofhbot I am")
-    print( "## sinfo enhanced by bofhbot ##")
+    vprint(1, "## sinfo enhanced by bofhbot ##")
+    # tmp exit
+    #return
+
+    # ++ TODO
+    # add code to handle --nodelist (from pdsh as template)
+    # substitude the nodelist instead of running commands below
+
     generateSinfo()
     sinfoList = buildSinfoList()
     #sinfoNodeList = sinfoList2nodeList( sinfoList )  # OOP would be nice not having to pass whole array as fn param
-    # TBD: OOP to iterate all items in parallel 
 
     # ++ OOP gather all info
     # have diff fn to format output
