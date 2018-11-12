@@ -250,8 +250,19 @@ other names
 * bofhbot - yeah, i like this!
 
 
-.rst quick reference
-====================
+.rst reference
+==============
 
 - http://docutils.sourceforge.net/docs/user/rst/quickref.html
+- http://www.sphinx-doc.org/en/1.3/markup/code.html
+
+
+apparently boxing title with ===== above and below a line could throw off validator.
+was that a .md feature?  but it had worked on short rst...
+validate rst as:
+
+::
+
+        pip install rstvalidator
+        python -m rstvalidator README.rst
 
