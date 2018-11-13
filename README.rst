@@ -75,7 +75,18 @@ append several columns to it:
 :: 
 
 	ping  ssh   nhc   slurm-pid  ipmi-powerStatus   recommed-action
-	ok    no    na    na         on/time-out        wwsh ipmi cycle
+	3ms   5min  na    na         on                 wwsh ipmi cycle
+	no    no    na    na         time-out           check net cable
+
+
+Instead of report ssh up or down, just have it run uptime command:
+
+::
+
+
+	uptime
+	1day
+	ssh-DOWN
 
 
 output as quickly as node responses are gathered.
