@@ -23,6 +23,7 @@ import sys
 import subprocess
 #import paramiko  # could abandone
 from multiprocessing import Pool
+from shutil import copyfile 
 
 # global param :)  better as OOP get() fn or some such.  
 sinfoRSfile = '/var/tmp/sinfo-RSE.txt'
@@ -53,7 +54,8 @@ def vprint( level, strg ):
 def process_cli() :
         # https://docs.python.org/2/howto/argparse.html#id1
         parser = argparse.ArgumentParser( description='This script give enhanced status of problem nodes reported by eg sinfo -R')
-        parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file, eg /etc/pdsh/all",  required=False, default="" ) 
+        parser.add_argument('-i', '--ipmi',  help="include ipmi test (may req elevated priv)",  required=False, action="store_true" ) 
+        parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file, eg /etc/pdsh/group/all",  required=False, default="" ) 
         parser.add_argument('-s', '--sfile',  help='Use a file containing output of sinfo -N -R -S %E --format="%N %6t %19H %9u %E"', required=False, default="" ) 
         parser.add_argument('-v', '--verboselevel', help="Add verbose output. Up to -vv maybe useful. ", action="count", default=0)
         parser.add_argument('-d', '--debuglevel', help="Debug mode. Up to -ddd useful for troubleshooting input file parsing. -ddddd intended for coder. ", action="count", default=0)
@@ -63,8 +65,17 @@ def process_cli() :
         global verboseLevel 
         dbgLevel = args.debuglevel
         verboseLevel = args.verboselevel
+        if args.nodelist != '' :
+            args.nodelist = re.sub( r'[^A-Za-z0-9/\-_%\. ]+', r'_', args.nodelist )
+            vprint(1, "## cli parse for --nodelist, after cleansing, will use: '%s'" % args.nodelist )
         if args.sfile != '' :
-            sinfoRSfile = args.sfile
+            # check path not having things like /foo/bar;rm /etc/passwd
+            # the clean list is probably harsher than need to be , but it is a path, not typically convoluted
+            vprint(2, "cli parse for --sfile input  '%s'" % args.sfile )
+            args.sfile = re.sub( r'[^A-Za-z0-9/\-_%\. ]+', r'_', args.sfile )  # not sure if i really want to allow space...
+            vprint(1, "## cli parse for --sfile will use: '%s'" % args.sfile )
+        if args.ipmi :
+            dbg(3, "-i or --ipmi option was used" )
         return args
 # end process_cli() 
 
@@ -72,7 +83,8 @@ def process_cli() :
 
 
 # get ouptupt of sinfo -R -S ... 
-# return a list...  hash... oop nodelist?
+# now just store output in a file  sinfoRSfile (global; future oop property)
+# return is just exit code of running the sinfo cmd.
 def generateSinfo() :
     # https://github.com/PySlurm/pyslurm  but then have to install python lib before being able to use script :-/
     #sinfoRS = subprocess.run(['sinfo', '-R -S %E --format="%9u %19H %6t %N %E"'])
@@ -84,6 +96,7 @@ def generateSinfo() :
     sinfoRSout = os.system(command) # exit code only from mos.system()
     dbg(5, sinfoRSout )
     return sinfoRSout 
+    # return is just exit code of running the sinfo cmd.
     #+sinfoRS = os.popen(cmd).read()
     #sinfoRS = open('sinfo-RSE-eg.txt.head5','r')
 #generateSinfo()-end
@@ -93,10 +106,12 @@ def buildSinfoList():
 #def buildSinfoList(infoRS=sinfoRSfile):
     # sinfoRSfile is currently global, i guess OOP would be very similar...
     # ++ consider changing to use fn arg for the file
+    dbg(3, "buildSinfoList() about to open '%s'" % sinfoRSfile )
     sinfoRS = open( sinfoRSfile,'r')
     #print( sinfoRS )
     #linelist = sinfoRS.split('\s')
-    # need to do some cleansing... just in case of hacking... but what to clean?  ; ?
+    # TODO ++ need to do some cleansing... just in case of hacking... 
+    # especially now user could be providing --nodelist or --sfile 
     sinfoList = [ ] 
     for line in sinfoRS :
         dbg(4, "processing '%s'" % line.rstrip() )
@@ -232,8 +247,10 @@ def checkSshParamiko_Abandoned( node ) :
 
 
 def cleanUp() :
-    #-- os.remove( sinfoRSfile ) # could be user provided now, don't remove!
-    print( "## Run 'reset' if terminal is messed up" )
+    if( dbgLevel == 0 ) :
+        os.remove( sinfoRSfile ) 
+    dbg(1, "sinfoRSfile left at: %s " % sinfoRSfile )
+    vprint(1, "## Run 'reset' if terminal is messed up" )
     #os.system( "reset") # terminal maybe messed up due to bad ssh, but reset clears the screen :(
 # cleanUp()-end
 
@@ -254,31 +271,37 @@ def main():
     # tmp exit
     #return
 
-    # ++ TODO
-    # add code to handle --nodelist (from pdsh as template)
-    # substitude the nodelist instead of running commands below
 
+    # TODO ++ when turn into OOP
+    # create as object property/state info
+    # where various args could have "side effects"
+    # eg, in addition to handling --nodelist as input for list of hosts
+    #     also change the format to narrow the column containing host info (since no sinfo -R data)
     if( args.nodelist != "" ) :
         # used --nodelist option, 
-        # ++ cleanse input before reading file, may do that in parseCli()
-        nodelistFile = args.nodelist
-        dbg(2, "nodelistFile is %s" % nodelistFile )
-        # need more work to create nodes ...
-    elif (args.sinfo != "" ) :
+        # nodelistFile = args.nodelist
+        # --nodelist eg file /etc/pdsh/group/all -- ie, one hostname per line
+        dbg(2, "--nodelist arg was %s" % args.nodelist )
+        copyfile( args.nodelist, sinfoRSfile )
+    elif( args.sfile != "" ) :
         # used --sfile option, 
-        # ++ cleanse input before reading file, may do that in parseCli()
-        sinfoFile = args.sfile
-        dbg(2, "sinfoFile is %s" % sinfoFile )
-        # can skip generateSinfo() in this case
-        # ++ TODO 
-        # just call prev debug use fn: ??
-        # sinfoList = buildSinfoList()
-        #sinfoNodeList = sinfoList2nodeList( sinfoList )  # OOP would be nice not having to pass whole array as fn param
-        # need more work to trace thru what seq of fn to call, but most coding in  there already
+        dbg(2, "--sfile arg was %s" % args.sfile )
+        dbg(2, "sinfoRSfile is %s" % sinfoRSfile )
+        # better off having objects.
+        # right now it is like a hack, copy user's provided sinfo file into the location 
+        # where my script would store the temporary output
+        copyfile( args.sfile, sinfoRSfile )
     else :
         generateSinfo()
-        sinfoList = buildSinfoList()
     #endif 
+    # ++ TODO  currently only read sinfoFile for hostname, rest passed as comment
+    #    at least when using --nodelist should narrow the column space since no sinfo -R comment avail.
+    sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
+
+
+    # tmp exit (for code dev use)
+    #return
+
 
     # ++ OOP gather all info
     # ++ TODO consider have diff option and invoke alternate fn to format output

@@ -4,6 +4,11 @@
 module load python/3.6
 ./bofhbot.py | tee bofhbot.brc.2018.1001.txt
 
+./bofhbot.py -ddd 
+./bofhbot.py --ipmi -v 
+./bofhbot.py -vv -ddd --nodelist ./dev_aid/nodelist
+
+
 
 
 /global/software/sl-7.x86_64/modules/langs/python/3.6/bin/python3   bofhbot.py | tee bofhbot.brc.2018.1001.txt
