@@ -55,6 +55,8 @@ def process_cli() :
         # https://docs.python.org/2/howto/argparse.html#id1
         parser = argparse.ArgumentParser( description='This script give enhanced status of problem nodes reported by eg sinfo -R')
         parser.add_argument('-i', '--ipmi',  help="include ipmi test (may req elevated priv)",  required=False, action="store_true" ) 
+        parser.add_argument('-w',  help="TBA pdsh-style list of nodes eg n00[06-17].sav3" ) 
+        parser.add_argument('-g',  help="TBA heck take /etc/pdsh/group def file for node list" ) 
         parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file, eg /etc/pdsh/group/all",  required=False, default="" ) 
         parser.add_argument('-s', '--sfile',  help='Use a file containing output of sinfo -N -R -S %E --format="%N %6t %19H %9u %E"', required=False, default="" ) 
         parser.add_argument('-v', '--verboselevel', help="Add verbose output. Up to -vv maybe useful. ", action="count", default=0)
@@ -110,7 +112,9 @@ def buildSinfoList():
     sinfoRS = open( sinfoRSfile,'r')
     #print( sinfoRS )
     #linelist = sinfoRS.split('\s')
-    # TODO ++ need to do some cleansing... just in case of hacking... 
+    # basic cleansing/sanitizing done, just to avoid hacking
+    # note that the debug still process original line
+    # once stable and known work as desired, move the sanitizing earlier in the code
     # especially now user could be providing --nodelist or --sfile 
     sinfoList = [ ] 
     for line in sinfoRS :
@@ -120,8 +124,14 @@ def buildSinfoList():
         if( currentLine ) :
             dbg(5, "skipping blank line" )
         else :
-            dbg(5, "will add:  '%s' to sinfoList" % line.rstrip() )
-            sinfoList.append( line.rstrip() )
+            # sinfoList.append( line.rstrip() )  # unsanitized, work.
+            currentLine =  re.sub( '[;$`#\&\\\]', '_', line ).rstrip()   # sanitized
+            # sanitization/cleansing replaces ; $ ` # &  \ with underscore
+            # () still allowed.  but since $ not allowed, won't have 4()
+            # * ' " are allowd.  not thinking of problem with these at this point
+            sinfoList.append( currentLine )  # sanitized, replaces ; & with underscore
+            #sinfoList.append( re.sub( r':;\&\*', r'_', line.rstrip() ) )  # sanitized, replaces ; & with underscore
+            dbg(5, "adding...: '%s' to   sinfoList" % currentLine )
     #print( sinfoList )
     return sinfoList 
 # buildSinfoList()-end
@@ -145,6 +155,10 @@ def sinfoList2nodeList( sinfoList ):
 # Input: single line of output of sinfo -R -S ...
 # OUTPUT: array list of nodes (maybe empty)
 # for now return a list of nodes needing ping/ssh info
+## don't like this now.  very specific to our node naming convention of n0000.CLUSTER
+## should just expect nodename from column 1 or some such
+## TODO.  ie, relax it needing \d\d\d\d ... 
+## do expect a cleansed file :)
 def getNodeList( sinfoLine ) :
         line = sinfoLine
         nodeList = [ ]

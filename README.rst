@@ -63,6 +63,17 @@ Example output
 	n0091.savio2 Not responding
 
 
+Known issues
+------------
+
+* std out redirect may truncate output.  Use | tee filename.out instead.  Affects v 0.2 with parallelized ssh.
+  
+
+::
+
+  ./bofhbot.py > result.out      # this will get last few lines truncated
+  ./bofhbot.py | tee result.out  # this works correctly.
+
 
 
 TL;DR

@@ -1,0 +1,41 @@
+NODELIST STATE  TIMESTAMP           USER      REASON
+n0141.savio1 drain  2018-10-22T13:09:27 root      Epilog error
+n0030.savio1 down*  2018-05-21T10:20:52 root      HW. Tin. need open case.   wont power on, even after reseating blade
+n0107.savio2 down*  2018-06-26T10:08:33 root      HW.ReseatedManyTime_WontPowerOn.Tin
+n0185.savio2 down   2018-11-02T18:25:31 root      HW:Ram@KarenOffice
+0154.savio2 drain  2018-11-08T02:05:07 root      NHC: check_hw_physmem:  Actual RAM size (131926064 kB) greater than maximum allowed (67108864 kB).
+n0117.savio2 drain  2018-10-31T16:57:32 root      NHC: check_hw_physmem:  Actual RAM size (57459408 kB) less than minimum allowed (67108864 kB).
+n0234.savio2 down*  2018-04-06T13:04:50 root      NoBootDev_Tin
+n0110.savio2 down*  2018-10-12T02:12:08 root      Not responding
+n0013.cortex0 down*  2018-04-05T10:06:56 root      badGPU1_tin
+n0046.savio1 drain  2018-11-07T12:03:50 root      batch job complete failure
+n0010.cortex0 drng   2018-11-10T14:43:49 root      batch job complete failure
+n0218.savio2 drain  2018-01-23T10:34:33 root      dead disk -jwhite
+n0281.savio2 down*  2018-01-31T11:19:51 root      hungAtBios_Tin
+n0109.savio2 down   2018-04-25T12:18:01 root      ib card replaced, but now has memory error per nhc.  tin.
+n0042.savio2 drain* 2018-01-23T12:39:54 root      needs new dimms -kmwf
+n0068.savio2 drain  2018-07-16T11:52:41 root      see hung mpirun for jhlee84--Tin
+
+n0096.savio1 drain* 2018-05-21T11:20:32 root      QA. test \ backslash
+n0097.savio2 drain* 2018-05-21T11:20:32 root      QA. test \\ double backslash
+n0098.savio3 drain* 2018-05-21T11:20:32 root      QA test \\\ triple backslash # python re need 3 backslash to mean one
+n0099.savio4 drain* 2018-05-21T11:20:32 root      QA test \\\\ quad backslash
+n0099.savio5 drain* 2018-05-21T11:20:32 root      QA test \\\\\ hep backslash
+n
+n0006.bk1 drain* 2018-05-21T11:20:32 root      QA: test & amperstand
+n0006.bk2 drain* 2018-05-21T11:20:32 root      QA: test && double amperstand
+n0006.bk3 drain* 2018-05-21T11:20:32 root      QA: test ;  semicolon
+n0006.bk4 drain* 2018-05-21T11:20:32 root      QA: test \;  escaped semicolon
+n0006.bk5 drain* 2018-05-21T11:20:32 root      QA: test % percent # may not be removed
+n0008.bk1 drain* 2018-05-21T11:20:32 root      QA: test # hash
+n0008.bk2 drain* 2018-05-21T11:20:32 root      QA: test ## double hash
+n0066.bk1 drain* 2018-05-21T11:20:32 root      QA: test $ dollar
+n0066.bk2 drain* 2018-05-21T11:20:32 root      QA: test $$ double dollar
+n0666.bk1 drain* 2018-05-21T11:20:32 root      QA: test ` backtick
+n0666.bk2 drain* 2018-05-21T11:20:32 root      QA: test `` double backtick
+
+n0196.lr1 drain* 2018-05-21T11:20:32 root      QA. test / slash          # not sanitized
+n0237.lr2 drain* 2018-05-21T11:20:32 root      QA. test // double slash  # ie slash allowed
+n0198.lr3 drain* 2018-05-21T11:20:32 root      QA test /// triple slash 
+n0199.lr4 drain* 2018-05-21T11:20:32 root      QA test //// quad slash
+n0109.lr5 drain* 2018-05-21T11:20:32 root      QA test ///// hep slash

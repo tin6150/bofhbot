@@ -8,6 +8,8 @@ module load python/3.6
 ./bofhbot.py --ipmi -v 
 ./bofhbot.py -vv -ddd --nodelist ./dev_aid/nodelist
 
+./bofhbot.py -ddddd -s ./dev_aid/sample_input/sinfo-RSE.test.txt
+
 
 
 
