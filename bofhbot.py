@@ -21,8 +21,9 @@ import argparse
 import shlex
 import sys
 import subprocess
+import getpass
 #import paramiko  # could abandone
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from shutil import copyfile 
 
 # global param :)  better as OOP get() fn or some such.  
@@ -232,6 +233,16 @@ def checkMountUsage(node, mount):
     return usage or "NotFound"
 # checkMountUsage()-end
 
+def checkProcesses(node):
+    command = 'ps -eo uname | egrep -v \\"^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$\\" | uniq'.format(username=getpass.getuser())
+    users = ','.join(executeCommand(node, command).split('\n'))
+    return users or "(no users)"
+
+def checkUptime(node):
+    command = "uptime | awk -F' ' '{ print $10 }'"
+    uptime = executeCommand(node, command)
+    return uptime
+
 # https://stackoverflow.com/questions/14236346/elegant-way-to-test-ssh-availability
 # but paramiko seems to req lot of username/key setup, too variable for generic user to use :(
 def checkSshParamiko_Abandoned( node ) :
@@ -274,8 +285,10 @@ def processLine(data):
     scratchStatus = checkMountUsage(node, "/global/scratch") 	if sshStatus == 'up' else "(skip)"
     swStatus      = checkMountUsage(node, "/global/software") 	if sshStatus == 'up' else "(skip)"
     tmpStatus     = checkMountUsage(node, "/tmp") 		if sshStatus == 'up' else "(skip)"
+    users         = checkProcesses(node)                        if sshStatus == 'up' else "(skip)"
+    uptime        = checkUptime(node)                           if sshStatus == 'up' else "(skip)"
     #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
-    print("%-80s ## ssh:%4s scratch:%7s sw:%7s tmp:%7s" % (line, sshStatus, scratchStatus, swStatus,tmpStatus))
+    print("%-80s ## ssh:%4s scratch:%7s sw:%7s tmp:%7s load: %7s users:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus, uptime, users))
 #processLine()-end
 
 def main(): 
@@ -319,7 +332,7 @@ def main():
 
     # ++ OOP gather all info
     # ++ TODO consider have diff option and invoke alternate fn to format output
-    pool = Pool(20)
+    pool = Pool(cpu_count())
     nodes = [ (node, line) for line in sinfoList for node in getNodeList(line) ]
     pool.map(processLine, nodes)
     cleanUp()
