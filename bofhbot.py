@@ -291,6 +291,13 @@ def processLine(data):
     print("%-80s ## ssh:%4s scratch:%7s sw:%7s tmp:%7s load: %7s users:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus, uptime, users))
 #processLine()-end
 
+def print_stderr(s, color = True):
+    # Colors: https://stackoverflow.com/questions/37340049/how-do-i-print-colored-output-to-the-terminal-in-python
+    if color:
+        s = '\033[1;31m' + s + '\033[0;0m'
+    sys.stderr.write(s + '\n')
+    sys.stderr.flush()
+
 def main(): 
     args = process_cli()
     dbg(5, "bofhbot I am")
@@ -332,9 +339,17 @@ def main():
 
     # ++ OOP gather all info
     # ++ TODO consider have diff option and invoke alternate fn to format output
-    pool = Pool(cpu_count())
+
+    # Pool doesn't work if /dev/shm is disabled
+    if os.stat('/dev/shm').st_mode == 16832:
+        pool = Pool(cpu_count())
+        map_fn = pool.map
+    else:
+        print_stderr('/dev/shm is not available... Using single thread mode')
+        sys.stderr.flush()
+        map_fn = lambda f, x: list(map(f, x))
     nodes = [ (node, line) for line in sinfoList for node in getNodeList(line) ]
-    pool.map(processLine, nodes)
+    map_fn(processLine, nodes)
     cleanUp()
 # main()-end
 
