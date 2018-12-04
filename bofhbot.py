@@ -290,36 +290,33 @@ red_bg = make_color(1, 41)
 green_bg = make_color(1, 42)
 gray = make_color(1, 30)
 
-def make_process_line(color = False):
-    def processLine(data):
-        node, line = data
-        line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
-        sshStatus = checkSsh(node)
+def processLine(data):
+    node, line, color = data
+    line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
+    sshStatus = checkSsh(node)
 
-        if color:
-            ssh_color = green if sshStatus == 'up' else red
-            sshStatusFormatted = ssh_color(sshStatus)
-            node_color = green_bg if sshStatus == 'up' else red_bg
-            nodeFormatted = node_color(node)
-        else:
-            sshStatusFormatted = sshStatus
-            nodeFormatted = node
-        skip = gray('(skip)') if color else '(skip)' 
+    if color:
+        ssh_color = green if sshStatus == 'up' else red
+        sshStatusFormatted = ssh_color(sshStatus)
+        node_color = green_bg if sshStatus == 'up' else red_bg
+        nodeFormatted = node_color(node)
+    else:
+        sshStatusFormatted = sshStatus
+        nodeFormatted = node
+    skip = gray('(skip)') if color else '(skip)' 
 
-        checks = [
-            ('scratch', lambda: checkMountUsage(node, "/global/scratch")),
-            ('software', lambda: checkMountUsage(node, "/global/software")),
-            ('tmp', lambda: checkMountUsage(node, "/tmp")),
-            ('users', lambda: checkProcesses(node)),
-            ('load', lambda: checkUptime(node))
-        ]
-        results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
+    checks = [
+        ('scratch', lambda: checkMountUsage(node, "/global/scratch")),
+        ('software', lambda: checkMountUsage(node, "/global/software")),
+        ('tmp', lambda: checkMountUsage(node, "/tmp")),
+        ('users', lambda: checkProcesses(node)),
+        ('load', lambda: checkUptime(node))
+    ]
+    results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
 
-        #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
-        print("{:14} {:80} ## ssh: {:4} ".format(nodeFormatted, line, sshStatusFormatted) + ' '.join(results))
-    #processLine()-end
-    return processLine
-#make_process_line()-end
+    #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
+    print("{:14} {:80} ## ssh: {:4} ".format(nodeFormatted, line, sshStatusFormatted) + ' '.join(results))
+#processLine()-end
 
 def print_stderr(s, color = True):
     # Colors: https://stackoverflow.com/questions/37340049/how-do-i-print-colored-output-to-the-terminal-in-python
@@ -378,8 +375,8 @@ def main():
         print_stderr('/dev/shm is not available... Using single thread mode')
         sys.stderr.flush()
         map_fn = lambda f, x: list(map(f, x))
-    nodes = [ (node, line) for line in sinfoList for node in getNodeList(line) ]
-    map_fn(make_process_line(color = args.color), nodes)
+    nodes = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
+    map_fn(processLine, nodes)
     cleanUp()
 # main()-end
 
