@@ -310,8 +310,8 @@ def make_process_line(color = False):
             ('scratch', lambda: checkMountUsage(node, "/global/scratch")),
             ('software', lambda: checkMountUsage(node, "/global/software")),
             ('tmp', lambda: checkMountUsage(node, "/tmp")),
-            ('load', lambda: checkProcesses(node)),
-            ('users', lambda: checkUptime(node))
+            ('users', lambda: checkProcesses(node)),
+            ('load', lambda: checkUptime(node))
         ]
         results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
 
