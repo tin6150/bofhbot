@@ -368,7 +368,9 @@ def main():
     # ++ TODO consider have diff option and invoke alternate fn to format output
 
     # Pool doesn't work if /dev/shm is disabled
-    if os.stat('/dev/shm').st_mode == 16832:
+    # Either everyone can write to it, or it is owned by current user
+    shm_permissions = os.stat('/dev/shm')
+    if oct(shm_permissions.st_mode)[6] == '7' or shm_permissions.st_uid == os.getuid(): 
         pool = Pool(cpu_count())
         map_fn = pool.map
     else:
