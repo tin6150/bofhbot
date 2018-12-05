@@ -229,7 +229,7 @@ def executeCommand(node, command, timeout=5):
 # executeCommand()-end
 
 def checkMountUsage(node, mount):
-    command = "df -h {mount} --output=target,used | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
+    command = "df -h {mount} --output=target,size | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
     usage = executeCommand(node, command)
     return usage or "NotFound"
 # checkMountUsage()-end
