@@ -243,7 +243,7 @@ def checkProcesses(node):
     return users or "(no users)"
 
 def checkLoad(node):
-    command = "uptime | awk -F' ' '{ print $10 }'"
+    command = "uptime | awk -F' ' '{ print substr($10,0,length($10)-1) }'"
     uptime = executeCommand(node, command)
     return uptime
 
