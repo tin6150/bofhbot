@@ -25,6 +25,8 @@ import getpass
 #import paramiko  # could abandone
 from multiprocessing import Pool, cpu_count
 from shutil import copyfile 
+from dateutil import parser
+import time
 
 # global param :)  better as OOP get() fn or some such.  
 sinfoRSfile = '/var/tmp/sinfo-RSE.txt'
@@ -224,7 +226,8 @@ def executeCommand(node, command, timeout=5):
         with open(os.devnull, 'w') as devnull:
             sshStdOut = subprocess.check_output(shlex.split(sshCommand), timeout=timeout, stderr=devnull)
             return sshStdOut.decode('utf-8').strip()
-    except:
+    except Exception as e:
+        print(e)
         return None # Might want to add specific error handling later
 # executeCommand()-end
 
@@ -239,10 +242,32 @@ def checkProcesses(node):
     users = ','.join(executeCommand(node, command).split('\n'))
     return users or "(no users)"
 
-def checkUptime(node):
+def checkLoad(node):
     command = "uptime | awk -F' ' '{ print $10 }'"
     uptime = executeCommand(node, command)
     return uptime
+
+def secondsToString(sec):
+    sec = int(sec)
+    if sec < 60:
+        return "{}s".format(sec)
+    minutes = sec // 60
+    if minutes < 60:
+        return "{}m".format(minutes)
+    hours = minutes // 60
+    if hours < 24:
+        return "{}h".format(hours)
+    days = hours // 24
+    return "{}d".format(days) 
+
+def checkUptime(node):
+    command = "uptime -s"
+    start_time = executeCommand(node, command)
+    start_date = parser.parse(start_time) 
+    return secondsToString(time.time() - start_date.timestamp())
+    command = 'echo $(date +%s) - $(date --date="$(uptime -s)" +"%s") | bc'
+    uptime = executeCommand(node, command)
+    return secondsToString(int(uptime)) if uptime else "Error"
 
 # https://stackoverflow.com/questions/14236346/elegant-way-to-test-ssh-availability
 # but paramiko seems to req lot of username/key setup, too variable for generic user to use :(
@@ -310,7 +335,8 @@ def processLine(data):
         ('software', lambda: checkMountUsage(node, "/global/software")),
         ('tmp', lambda: checkMountUsage(node, "/tmp")),
         ('users', lambda: checkProcesses(node)),
-        ('load', lambda: checkUptime(node))
+        ('load', lambda: checkLoad(node)),
+        ('uptime', lambda: checkUptime(node))
     ]
     results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
 
