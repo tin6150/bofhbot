@@ -3,14 +3,18 @@ language: python
 python:
   - "3.6"
   # PyPy versions
-  #- "pypy3.5"
+  - "pypy3.5"
   # pip 9.0.1 from /global/software/sl-7.x86_64/modules/langs/python/3.6/lib/python3.6/site-packages (python 3.6) # brc
 pip:
   - "9.0.1"
 # command to install dependencies
 # req generated as "pip freeze > requirements.txt"
-install:
-  - pip install -r requirements.txt
+install: 
+  - pip install --user -r requirements.txt
+  #- pip install -r requirements.txt
   #- pip install .
 #command to run tests
 script: python bofhbot.py --version
+# would be ubuntu env:
+virtualenv:
+  system_site_packages: true
