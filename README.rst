@@ -1,9 +1,11 @@
 
 master branch:
+
 .. image:: https://travis-ci.org/tin6150/bofhbot.svg?branch=master
     :target: https://travis-ci.org/tin6150/bofhbot
 
 nodelist branch: 
+
 .. image:: https://travis-ci.org/tin6150/bofhbot.svg?branch=nodelist
     :target: https://travis-ci.org/tin6150/bofhbot 
 
