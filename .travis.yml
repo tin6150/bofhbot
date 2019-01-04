@@ -3,7 +3,8 @@ language: python
 python:
   - "3.6"
   # PyPy versions
-  - "pypy3.5"
+  #- "pypy3.5"
+  # pip 9.0.1 from /global/software/sl-7.x86_64/modules/langs/python/3.6/lib/python3.6/site-packages (python 3.6)
 # command to install dependencies
 # req generated as "pip freeze > requirements.txt"
 install:

@@ -1,5 +1,5 @@
 alabaster==0.7.10
-anaconda-client==1.6.9
+#anaconda-client==1.6.9
 anaconda-navigator==1.4.3
 anaconda-project==0.8.2
 asn1crypto==0.24.0
