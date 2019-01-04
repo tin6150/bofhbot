@@ -1,0 +1,37 @@
+NODELIST STATE  TIMESTAMP           USER      REASON
+n0141.savio1 drain  2018-10-22T13:09:27 root      Epilog error
+n0030.savio1 down*  2018-05-21T10:20:52 root      HW. Tin. need open case.   wont power on, even after reseating blade
+n0107.savio2 down*  2018-06-26T10:08:33 root      HW.ReseatedManyTime_WontPowerOn.Tin
+n0000.savio2 down*  2018-05-21T10:48:18 root      HW: Tin. check console/bios boot settings.  when boot again check hw health/wonkiness
+n0096.savio2 drain* 2018-05-21T11:20:32 root      HW: need HT off. Tin
+n0114.savio2 down*  2018-06-26T10:50:56 root      HW:54gRAMonly
+n0185.savio2 down   2018-11-02T18:25:31 root      HW:Ram@KarenOffice
+n0108.savio2 drain* 2018-07-30T12:26:45 root      HW:sda missing after reseat-Sn
+n0113.savio2 down*  2018-06-26T10:44:57 root      HW:shutdownAgainWontPowerOn_openCase
+n0093.savio2 drain  2018-10-19T11:44:58 root      MPI HUNG behaviour Oct 18
+n0094.savio2 drain  2018-10-19T11:46:50 root      MPI HUNG behaviour Oct 18
+n0179.savio2 drain* 2018-10-30T11:08:35 root      NHC: check_hw_ib:  No IB port is ACTIVE (LinkUp 56 Gb/sec).
+n0154.savio2 drain  2018-11-08T02:05:07 root      NHC: check_hw_physmem:  Actual RAM size (131926064 kB) greater than maximum allowed (67108864 kB).
+n0117.savio2 drain  2018-10-31T16:57:32 root      NHC: check_hw_physmem:  Actual RAM size (57459408 kB) less than minimum allowed (67108864 kB).
+n0234.savio2 down*  2018-04-06T13:04:50 root      NoBootDev_Tin
+n0110.savio2 down*  2018-10-12T02:12:08 root      Not responding
+n0187.savio2 down*  2018-11-12T17:51:28 slurm     Not responding
+n0233.savio2 down*  2018-10-31T05:39:38 root      Not responding
+n0238.savio2 down*  2018-10-27T20:32:53 root      Not responding
+n0098.savio1 down*  2018-11-11T10:04:35 slurm     Not responding
+n0084.savio2 drain  2018-11-08T21:20:01 root      Prolog error
+n0194.savio2 drain  2018-11-10T21:22:33 root      Prolog error
+n0013.cortex0 down*  2018-04-05T10:06:56 root      badGPU1_tin
+n0046.savio1 drain  2018-11-07T12:03:50 root      batch job complete failure
+n0055.savio1 drain  2018-10-30T11:18:06 root      batch job complete failure
+n0073.savio1 drain  2018-10-31T15:18:53 root      batch job complete failure
+n0052.savio2 drain  2018-10-30T11:17:51 root      batch job complete failure
+n0232.savio2 drain  2018-10-30T11:16:10 root      batch job complete failure
+n0010.cortex0 drng   2018-11-10T14:43:49 root      batch job complete failure
+n0218.savio2 drain  2018-01-23T10:34:33 root      dead disk -jwhite
+n0281.savio2 down*  2018-01-31T11:19:51 root      hungAtBios_Tin
+n0109.savio2 down   2018-04-25T12:18:01 root      ib card replaced, but now has memory error per nhc.  tin.
+n0042.savio2 drain* 2018-01-23T12:39:54 root      needs new dimms -kmwf
+n0124.savio2 drain  2018-10-18T16:57:39 root      no ib
+n0050.savio1 down*  2018-01-23T12:37:21 root      no post, failed mb -kmwf
+n0068.savio2 drain  2018-07-16T11:52:41 root      see hung mpirun for jhlee84--Tin

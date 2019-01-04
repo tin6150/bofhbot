@@ -1,4 +1,16 @@
 
+master branch:
+
+.. image:: https://travis-ci.org/tin6150/bofhbot.svg?branch=master
+    :target: https://travis-ci.org/tin6150/bofhbot
+
+nodelist branch: 
+
+.. image:: https://travis-ci.org/tin6150/bofhbot.svg?branch=nodelist
+    :target: https://travis-ci.org/tin6150/bofhbot 
+
+
+
 .. figure:: doc/bofhbot_screenshot.png
 	:align: center
 	:alt: bofhbot output screenshot
@@ -63,6 +75,17 @@ Example output
 	n0091.savio2 Not responding
 
 
+Known issues
+------------
+
+* std out redirect may truncate output.  Use | tee filename.out instead.  Affects v 0.2 with parallelized ssh.
+  
+
+::
+
+  ./bofhbot.py > result.out      # this will get last few lines truncated
+  ./bofhbot.py | tee result.out  # this works correctly.
+
 
 
 TL;DR
@@ -76,7 +99,18 @@ append several columns to it:
 :: 
 
 	ping  ssh   nhc   slurm-pid  ipmi-powerStatus   recommed-action
-	ok    no    na    na         on/time-out        wwsh ipmi cycle
+	3ms   5min  na    na         on                 wwsh ipmi cycle
+	no    no    na    na         time-out           check net cable
+
+
+Instead of report ssh up or down, just have it run uptime command:
+
+::
+
+
+	uptime
+	1day
+	ssh-DOWN
 
 
 output as quickly as node responses are gathered.

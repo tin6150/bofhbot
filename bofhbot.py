@@ -21,9 +21,12 @@ import argparse
 import shlex
 import sys
 import subprocess
+import getpass
 #import paramiko  # could abandone
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from shutil import copyfile 
+from dateutil import parser
+import time
 
 # global param :)  better as OOP get() fn or some such.  
 sinfoRSfile = '/var/tmp/sinfo-RSE.txt'
@@ -55,7 +58,10 @@ def process_cli() :
         # https://docs.python.org/2/howto/argparse.html#id1
         parser = argparse.ArgumentParser( description='This script give enhanced status of problem nodes reported by eg sinfo -R')
         parser.add_argument('-i', '--ipmi',  help="include ipmi test (may req elevated priv)",  required=False, action="store_true" ) 
+        parser.add_argument('-w',  help="TBA pdsh-style list of nodes eg n00[06-17].sav3" ) 
+        parser.add_argument('-g',  help="TBA heck take /etc/pdsh/group def file for node list" ) 
         parser.add_argument('-n', '--nodelist',  help="Use a specified nodelist file, eg /etc/pdsh/group/all",  required=False, default="" ) 
+        parser.add_argument('--color', help='Color output text', action='store_true')
         parser.add_argument('-s', '--sfile',  help='Use a file containing output of sinfo -N -R -S %E --format="%N %6t %19H %9u %E"', required=False, default="" ) 
         parser.add_argument('-v', '--verboselevel', help="Add verbose output. Up to -vv maybe useful. ", action="count", default=0)
         parser.add_argument('-d', '--debuglevel', help="Debug mode. Up to -ddd useful for troubleshooting input file parsing. -ddddd intended for coder. ", action="count", default=0)
@@ -110,7 +116,9 @@ def buildSinfoList():
     sinfoRS = open( sinfoRSfile,'r')
     #print( sinfoRS )
     #linelist = sinfoRS.split('\s')
-    # TODO ++ need to do some cleansing... just in case of hacking... 
+    # basic cleansing/sanitizing done, just to avoid hacking
+    # note that the debug still process original line
+    # once stable and known work as desired, move the sanitizing earlier in the code
     # especially now user could be providing --nodelist or --sfile 
     sinfoList = [ ] 
     for line in sinfoRS :
@@ -120,8 +128,14 @@ def buildSinfoList():
         if( currentLine ) :
             dbg(5, "skipping blank line" )
         else :
-            dbg(5, "will add:  '%s' to sinfoList" % line.rstrip() )
-            sinfoList.append( line.rstrip() )
+            # sinfoList.append( line.rstrip() )  # unsanitized, work.
+            currentLine =  re.sub( '[;$`#\&\\\]', '_', line ).rstrip()   # sanitized
+            # sanitization/cleansing replaces ; $ ` # &  \ with underscore
+            # () still allowed.  but since $ not allowed, won't have 4()
+            # * ' " are allowd.  not thinking of problem with these at this point
+            sinfoList.append( currentLine )  # sanitized, replaces ; & with underscore
+            #sinfoList.append( re.sub( r':;\&\*', r'_', line.rstrip() ) )  # sanitized, replaces ; & with underscore
+            dbg(5, "adding...: '%s' to   sinfoList" % currentLine )
     #print( sinfoList )
     return sinfoList 
 # buildSinfoList()-end
@@ -145,6 +159,10 @@ def sinfoList2nodeList( sinfoList ):
 # Input: single line of output of sinfo -R -S ...
 # OUTPUT: array list of nodes (maybe empty)
 # for now return a list of nodes needing ping/ssh info
+## don't like this now.  very specific to our node naming convention of n0000.CLUSTER
+## should just expect nodename from column 1 or some such
+## TODO.  ie, relax it needing \d\d\d\d ... 
+## do expect a cleansed file :)
 def getNodeList( sinfoLine ) :
         line = sinfoLine
         nodeList = [ ]
@@ -208,15 +226,48 @@ def executeCommand(node, command, timeout=5):
         with open(os.devnull, 'w') as devnull:
             sshStdOut = subprocess.check_output(shlex.split(sshCommand), timeout=timeout, stderr=devnull)
             return sshStdOut.decode('utf-8').strip()
-    except:
+    except Exception as e:
+        print(e)
         return None # Might want to add specific error handling later
 # executeCommand()-end
 
 def checkMountUsage(node, mount):
-    command = "df -h {mount} --output=target,used | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
+    command = "df -h {mount} --output=target,size | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
     usage = executeCommand(node, command)
     return usage or "NotFound"
 # checkMountUsage()-end
+
+def checkProcesses(node):
+    command = 'ps -eo uname | egrep -v \\"^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$\\" | uniq'.format(username=getpass.getuser())
+    users = ','.join(executeCommand(node, command).split('\n'))
+    return users or "(no users)"
+
+def checkLoad(node):
+    command = "uptime | awk -F' ' '{ print substr($10,0,length($10)-1) }'"
+    uptime = executeCommand(node, command)
+    return uptime
+
+def secondsToString(sec):
+    sec = int(sec)
+    if sec < 60:
+        return "{}s".format(sec)
+    minutes = sec // 60
+    if minutes < 60:
+        return "{}m".format(minutes)
+    hours = minutes // 60
+    if hours < 24:
+        return "{}h".format(hours)
+    days = hours // 24
+    return "{}d".format(days) 
+
+def checkUptime(node):
+    command = "uptime -s"
+    start_time = executeCommand(node, command)
+    start_date = parser.parse(start_time) 
+    return secondsToString(time.time() - start_date.timestamp())
+    command = 'echo $(date +%s) - $(date --date="$(uptime -s)" +"%s") | bc'
+    uptime = executeCommand(node, command)
+    return secondsToString(int(uptime)) if uptime else "Error"
 
 # https://stackoverflow.com/questions/14236346/elegant-way-to-test-ssh-availability
 # but paramiko seems to req lot of username/key setup, too variable for generic user to use :(
@@ -254,15 +305,51 @@ def cleanUp() :
     #os.system( "reset") # terminal maybe messed up due to bad ssh, but reset clears the screen :(
 # cleanUp()-end
 
+def make_color(a, b):
+  return lambda s: '\033[{};{}m{}\033[0;0m'.format(a, b, s)
+# Colors: https://stackoverflow.com/questions/37340049/how-do-i-print-colored-output-to-the-terminal-in-python
+light_red = make_color(1, 31)
+red = make_color(0, 31)
+green = make_color(0, 32)
+red_bg = make_color(1, 41)
+green_bg = make_color(1, 42)
+gray = make_color(1, 30)
+
 def processLine(data):
-    node, line = data
+    node, line, color = data
+    line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
     sshStatus = checkSsh(node)
-    scratchStatus = checkMountUsage(node, "/global/scratch") 	if sshStatus == 'up' else "(skip)"
-    swStatus      = checkMountUsage(node, "/global/software") 	if sshStatus == 'up' else "(skip)"
-    tmpStatus     = checkMountUsage(node, "/tmp") 		if sshStatus == 'up' else "(skip)"
+
+    if color:
+        ssh_color = green if sshStatus == 'up' else red
+        sshStatusFormatted = ssh_color(sshStatus)
+        node_color = green_bg if sshStatus == 'up' else red_bg
+        nodeFormatted = node_color(node)
+    else:
+        sshStatusFormatted = sshStatus
+        nodeFormatted = node
+    skip = gray('(skip)') if color else '(skip)' 
+
+    checks = [
+        ('scratch', lambda: checkMountUsage(node, "/global/scratch")),
+        ('software', lambda: checkMountUsage(node, "/global/software")),
+        ('tmp', lambda: checkMountUsage(node, "/tmp")),
+        ('users', lambda: checkProcesses(node)),
+        ('load', lambda: checkLoad(node)),
+        ('uptime', lambda: checkUptime(node))
+    ]
+    results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
+
     #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
-    print("%-80s ## ssh:%4s scratch:%7s sw:%7s tmp:%7s" % (line, sshStatus, scratchStatus, swStatus,tmpStatus))
+    print("{:14} {:80} ## ssh: {:4} ".format(nodeFormatted, line, sshStatusFormatted) + ' '.join(results))
 #processLine()-end
+
+def print_stderr(s, color = True):
+    # Colors: https://stackoverflow.com/questions/37340049/how-do-i-print-colored-output-to-the-terminal-in-python
+    if color:
+        s = light_red(s)
+    sys.stderr.write(s + '\n')
+    sys.stderr.flush()
 
 def main(): 
     args = process_cli()
@@ -305,9 +392,19 @@ def main():
 
     # ++ OOP gather all info
     # ++ TODO consider have diff option and invoke alternate fn to format output
-    pool = Pool(20)
-    nodes = [ (node, line) for line in sinfoList for node in getNodeList(line) ]
-    pool.map(processLine, nodes)
+
+    # Pool doesn't work if /dev/shm is disabled
+    # Either everyone can write to it, or it is owned by current user
+    shm_permissions = os.stat('/dev/shm')
+    if oct(shm_permissions.st_mode)[6] == '7' or shm_permissions.st_uid == os.getuid(): 
+        pool = Pool(cpu_count())
+        map_fn = pool.map
+    else:
+        print_stderr('/dev/shm is not available... Using single thread mode')
+        sys.stderr.flush()
+        map_fn = lambda f, x: list(map(f, x))
+    nodes = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
+    map_fn(processLine, nodes)
     cleanUp()
 # main()-end
 
