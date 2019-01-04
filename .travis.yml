@@ -10,8 +10,8 @@ pip:
 # command to install dependencies
 # req could be generated as "pip freeze > requirements.txt", but brc pip is pretty old and travis ci can't find the old packages :(
 install: 
-  - pip install --user -r requirements.txt
-  #- pip install -r requirements.txt
+  #- pip install --user -r requirements.txt # Can not perform a '--user' install. User site-packages are not visible in this virtualenv. # (python 3.6)
+  - pip install -r requirements.txt
   #- pip install .
 #command to run tests
 script: python bofhbot.py --version
