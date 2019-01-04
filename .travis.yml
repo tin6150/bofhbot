@@ -8,5 +8,5 @@ python:
 #install:
   #- pip install -r requirements.txt
   #- pip install .
-# command to run tests
-#script: pytest
+#command to run tests
+script: python bofhbot.py --version
