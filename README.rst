@@ -8,7 +8,7 @@ master branch: |status1| // nodelist branch: |status2|
     :target: https://travis-ci.org/tin6150/bofhbot 
 
 
-.. figure:: doc/bofhbot_screenshot.png
+.. figure:: doc/bofhbot_screenshot2.png
 	:align: center
 	:alt: bofhbot output screenshot
 
