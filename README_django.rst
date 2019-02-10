@@ -35,6 +35,24 @@ it should provide a very granual approach, severly limiting possible damage from
 hmm, maybe have way to do tail -f and other stuff in REST 
 
 
+
+AI
+--
+
+only nodes where deemed reboot is appropriate and likely good fix, only then would "ipmi cycle" button be presented/enabled.
+
+other AI feature could come later as more logs are parsed.
+
+the server arch also allow for monitoring sinfo -RSE, 
+keep a history of what has been done to nodes, etc.
+so that AI can give action recommendation 
+
+
+
+PS
+--
+
+
 could have done this as a separete github project/repo, but didn't want to create another project.  
 the former bofhbot.py cli command would likely become a very separate/independent script, albeit with very similar goal in mind (which is why i kept everything in here).
 
