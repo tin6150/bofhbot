@@ -21,6 +21,43 @@ resunt will be in json format, the browser can render which ever column is neede
 potentially, can have a cli client that query the browser.
 
 
+BOFHbot REST API 
+----------------
+
+early thought process:
+
+hmm... maybe start with looking what slurm api provides, how it does sinfo -RSE
+depending how it provide the result/format, maybe then make this API to follow that...
+
+GET URI:
+
+/api/v1/sinfo           # current output of bofhbot --color ??
+/api/v1/group-list      # list cluster, but get info from pdsh groups
+
+
+/api/v1/status-ping?g=sinfo     # special case, get nodelist from sinfo -RSE
+/api/v1/status-ping?g=savio3    # group (cluster) = savio3 node ping status
+/api/v1/status-ping?g=all       # ping status of all nodes  
+
+/api/v1/status-ssh?g=sinfo     # special case, get nodelist from sinfo -RSE
+
+/api/v1/status-uptime?g=sinfo     # special case, get nodelist from sinfo -RSE
+/api/v1/df?g=sinfo                       # df (for all)
+/api/v1/df/tmp?g=sinfo                   # df for tmp only, implement as child?
+
+/api/v1/status-ipmi-reachable?g=sinfo   # whether responding to ipmi cmd
+/api/v1/status-ipmi-state?g=sinfo       # query ipmi for whether power is on/off
+
+
+/api/v1/hostinfo?h=n0000.savio3         # need this?  store info of sinfo -RSE of a given host, so that it can be rendered into output?  
+        # but may want the microservice to query for this and provide into json, 
+        # rather than client asking everynode one at a time...
+
+
+POST URI:
+
+/api/v2/reboot?h=n0000.savio3           # action to reboot a node
+
 Django enabling feature
 -----------------------
 
