@@ -163,6 +163,52 @@ hmm, maybe have way to do tail -f and other stuff in REST
 
 
 
+Serverside setup for django
+===========================
+
+https://www.django-rest-framework.org/tutorial/quickstart/
+
+module load python/3.6
+
+virtualenv venv4bofhbot  # name of dir
+source     venv4bofhbot/bin/activate
+pip install django
+pip install djangorestframework
+
+# create a project directory:
+django-admin startproject botd .	# note the tailing dot
+	# create 5 files:
+	./manage.py
+	botd/urls.py
+	botd/wsgi.py
+	botd/__init__.py
+	botd/settings.py 		# specify port, def 8000
+
+# create an app, inside the project dir to avoid namespace clash
+cd botd
+django-admin startapp quickstart	
+	# this create an "app", may want to create a diff app name later on
+	# add these files:
+	botd/quickstart/tests.py
+	botd/quickstart/migrations
+	botd/quickstart/migrations/__init__.py
+	botd/quickstart/admin.py
+	botd/quickstart/apps.py
+	botd/quickstart/models.py
+	botd/quickstart/views.py
+	botd/quickstart/__init__.py
+
+
+
+Coding
+------
+
+
+
+TODO
+====
+
+
 AI
 --
 
