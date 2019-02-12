@@ -163,17 +163,35 @@ hmm, maybe have way to do tail -f and other stuff in REST
 
 
 
-Serverside setup for django
-===========================
+Serverside setup for djang (run in each server)
+===============================================
 
 https://www.django-rest-framework.org/tutorial/quickstart/
 
 module load python/3.6
 
 virtualenv venv4bofhbot  # name of dir and prompt.  # brc
+virtualenv --python=python3  venv4bofhbot  # in bofh, since def looks for python 2
 source     venv4bofhbot/bin/activate
 pip install django
 pip install djangorestframework
+
+( create django project and app from one-time code setup section below )
+
+python manage.py migrate     # still fails in bofh  even when using py3 :(
+	# sync db ... (??)
+	# create a db.sqlite3 file, which is in .gitignore by github 
+
+
+python manage.py runserver
+	# this really start the server
+	# settings.py def port: 8000
+
+
+
+
+One-Time code setup (files added to git)
+----------------------------------------
 
 # create a project directory:
 django-admin startproject botd .	# note the tailing dot
@@ -198,16 +216,6 @@ django-admin startapp quickstart
 	botd/quickstart/views.py
 	botd/quickstart/__init__.py
 
-
-python manage.py migrate
-	# sync db ... (??)
-	# create a db.sqlite3 file, which is in .gitignore by github 
-
-
-
-python manage.py runserver
-	# this really start the server
-	# settings.py def port: 8000
 
 Coding
 ------
