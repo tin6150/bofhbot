@@ -170,7 +170,7 @@ https://www.django-rest-framework.org/tutorial/quickstart/
 
 module load python/3.6
 
-virtualenv venv4bofhbot  # name of dir
+virtualenv venv4bofhbot  # name of dir and prompt.  # brc
 source     venv4bofhbot/bin/activate
 pip install django
 pip install djangorestframework
@@ -187,7 +187,7 @@ django-admin startproject botd .	# note the tailing dot
 # create an app, inside the project dir to avoid namespace clash
 cd botd
 django-admin startapp quickstart	
-	# this create an "app", may want to create a diff app name later on
+	# ie the app name is "quickstart", may want to create a diff app name later on
 	# add these files:
 	botd/quickstart/tests.py
 	botd/quickstart/migrations
@@ -199,9 +199,25 @@ django-admin startapp quickstart
 	botd/quickstart/__init__.py
 
 
+python manage.py migrate
+	# sync db ... (??)
+	# create a db.sqlite3 file, which is in .gitignore by github 
+
+
+
+python manage.py runserver
+	# this really start the server
+	# settings.py def port: 8000
 
 Coding
 ------
+
+botd/quickstart/
+		serializers.py
+		views.py
+botd/
+     urls.py	
+
 
 
 
