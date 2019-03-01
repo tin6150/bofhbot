@@ -1,7 +1,10 @@
 
+(formerly README_django.rst, but will rid django ref
+converting to use Flask RESTful)
 
-BOFHbot django
-==============
+
+BOFHbot w/ REST
+===============
 
 This is a new version of bofhbot, using django to create a 
 RESTful client/server based version of bofhbot.
@@ -145,8 +148,8 @@ http status codes
 405: Method not allowed
 
 
-Django enabling feature
------------------------
+REST enabling feature
+---------------------
 
 provide a IPMI power cycle button to reboot a node.
 Req authentication in such case.  Maybe tap into OTP, maybe the MProxy that Globus use and create a x-hours token.
@@ -166,67 +169,22 @@ hmm, maybe have way to do tail -f and other stuff in REST
 Serverside setup for djang (run in each server)
 ===============================================
 
-https://www.django-rest-framework.org/tutorial/quickstart/
-
 module load python/3.6
 
-virtualenv venv4bofhbot  # name of dir and prompt.  # brc
-virtualenv --python=python3  venv4bofhbot  # in bofh, since def looks for python 2
+virtualenv --python=python3  venv4bofhbot  # in bofh, since def looks for python 2  (tbd)
 source     venv4bofhbot/bin/activate
-pip install django
-pip install djangorestframework
-
-( create django project and app from one-time code setup section below )
-
-python manage.py migrate     # still fails in bofh  even when using py3 :(
-	# sync db ... (??)
-	# create a db.sqlite3 file, which is in .gitignore by github 
-
-
-python manage.py runserver
-	# this really start the server
-	# settings.py def port: 8000
-
-
+pip install xxx djangorestframework   # use flask instead
 
 
 One-Time code setup (files added to git)
 ----------------------------------------
 
 # create a project directory:
-django-admin startproject botd .	# note the tailing dot
-	# create 5 files:
-	./manage.py
-	botd/urls.py
-	botd/wsgi.py
-	botd/__init__.py
-	botd/settings.py 		# specify port, def 8000
-
-# create an app, inside the project dir to avoid namespace clash
-cd botd
-django-admin startapp quickstart	
-	# ie the app name is "quickstart", may want to create a diff app name later on
-	# add these files:
-	botd/quickstart/tests.py
-	botd/quickstart/migrations
-	botd/quickstart/migrations/__init__.py
-	botd/quickstart/admin.py
-	botd/quickstart/apps.py
-	botd/quickstart/models.py
-	botd/quickstart/views.py
-	botd/quickstart/__init__.py
-
 
 Coding
 ------
 
-botd/quickstart/
-		serializers.py
-		views.py
-botd/
-     urls.py	
-
-
+botd/...
 
 
 TODO
