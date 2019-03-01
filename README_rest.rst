@@ -173,7 +173,17 @@ module load python/3.6
 
 virtualenv --python=python3  venv4bofhbot  # in bofh, since def looks for python 2  (tbd)
 source     venv4bofhbot/bin/activate
-pip install xxx djangorestframework   # use flask instead
+
+pip install flask-restful
+
+python  botd.py 
+python3 botd.py  # if really want to be sure using py3
+
+curl   http://localhost:5000/ 		# connect to server, make GET call
+elinks http://localhost:5000/ 		# connect to server, have to choose display
+
+
+
 
 
 One-Time code setup (files added to git)
