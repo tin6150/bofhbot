@@ -13,23 +13,12 @@
 # and parallel ssh/ping/etc check on them 
 # to speed up output
 
+# most functions moved to bofhbot_lib so that it can be used by the botd api server -Sn 2019.0302
+
 import bofhbot_lib
 from bofhbot_lib import *
-#from bofhbot_lib import vprint
 
-#import os
-import re # regex
-import time
 import argparse
-import shlex
-import sys
-import subprocess
-import getpass
-#import paramiko  # could abandone
-from multiprocessing import Pool, cpu_count
-from shutil import copyfile 
-from dateutil import parser
-import time
 
 
 def process_cli() :
