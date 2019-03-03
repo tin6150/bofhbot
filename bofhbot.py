@@ -14,6 +14,8 @@
 # to speed up output
 
 import bofhbot_lib
+from bofhbot_lib import *
+#from bofhbot_lib import vprint
 
 #import os
 import re # regex
@@ -43,10 +45,10 @@ def process_cli() :
         parser.add_argument('-d', '--debuglevel', help="Debug mode. Up to -ddd useful for troubleshooting input file parsing. -ddddd intended for coder. ", action="count", default=0)
         parser.add_argument('--version', action='version', version='%(prog)s 0.2')
         args = parser.parse_args()
-        global dbgLevel 
-        global verboseLevel 
-        dbgLevel = args.debuglevel
-        verboseLevel = args.verboselevel
+        #-global dbgLevel 
+        #-global verboseLevel 
+        bofhbot_lib.dbgLevel = args.debuglevel
+        bofhbot_lib.verboseLevel = args.verboselevel
         if args.nodelist != '' :
             args.nodelist = re.sub( r'[^A-Za-z0-9/\-_%\. ]+', r'_', args.nodelist )
             vprint(1, "## cli parse for --nodelist, after cleansing, will use: '%s'" % args.nodelist )
@@ -66,7 +68,7 @@ def process_cli() :
 
 def main(): 
     args = process_cli()
-    dbg(5, "bofhbot I am")
+    bofhbot_lib.dbg(5, "bofhbot I am")
     vprint(1, "## sinfo enhanced by bofhbot ##")
     # tmp exit
     #return

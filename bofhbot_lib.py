@@ -31,7 +31,7 @@ nodeColumnIndex=0
 # programmer aid fn
 # dbgLevel 3 (ie -ddd) is expected by user troubleshooting problem parsing input file
 # currently most detailed output is at level 5 (ie -ddddd) and it is eye blurry even for programmer
-#dbgLevel = 0  
+dbgLevel = 0     ## user of lib would change this "object" variable :)
 ##dbgLevel = 1   use -ddddd now
 def dbg( level, strg ):
     if( dbgLevel >= level ) : 
