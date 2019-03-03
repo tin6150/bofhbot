@@ -152,7 +152,7 @@ def getNodeList( sinfoLine ) :
 def checkSsh( node ) :
     litmusCmd = "uptime"
     command = "ssh %s %s" % (node, litmusCmd)
-    timeout = 10 ## 5
+    timeout = 5
     try:
         #exitCode = subprocess.call(shlex.split(command), timeout=timeout)
         #return exitCode
@@ -170,7 +170,8 @@ def checkSsh( node ) :
         error = "\"{cmd}\" exceeded the timeout of {t} seconds.".format(cmd=command, t=timeout)
         #raise TimeoutError(error)
         dbg(1, "This case likely have ssh asking for password")
-        print( e.output )
+        ##~~print( e.output )
+        dbg(1, e.output )    # this output b''
         return "TimedOut"
     return "Ssh_unexpected_problem"
 # checkSsh()-end 
@@ -181,8 +182,11 @@ def executeCommand(node, command, timeout=5):
         with open(os.devnull, 'w') as devnull:
             sshStdOut = subprocess.check_output(shlex.split(sshCommand), timeout=timeout, stderr=devnull)
             return sshStdOut.decode('utf-8').strip()
+    except subprocess.TimeoutExpired as e:
+        dbg(2, "executeCommand via ssh timed out--%s" % e) ## Sn
+        return None # Might want to add specific error handling later
     except Exception as e:
-        print(e)
+        dbg(1, e)
         return None # Might want to add specific error handling later
 # executeCommand()-end
 
@@ -194,15 +198,17 @@ def checkMountUsage(node, mount):
 
 def checkProcesses(node):
     command = 'ps -eo uname | egrep -v \\"^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$\\" | uniq'.format(username=getpass.getuser())
-    ## needed extra check for None when created lib else throw AttributeError for NonteType not having split -Tin
-    cmdResult = executeCommand(node, command)
-    if cmdResult is None :     
-        return "(NoNe)"       ## FIXME maybe return "(no users)"
-    else :
-        #users = ','.join(executeCommand(node, command).split('\n'))
-        users = ','.join(cmdResult).split('\n')
-        return users ## or "(no users)"
+    ## when placed as module lib for import, need to catch exception or it will returnt None and mess up all other ssh checks. -Sn
+    try : 
+        users = ','.join(executeCommand(node, command).split('\n'))
+    except subprocess.TimeoutExpired as e:
+        users = "(time out)"
+    except :
+        dbg( 1, "checkProcesses() general exception, returning users as NA")
+        users = "NA"
+    return users or "(no users)"
 # checkProcesses()-end
+
 
 def checkLoad(node):
     command = "uptime | awk -F' ' '{ print substr($10,0,length($10)-1) }'"
@@ -303,10 +309,16 @@ def processLine(data):
 
     ## added the try block, at least program no longer crash
     ## but time out error spill all over the screen. 
-    ## actually now only show ssh up, no other status :(   FIXME
-    ## likely need to break out results to catch error individually
+    ## furthermore, now only show ssh up, no other status :(   FIXME
+    ## likely need to break out `results =` line to process error individually
     try:
-        results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
+        ##results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
+        if sshStatus == 'up' :
+            results = [ '{}:{:7}'.format(name, check() ) for name, check in checks ]
+        else :
+            #skip
+            results = "" ## ie no output when ssh time out
+    #except :
     except TypeError as e:
         results = "" ## ie no output when ssh time out
     #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
