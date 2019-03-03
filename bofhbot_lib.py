@@ -152,7 +152,7 @@ def getNodeList( sinfoLine ) :
 def checkSsh( node ) :
     litmusCmd = "uptime"
     command = "ssh %s %s" % (node, litmusCmd)
-    timeout = 5
+    timeout = 10 ## 5
     try:
         #exitCode = subprocess.call(shlex.split(command), timeout=timeout)
         #return exitCode
@@ -194,8 +194,15 @@ def checkMountUsage(node, mount):
 
 def checkProcesses(node):
     command = 'ps -eo uname | egrep -v \\"^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$\\" | uniq'.format(username=getpass.getuser())
-    users = ','.join(executeCommand(node, command).split('\n'))
-    return users or "(no users)"
+    ## needed extra check for None when created lib else throw AttributeError for NonteType not having split -Tin
+    cmdResult = executeCommand(node, command)
+    if cmdResult is None :     
+        return "(NoNe)"       ## FIXME maybe return "(no users)"
+    else :
+        #users = ','.join(executeCommand(node, command).split('\n'))
+        users = ','.join(cmdResult).split('\n')
+        return users ## or "(no users)"
+# checkProcesses()-end
 
 def checkLoad(node):
     command = "uptime | awk -F' ' '{ print substr($10,0,length($10)-1) }'"
@@ -293,8 +300,15 @@ def processLine(data):
         ('load', lambda: checkLoad(node)),
         ('uptime', lambda: checkUptime(node))
     ]
-    results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
 
+    ## added the try block, at least program no longer crash
+    ## but time out error spill all over the screen. 
+    ## actually now only show ssh up, no other status :(   FIXME
+    ## likely need to break out results to catch error individually
+    try:
+        results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
+    except TypeError as e:
+        results = "" ## ie no output when ssh time out
     #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
     print("{:14} {:80} ## ssh: {:4} ".format(nodeFormatted, line, sshStatusFormatted) + ' '.join(results))
 #processLine()-end
