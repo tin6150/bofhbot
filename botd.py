@@ -1,5 +1,7 @@
 
 # bofhbot api server daemon 
+# example use:
+# python botd.py -s dev_aid/sample_input/sinfo-RSE.test.txt -ddd -v 
 
 # flask main executable
 # run as (with python3 in venv): 
@@ -12,10 +14,11 @@ import os
 import bofhbot_lib
 from   bofhbot_lib import *
 import argparse
+import re # regular expression
 
 
 ## class wide variables
-sinfoGenerationTime = 0     
+sinfoGenerationTime = 0     # store a timestamp of when sinfo-RSE was collected (it not using -s)
 
 
 
@@ -54,6 +57,7 @@ class botD_status(Resource):
     def get(self):
         # get status.  for sinfo -RSE (default and only option for now)
         
+        # finding source for host list, for now it is whether to run sinfo -RSE
         if( args.sfile != "" ) :
             # used --sfile option, 
             dbg(2, "--sfile arg was %s" % args.sfile )
@@ -67,6 +71,21 @@ class botD_status(Resource):
             generateSinfo()
         #end-if
         
+        #+ sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
+
+        shm_permissions = os.stat('/dev/shm')
+        if oct(shm_permissions.st_mode)[6] == '7' or shm_permissions.st_uid == os.getuid():
+            pool = Pool(cpu_count())
+            map_fn = pool.map
+        else:
+            print_stderr('/dev/shm is not available... Using single thread mode')
+            sys.stderr.flush()
+            map_fn = lambda f, x: list(map(f, x))
+        nodes = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
+        #+ map_fn(processLine, nodes)   ## this is place of main work and need to be redone for REST/json ++ 
+        cleanUp()
+
+
         return {'botD_sinfo': 'tba'}   # tmp code
     # get()-end
 # botD_status class end ##################################################################
@@ -77,7 +96,7 @@ api.add_resource(botD_status, '/', '/api/v1/status')   # ie respond to two URL. 
 if __name__ == '__main__':
     args = process_cli()
     
-    dbg(1, "before app.run(), performing some setup")
+    dbg(3, "before app.run(), performing some setup")
     status = 0
     #status = generateSinfo()     # this save info in a file, skipping generation for now and use a saved file.
     if status != 0 :
@@ -87,9 +106,10 @@ if __name__ == '__main__':
     #app.run(debug=True)
     port = int(os.environ.get('PORT', 5000))
     #app.run(port=port)                                 # this is default, localhost only    
-    app.run(host='0.0.0.0', port=port, debug=True)      # i have iptables limiting exposure
+    #app.run(host='0.0.0.0', port=port, debug=True)      # i have iptables limiting exposure
+    app.run(host='0.0.0.0', port=port, debug=args.debuglevel)      # i have iptables limiting exposure
     
-    dbg(1, "after app.run(), doing clean up")
+    dbg(3, "after app.run(), doing clean up")
     # rm sinfo file
     #+ cleanUp()
     
