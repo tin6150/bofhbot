@@ -48,6 +48,7 @@ def vprint( level, strg ):
 # return is just exit code of running the sinfo cmd.
 def generateSinfo() :
     # https://github.com/PySlurm/pyslurm  but then have to install python lib before being able to use script :-/
+    # actually pyslurm don't have any fn for sinfo 
     #sinfoRS = subprocess.run(['sinfo', '-R -S %E --format="%9u %19H %6t %N %E"'])
     #cmd = 'sinfo -R -S %E --format="%9u %19H %6t %N %E" ' + " > "  +  sinfoRSfile     # more human readable
     cmd = 'sinfo -N -R -S %E --format="%N %6t %19H %9u %E" ' + " > "  +  sinfoRSfile   # node first, one node per line :)

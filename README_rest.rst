@@ -171,16 +171,19 @@ Serverside setup for djang (run in each server)
 
 module load python/3.6
 
-virtualenv --python=python3  venv4bofhbot  # in bofh, since def looks for python 2  (tbd)
+virtualenv --python=python3  venv4bofhbot  # in bofh, since def looks for python 2  (+ L43826)
 source     venv4bofhbot/bin/activate
 
+pip install flask            		# L43826 wsl warns C extension cannot be compiled
 pip install flask-restful
+pip install -r requirements.txt     # install req listed in requirements.txt
 
 python  botd.py 
 python3 botd.py  # if really want to be sure using py3
 
 curl   http://localhost:5000/ 		# connect to server, make GET call
 elinks http://localhost:5000/ 		# connect to server, have to choose display
+browsh http://localhost:5000/ 	    # text, support JS.  good with SSH/Mosh 
 
 
 
