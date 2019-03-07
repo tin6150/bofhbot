@@ -67,7 +67,7 @@ class botD_status(Resource):
             # where my script would store the temporary output
             copyfile( args.sfile, sinfoRSfile )
         else :
-        dbg( 1, "calling generateSinfo() , need to be in a slurm cluster to work correctly.")
+            dbg( 1, "calling generateSinfo() , need to be in a slurm cluster to work correctly.")
             generateSinfo()
         #end-if
         
@@ -82,9 +82,13 @@ class botD_status(Resource):
             sys.stderr.flush()
             map_fn = lambda f, x: list(map(f, x))
 
-        nodeList = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
+        useColor = False;
+        #nodeList = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
+        #nodeList = [ (node, line, useColor) for line in sinfoList for node in getNodeList(line) ]
+        # so nodeList above is a list of hostname ?   Not really, they are sinfo-RSE output lines...
 
-        # so nodeList above is a list of hostname ?  
+        #nodeList  = getNodeList( sinfoList ) 
+        #print( nodeList )
 
         #+ map_fn(processLine, nodeList)   ## this is place of main work and need to be redone for REST/json ++ 
         cleanUp()
