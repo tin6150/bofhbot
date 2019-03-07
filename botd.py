@@ -71,7 +71,7 @@ class botD_status(Resource):
             generateSinfo()
         #end-if
         
-        #+ sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
+        sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
 
         shm_permissions = os.stat('/dev/shm')
         if oct(shm_permissions.st_mode)[6] == '7' or shm_permissions.st_uid == os.getuid():
@@ -81,8 +81,12 @@ class botD_status(Resource):
             print_stderr('/dev/shm is not available... Using single thread mode')
             sys.stderr.flush()
             map_fn = lambda f, x: list(map(f, x))
-        nodes = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
-        #+ map_fn(processLine, nodes)   ## this is place of main work and need to be redone for REST/json ++ 
+
+        nodeList = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
+
+        # so nodeList above is a list of hostname ?  
+
+        #+ map_fn(processLine, nodeList)   ## this is place of main work and need to be redone for REST/json ++ 
         cleanUp()
 
 
