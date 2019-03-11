@@ -82,13 +82,18 @@ class botD_status(Resource):
             sys.stderr.flush()
             map_fn = lambda f, x: list(map(f, x))
 
+        ## ++ continue here FIXME
         useColor = False;
+        ## nick did some double for to get the node in single line
         #nodeList = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
         #nodeList = [ (node, line, useColor) for line in sinfoList for node in getNodeList(line) ]
         # so nodeList above is a list of hostname ?   Not really, they are sinfo-RSE output lines...
 
-        #nodeList  = getNodeList( sinfoList ) 
-        #print( nodeList )
+        #dbg( 2, sinfoList )  ## dbg
+        nodeList  = sinfoList2nodeList( sinfoList )   # this take whole file?   yes but get a list of list ... 
+        #nodeList  = getNodeList( sinfoList )   # problem here, getNodeList is badly named...  it takes only one node
+# 
+        dbg( 2, nodeList )   
 
         #+ map_fn(processLine, nodeList)   ## this is place of main work and need to be redone for REST/json ++ 
         cleanUp()
