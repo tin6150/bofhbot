@@ -94,6 +94,39 @@ class botD_status(Resource):
         nodeList  = sinfoList2nodeList( sinfoList )   # this take whole file?   yes but get a list of list ... 
 
         ## ++ continue here FIXME
+## actually get parseLine to return hash/obj  (json only used when needing to serialize)
+## really need to get obj backend first.  
+        """
+        status.setCurrent(sinfoMsg)
+        status.setSshState(up/down)
+        status.setDfState('/tmp',size)
+        status.setDfFree('/tmp',freeSpace)
+        status.addHistory(time,msg)
+        but then need lots of get... or return as json?...
+        *sigh*  it is really a data structure, 
+        just need a 2-D table :)
+        hmmm... store in sqlite db?  but then need to create schema :(
+        best:
+        panda dataframe: https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html#dataframe
+            - nodename.cluster as index (row labels)
+            - column labels are the diff tests
+            - it is a glorified Dict of Series  (or dicts)
+            - better than structured or record array  (~~ dict of arrays)
+            - still fuzzy about the diff types... 
+            - also, seems like creating bunch of structs, then generate df out of them?
+            - any way to insert data into df?  should be!
+        not too many actions on them.  not likely to drastically change req lot of recode 
+        two hashes would req less coding.  
+        status[node][sinfoMsg]
+        status[node][TmpSize]
+        status[node][uptime]
+        status[node][load]
+        status[node][userList]   # exclude list of predefined expected system user, eg root, 
+        the two key hash... refer to taxorpt...
+        parallel hash in future
+        history[node][timestamp] = sinfoMsg
+        timestamp uses sinfo format yyyy-mm-ddThh:mm ??
+        """
         dbg( 2, nodeList )   
         restReturn = jsonify( nodeList )   # this produce json with html mime encoding, works.
         restReturn = jsonify( sinfoList )  # this produce json with html mime encoding, works.
