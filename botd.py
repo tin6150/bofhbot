@@ -8,7 +8,7 @@
 # python botd.py 
 
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Resource, Api
 import os
 import bofhbot_lib
@@ -71,7 +71,6 @@ class botD_status(Resource):
             generateSinfo()
         #end-if
         
-        sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
 
         shm_permissions = os.stat('/dev/shm')
         if oct(shm_permissions.st_mode)[6] == '7' or shm_permissions.st_uid == os.getuid():
@@ -81,8 +80,9 @@ class botD_status(Resource):
             print_stderr('/dev/shm is not available... Using single thread mode')
             sys.stderr.flush()
             map_fn = lambda f, x: list(map(f, x))
+        #end-if
 
-        ## ++ continue here FIXME
+        sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
         useColor = False;
         ## nick did some double for to get the node in single line
         #nodeList = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
@@ -90,16 +90,20 @@ class botD_status(Resource):
         # so nodeList above is a list of hostname ?   Not really, they are sinfo-RSE output lines...
 
         #dbg( 2, sinfoList )  ## dbg
+        #nodeList  = getNodeList( sinfoList )         # nope.  getNodeList process one line at a time, (sinfo may list several node in a single line)
         nodeList  = sinfoList2nodeList( sinfoList )   # this take whole file?   yes but get a list of list ... 
-        #nodeList  = getNodeList( sinfoList )   # problem here, getNodeList is badly named...  it takes only one node
-# 
+
+        ## ++ continue here FIXME
         dbg( 2, nodeList )   
+        restReturn = jsonify( nodeList )   # this produce json with html mime encoding, works.
+        restReturn = jsonify( sinfoList )  # this produce json with html mime encoding, works.
 
         #+ map_fn(processLine, nodeList)   ## this is place of main work and need to be redone for REST/json ++ 
         cleanUp()
 
 
-        return {'botD_sinfo': 'tba'}   # tmp code
+        #return {'botD_sinfo': 'tba'}   # tmp code
+        return restReturn   # tmp code
     # get()-end
 # botD_status class end ##################################################################
 
