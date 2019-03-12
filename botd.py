@@ -67,7 +67,7 @@ class botD_status(Resource):
             # where my script would store the temporary output
             copyfile( args.sfile, sinfoRSfile )
         else :
-        dbg( 1, "calling generateSinfo() , need to be in a slurm cluster to work correctly.")
+            dbg( 1, "calling generateSinfo() , need to be in a slurm cluster to work correctly.")
             generateSinfo()
         #end-if
         

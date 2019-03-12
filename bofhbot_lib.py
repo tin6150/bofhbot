@@ -119,6 +119,9 @@ def sinfoList2nodeList( sinfoList ):
 ## should just expect nodename from column 1 or some such
 ## TODO.  ie, relax it needing \d\d\d\d ... 
 ## do expect a cleansed file :)
+#### i typically return only one node, and probably indeed do only so now
+#### some sinfo -some-args return more than one node per line, maybe -RSE don't... 
+#### this is working for bofhbot.py... 
 def getNodeList( sinfoLine ) :
         line = sinfoLine
         nodeList = [ ]
