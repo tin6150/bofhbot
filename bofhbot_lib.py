@@ -63,7 +63,9 @@ def generateSinfo() :
     #sinfoRS = open('sinfo-RSE-eg.txt.head5','r')
 #generateSinfo()-end
 
-#def getSinfo():
+# buildSinfoList() return an array of lines
+# each line is sanitized version of sinfo -RSE output line
+# ie, each record become an array entry
 def buildSinfoList():
 #def buildSinfoList(infoRS=sinfoRSfile):
     # sinfoRSfile is currently global, i guess OOP would be very similar...
@@ -287,6 +289,8 @@ red_bg = make_color(1, 41)
 green_bg = make_color(1, 42)
 gray = make_color(1, 30)
 
+# INPUT: data is ... ???
+# OUTPUT:  stdout, decorated/improved output of sinfo -RSE
 def processLine(data):
     node, line, color = data
     line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
@@ -302,6 +306,7 @@ def processLine(data):
         nodeFormatted = node
     skip = gray('(skip)') if color else '(skip)' 
 
+    #++ these checks should be read from  a .cfg file
     checks = [
         ('scratch', lambda: checkMountUsage(node, "/global/scratch")),
         ('software', lambda: checkMountUsage(node, "/global/software")),

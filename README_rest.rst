@@ -176,6 +176,7 @@ source     venv4bofhbot/bin/activate
 
 pip install flask            		# L43826 wsl warns C extension cannot be compiled
 									# could not install on T55, due to perm err, even as root :(
+
 pip install flask-restful
 pip install -r requirements.txt     # install req listed in requirements.txt
 
