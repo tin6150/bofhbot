@@ -1,0 +1,27 @@
+NODELIST STATE  TIMESTAMP           USER      REASON
+n0030.savio1 down*  2018-05-21T10:20:52 root      HW. Tin. need open case.   wont power on, even after reseating blade
+n0141.savio1 drain* 2018-12-12T13:51:31 root      HW: Failing hd_Nick
+n0234.savio2 down*  2018-12-12T17:05:22 root      HW: case BNFVKLK Sn NoBootDev
+n0185.savio2 drain* 2018-12-12T14:59:24 root      HW: only 109G ram, expect 128G
+n0124.savio2 drain* 2018-12-12T17:16:54 root      HW:BNFVKKV.badIB.Sn 
+n0107.savio2 down*  2018-12-12T17:17:31 root      HW:BNFVKLD.WontBoot.Sn
+n0108.savio2 drain* 2018-12-12T17:09:56 root      HW:BNFVKNT.dead sda.Sn
+n0114.savio2 down   2018-12-12T17:16:22 root      HW:BNFVKRG.54gRam.Sn
+n0113.savio2 down*  2018-12-05T16:39:05 root      HW:shutdownAgainWontPowerOn_tin
+n0294.savio2 drng   2019-01-16T00:47:01 root      NHC: Script timed out while executing "check_hw_physmem_free 1kB".
+n0295.savio2 drng   2019-01-16T08:17:35 root      NHC: Script timed out while executing "check_hw_physmem_free 1kB".
+n0297.savio2 drng   2019-01-15T08:21:59 root      NHC: Script timed out while executing "check_hw_physmem_free 1kB".
+n0096.savio1 drain  2019-01-11T01:00:26 root      NHC: check_fs_mount:  /tmp mount options incorrect (should match /(^|,)rw($|,)/)
+n0117.savio2 drain  2019-01-02T09:43:22 root      NHC: check_hw_physmem:  Actual RAM size (57459408 kB) less than minimum allowed (67108864 kB).
+n0098.savio1 down   2019-01-16T09:16:12 slurm     Node unexpectedly rebooted
+n0096.savio2 down*  2019-01-10T19:12:03 root      Not responding
+n0106.savio2 down*  2019-01-10T10:03:25 root      Not responding
+n0110.savio2 down*  2019-01-11T11:11:02 root      Not responding
+n0175.savio2 drain  2019-01-09T19:54:47 root      Prolog error
+n0013.cortex0 down*  2018-04-05T10:06:56 root      badGPU1_tin
+n0300.savio2 down   2018-12-11T14:29:02 root      cis-cat
+n0218.savio2 drain* 2018-01-23T10:34:33 root      dead disk -jwhite
+n0281.savio2 down*  2018-01-31T11:19:51 root      hungAtBios_Tin
+n0109.savio2 down*  2018-04-25T12:18:01 root      ib card replaced, but now has memory error per nhc.  tin.
+n0042.savio2 drain* 2018-01-23T12:39:54 root      needs new dimms -kmwf
+n0050.savio1 down*  2018-01-23T12:37:21 root      no post, failed mb -kmwf

@@ -1,5 +1,14 @@
 
-.. figure:: doc/bofhbot_screenshot.png
+master branch: |status1| // nodelist branch: |status2|
+
+.. |status1| image:: https://travis-ci.org/tin6150/bofhbot.svg?branch=master
+    :target: https://travis-ci.org/tin6150/bofhbot
+
+.. |status2| image:: https://travis-ci.org/tin6150/bofhbot.svg?branch=nodelist
+    :target: https://travis-ci.org/tin6150/bofhbot 
+
+
+.. figure:: doc/bofhbot_screenshot2.png
 	:align: center
 	:alt: bofhbot output screenshot
 
