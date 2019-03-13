@@ -27,6 +27,7 @@ from multiprocessing import Pool, cpu_count
 from shutil import copyfile 
 from dateutil import parser
 import time
+import pandas # For table formatting 
 
 # global param :)  better as OOP get() fn or some such.  
 sinfoRSfile = '/var/tmp/sinfo-RSE.txt'
@@ -231,6 +232,18 @@ def executeCommand(node, command, timeout=5):
         return None # Might want to add specific error handling later
 # executeCommand()-end
 
+def checkLastJob(node, timestamp, timeout=10):
+    command = "sacct -PX -o JobID,User --nodelist={} -S {} -a".format(node, timestamp)
+    try:
+        with open(os.devnull, 'w') as devnull:
+            output = subprocess.check_output(shlex.split(command), timeout=timeout, stderr=devnull)
+            output = output.decode('utf-8').strip().split('\n')
+            if len(output) > 1:
+              return output[1]
+            return '(not found)'
+    except Exception as e:
+        return None
+
 def checkMountUsage(node, mount):
     command = "df -h {mount} --output=target,size | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
     usage = executeCommand(node, command)
@@ -319,6 +332,14 @@ def processLine(data):
     node, line, color = data
     line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
     sshStatus = checkSsh(node)
+    pieces = line.split(' ')[1:]
+    timestamp = None
+    for piece in pieces:
+      if not timestamp:
+        timestamp = piece
+      else:
+        break
+    lastJob = checkLastJob(node, timestamp)
 
     if color:
         ssh_color = green if sshStatus == 'up' else red
@@ -341,7 +362,7 @@ def processLine(data):
     results = [ '{}:{:7}'.format(name, check() if sshStatus == 'up' else skip) for name, check in checks ]
 
     #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
-    print("{:14} {:80} ## ssh: {:4} ".format(nodeFormatted, line, sshStatusFormatted) + ' '.join(results))
+    print("{:14} {:80} ## ssh: {:4} last_job: {:20} ".format(nodeFormatted, line, sshStatusFormatted, lastJob) + ' '.join(results))
 #processLine()-end
 
 def print_stderr(s, color = True):
