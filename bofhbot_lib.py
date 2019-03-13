@@ -196,6 +196,18 @@ def checkMountUsage(node, mount):
     return usage or "NotFound"
 # checkMountUsage()-end
 
+def checkLastJob(node, timestamp, timeout=10):
+    command = "sacct -PX -o JobID,User --nodelist={} -S {} -a".format(node, timestamp)
+    try:
+        with open(os.devnull, 'w') as devnull:
+            output = subprocess.check_output(shlex.split(command), timeout=timeout, stderr=devnull)
+            output = output.decode('utf-8').strip().split('\n')
+            if len(output) > 1:
+              return output[1]
+            return '(not found)'
+    except Exception as e:
+        return None
+
 def checkProcesses(node):
     command = 'ps -eo uname | egrep -v \\"^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$\\" | uniq'.format(username=getpass.getuser())
     ## when placed as module lib for import, need to catch exception or it will returnt None and mess up all other ssh checks. -Sn
@@ -287,6 +299,14 @@ def processLine(data):
     node, line, color = data
     line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
     sshStatus = checkSsh(node)
+    pieces = line.split(' ')[1:]
+    timestamp = None
+    for piece in pieces:
+      if not timestamp:
+        timestamp = piece
+      else:
+        break
+    lastJob = checkLastJob(node, timestamp)
 
     if color:
         ssh_color = green if sshStatus == 'up' else red
@@ -322,7 +342,7 @@ def processLine(data):
     except TypeError as e:
         results = "" ## ie no output when ssh time out
     #print("%-120s ## ssh:%4s scratch:%10s" % (line, sshStatus, scratchStatus, swStatus, tmpStatus))
-    print("{:14} {:80} ## ssh: {:4} ".format(nodeFormatted, line, sshStatusFormatted) + ' '.join(results))
+    print("{:14} {:80} ## ssh: {:4} lastJob: {} ".format(nodeFormatted, line, sshStatusFormatted, lastJob) + ' '.join(results))
 #processLine()-end
 
 def print_stderr(s, color = True):
