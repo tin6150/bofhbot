@@ -1,5 +1,8 @@
 # Nick: Ignore emacs save files
 \#*\#
+# virtualenv
+bin/*
+include/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

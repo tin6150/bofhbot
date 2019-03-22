@@ -17,6 +17,7 @@ import shlex
 import sys
 import subprocess
 import getpass
+import pandas as pd
 from multiprocessing import Pool, cpu_count
 from shutil import copyfile 
 from dateutil import parser
@@ -51,7 +52,7 @@ def generateSinfo() :
     # actually pyslurm don't have any fn for sinfo 
     #sinfoRS = subprocess.run(['sinfo', '-R -S %E --format="%9u %19H %6t %N %E"'])
     #cmd = 'sinfo -R -S %E --format="%9u %19H %6t %N %E" ' + " > "  +  sinfoRSfile     # more human readable
-    cmd = 'sinfo -N -R -S %E --format="%N %6t %19H %9u %E" ' + " > "  +  sinfoRSfile   # node first, one node per line :)
+    cmd = 'sinfo -N -R -S %E --format="$(echo -e \'%N\t%t\t%H\t%u\t%E\')"' + " > "  +  sinfoRSfile   # node first, one node per line :)
     command = cmd
     dbg(5, command)
     #sinfoRSout = subprocess.call(shlex.split(command))
@@ -98,6 +99,10 @@ def buildSinfoList():
     return sinfoList 
 # buildSinfoList()-end
 
+def buildSinfoDataFrame():
+    splitColumns = lambda line: [ elem.strip() for elem in line.split('\t') ]
+    columns, *data = map(splitColumns, open(sinfoRSfile, 'r'))
+    return pd.DataFrame(data, columns = columns)
 
 # Input: array list of lines with output of sinfo -R -S ...
 # OUTPUT: array list of nodes (maybe empty)
@@ -293,7 +298,7 @@ gray = make_color(1, 30)
 # OUTPUT:  stdout, decorated/improved output of sinfo -RSE
 def processLine(data):
     node, line, color = data
-    line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
+    line = ' '.join(line.split('\t')[1:]) # Remove node name from beginning of line
     sshStatus = checkSsh(node)
 
     if color:

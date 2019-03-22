@@ -43,8 +43,8 @@ def process_cli() :
 
 
 
-app = Flask(__name__)
-api = Api(app)
+app = Flask(__name__, static_folder = 'static')
+api = Api(app, '/api/v1')
 
 class botD_hello(Resource):
     def get(self):
@@ -128,8 +128,8 @@ class botD_status(Resource):
         timestamp uses sinfo format yyyy-mm-ddThh:mm ??
         """
         dbg( 2, nodeList )   
-        restReturn = jsonify( nodeList )   # this produce json with html mime encoding, works.
-        restReturn = jsonify( sinfoList )  # this produce json with html mime encoding, works.
+        df = buildSinfoDataFrame()
+        restReturn = jsonify(df.to_dict(orient = 'records'))
 
         #+ map_fn(processLine, nodeList)   ## this is place of main work and need to be redone for REST/json ++ 
         cleanUp()
@@ -140,8 +140,14 @@ class botD_status(Resource):
     # get()-end
 # botD_status class end ##################################################################
 
+# https://stackoverflow.com/a/20648053
+@app.route('/')
+def root():
+    return app.send_static_file('index.html')
+
 api.add_resource(botD_hello, '/hello')
-api.add_resource(botD_status, '/', '/api/v1/status')   # ie respond to two URL.  eventually need to parse status?group=sinfo vs status?group=lr6
+api.add_resource(botD_status, '/status')   # ie respond to two URL.  eventually need to parse status?group=sinfo vs status?group=lr6
+
 
 if __name__ == '__main__':
     args = process_cli()
