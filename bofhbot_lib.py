@@ -52,6 +52,7 @@ def generateSinfo() :
     # actually pyslurm don't have any fn for sinfo 
     #sinfoRS = subprocess.run(['sinfo', '-R -S %E --format="%9u %19H %6t %N %E"'])
     #cmd = 'sinfo -R -S %E --format="%9u %19H %6t %N %E" ' + " > "  +  sinfoRSfile     # more human readable
+    #format is: NODELIST        STATE   TIMESTAMP       USER    REASON
     cmd = 'sinfo -N -R -S %E --format="$(echo -e \'%N\t%t\t%H\t%u\t%E\')"' + " > "  +  sinfoRSfile   # node first, one node per line :)
     command = cmd
     dbg(5, command)
@@ -216,8 +217,7 @@ def checkProcesses(node):
         users = "(time out)"
     except :
         dbg( 1, "checkProcesses() general exception, returning users as NA")
-        users = "NA"
-    return users or "(no users)"
+    return users or None
 # checkProcesses()-end
 
 
@@ -293,6 +293,49 @@ green = make_color(0, 32)
 red_bg = make_color(1, 41)
 green_bg = make_color(1, 42)
 gray = make_color(1, 30)
+
+
+checks = {
+    'SSH': checkSsh,
+    'SCRATCH': lambda hostname: checkMountUsage(hostname, "/global/scratch"),
+    'SOFTWARE': lambda hostname: checkMountUsage(hostname, "/global/software"),
+    'TMP': lambda hostname: checkMountUsage(hostname, "/tmp"),
+    'USERS': checkProcesses,
+    'LOAD': checkLoad,
+    'UPTIME': checkUptime
+}
+
+def cache(timeout = 60):
+    def make_cache(f):
+        lastUpdated, cached = None, None
+        def cached():
+            nonlocal lastUpdated, cached
+            currentTime = time.time()
+            if not lastUpdated or (currentTime - lastUpdated) > timeout:
+                result = f()
+                lastUpdated, cached = currentTime, result
+                return result
+            return cached
+        return cached
+    return make_cache
+
+""" Given a hostname, SSH to node if possible and perform checks.
+    Returns a dictionary of the check results."""
+def getDataFromSsh(hostname):
+    sshStatus = checks['SSH'](hostname)
+    return { k: f(hostname) if sshStatus == 'up' else None for k, f in checks.items() }
+
+""" Return a DataFrame containing sinfo + SSH check data """
+@cache(timeout = 300)
+def getFullNodeData():
+    df = buildSinfoDataFrame()
+    pool = Pool(cpu_count())
+    results = pool.map(getDataFromSsh, df['NODELIST'])
+    for k in results[0].keys():
+        df[k] = [ result[k] for result in results ]
+    df.index = df['NODELIST']
+    return df
+
 
 # INPUT: data is ... ???
 # OUTPUT:  stdout, decorated/improved output of sinfo -RSE

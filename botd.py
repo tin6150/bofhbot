@@ -9,13 +9,13 @@
 
 
 from flask import Flask, jsonify
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, request
 import os
 import bofhbot_lib
 from   bofhbot_lib import *
 import argparse
 import re # regular expression
-
+from multiprocessing import Pool, cpu_count
 
 ## class wide variables
 sinfoGenerationTime = 0     # store a timestamp of when sinfo-RSE was collected (it not using -s)
@@ -83,7 +83,7 @@ class botD_status(Resource):
         #end-if
 
         sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
-        useColor = False;
+        # useColor = False;
         ## nick did some double for to get the node in single line
         #nodeList = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
         #nodeList = [ (node, line, useColor) for line in sinfoList for node in getNodeList(line) ]
@@ -128,8 +128,15 @@ class botD_status(Resource):
         timestamp uses sinfo format yyyy-mm-ddThh:mm ??
         """
         dbg( 2, nodeList )   
-        df = buildSinfoDataFrame()
-        restReturn = jsonify(df.to_dict(orient = 'records'))
+        df = getFullNodeData()
+
+        # Allow user to request orientation
+        # Available options are: dict, list, series, split, records, index
+        # Ref: http://pandas.pydata.org/pandas-docs/version/0.21/generated/pandas.DataFrame.to_dict.html
+        valid_orients = ['dict', 'list', 'series', 'split', 'records', 'index']
+        orient = request.args.get('orient') if request.args.get('orient') in valid_orients else 'index'
+
+        restReturn = jsonify(df.to_dict(orient = orient))
 
         #+ map_fn(processLine, nodeList)   ## this is place of main work and need to be redone for REST/json ++ 
         cleanUp()

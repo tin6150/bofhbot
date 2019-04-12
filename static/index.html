@@ -8,7 +8,7 @@
         $(document).ready( function () {
             $('#sinfo_table').DataTable({
                 "ajax": {
-                    url: "/api/v1/status",
+                    url: "/api/v1/status?orient=records",
                     dataSrc: ""
                 },
                 "columns": [
