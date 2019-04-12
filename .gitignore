@@ -1,5 +1,7 @@
 # Nick: Ignore emacs save files
 \#*\#
+.vscode
+pip-selfcheck.json
 # virtualenv
 bin/*
 include/*
