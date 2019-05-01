@@ -22,6 +22,7 @@ from multiprocessing import Pool, cpu_count
 from shutil import copyfile 
 from dateutil import parser
 import time
+import threading
 
 # global param :)  better as OOP get() fn or some such.  
 sinfoRSfile = '/var/tmp/sinfo-RSE.txt'
@@ -32,7 +33,7 @@ nodeColumnIndex=0
 # programmer aid fn
 # dbgLevel 3 (ie -ddd) is expected by user troubleshooting problem parsing input file
 # currently most detailed output is at level 5 (ie -ddddd) and it is eye blurry even for programmer
-dbgLevel = 0     ## user of lib would change this "object" variable :)
+dbgLevel = 5    ## user of lib would change this "object" variable :)
 ##dbgLevel = 1   use -ddddd now
 def dbg( level, strg ):
     if( dbgLevel >= level ) : 
@@ -100,10 +101,12 @@ def buildSinfoList():
     return sinfoList 
 # buildSinfoList()-end
 
+""" Read data from sinfoRSfile as a pandas DataFrame """
 def buildSinfoDataFrame():
     splitColumns = lambda line: [ elem.strip() for elem in line.split('\t') ]
     columns, *data = map(splitColumns, open(sinfoRSfile, 'r'))
     return pd.DataFrame(data, columns = columns)
+# buildSinfoDataFrame()-end
 
 # Input: array list of lines with output of sinfo -R -S ...
 # OUTPUT: array list of nodes (maybe empty)
@@ -176,7 +179,7 @@ def checkSsh( node ) :
         return "up"
     except subprocess.CalledProcessError as e:
         error = "\"{cmd}\" had a bad return code of {ret}.".format(cmd=command, ret=e.returncode)
-        return "DOWN"
+        return "Down"
         #raise ValueError(err)
     except subprocess.TimeoutExpired as e:
         error = "\"{cmd}\" exceeded the timeout of {t} seconds.".format(cmd=command, t=timeout)
@@ -190,41 +193,51 @@ def checkSsh( node ) :
 
 def executeCommand(node, command, timeout=5):
     sshCommand = "ssh {node} \"{command}\"".format(node=node, command=command)
+    return executeLocalCommand(sshCommand, timeout=timeout)
+# executeCommand()-end
+
+def executeLocalCommand(command, timeout=5):
     try:
         with open(os.devnull, 'w') as devnull:
-            sshStdOut = subprocess.check_output(shlex.split(sshCommand), timeout=timeout, stderr=devnull)
-            return sshStdOut.decode('utf-8').strip()
+            stdout = subprocess.check_output(shlex.split(command), timeout=timeout, stderr=devnull)
+            return stdout.decode('utf-8').strip()
     except subprocess.TimeoutExpired as e:
-        dbg(2, "executeCommand via ssh timed out--%s" % e) ## Sn
+        dbg(2, "executeLocalCommand timed out--%s" % e) ## Sn
         return None # Might want to add specific error handling later
     except Exception as e:
         dbg(1, e)
         return None # Might want to add specific error handling later
-# executeCommand()-end
+# executeLocalCommand()-end
 
-def checkMountUsage(node, mount):
-    command = "df -h {mount} --output=target,size | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
-    usage = executeCommand(node, command)
-    return usage or "NotFound"
+def checkPowerStatus(node):
+    command = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh status {node}".format(node=node)
+    output = executeLocalCommand(command)
+    if output:
+        return output.split('\n')[0].split(' ')[-1]
+    return 'error' 
+
+def checkMountUsage(mount):
+    def checkNode(node):
+        command = "df {mount} --output=target,size | grep {mount} | awk '{{ print $2 }}'".format(mount=mount)
+        usage = executeCommand(node, command)
+        return int(usage) * (2 ** 10) if usage else None
+    return checkNode
 # checkMountUsage()-end
 
 def checkProcesses(node):
     command = 'ps -eo uname | egrep -v \\"^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$\\" | uniq'.format(username=getpass.getuser())
     ## when placed as module lib for import, need to catch exception or it will returnt None and mess up all other ssh checks. -Sn
-    try : 
-        users = ','.join(executeCommand(node, command).split('\n'))
-    except subprocess.TimeoutExpired as e:
-        users = "(time out)"
-    except :
-        dbg( 1, "checkProcesses() general exception, returning users as NA")
-    return users or None
+    return list(filter(lambda x: x, executeCommand(node, command).split('\n')))
 # checkProcesses()-end
 
 
 def checkLoad(node):
     command = "uptime | awk -F' ' '{ print substr($10,0,length($10)-1) }'"
     uptime = executeCommand(node, command)
-    return uptime
+    try:
+        return float(uptime)
+    except ValueError:
+        return None
 
 def secondsToString(sec):
     sec = int(sec)
@@ -242,6 +255,8 @@ def secondsToString(sec):
 def checkUptime(node):
     command = "uptime -s"
     start_time = executeCommand(node, command)
+    if not start_time:
+        return None
     start_date = parser.parse(start_time) 
     return secondsToString(time.time() - start_date.timestamp())
     command = 'echo $(date +%s) - $(date --date="$(uptime -s)" +"%s") | bc'
@@ -294,12 +309,17 @@ red_bg = make_color(1, 41)
 green_bg = make_color(1, 42)
 gray = make_color(1, 30)
 
-
-checks = {
+# These checks should always be run (locally)
+local_checks = {
     'SSH': checkSsh,
-    'SCRATCH': lambda hostname: checkMountUsage(hostname, "/global/scratch"),
-    'SOFTWARE': lambda hostname: checkMountUsage(hostname, "/global/software"),
-    'TMP': lambda hostname: checkMountUsage(hostname, "/tmp"),
+    'POWER': checkPowerStatus,
+}
+
+# These checks should be run if SSH is up on the remote node
+ssh_checks = {
+    'SCRATCH': checkMountUsage("/global/scratch"),
+    'SOFTWARE': checkMountUsage("/global/software"),
+    'TMP': checkMountUsage("/tmp"),
     'USERS': checkProcesses,
     'LOAD': checkLoad,
     'UPTIME': checkUptime
@@ -307,32 +327,131 @@ checks = {
 
 def cache(timeout = 60):
     def make_cache(f):
-        lastUpdated, cached = None, None
-        def cached():
-            nonlocal lastUpdated, cached
+        lock = threading.Lock()
+        cache = {}
+        def cached(*args):
+            nonlocal cache
+            key = hash(repr(args))
+            lastUpdated, cached = cache[key] if key in cache else (None, None)
             currentTime = time.time()
+            # If there is no update necessary, no need to do the lock stuff 
+            if lastUpdated and (currentTime - lastUpdated) < timeout:
+                return cached
+            lock.acquire()
+            # This check is necesarry because by the time the lock is 
+            # acquired, the result may be fresh enough
             if not lastUpdated or (currentTime - lastUpdated) > timeout:
-                result = f()
+                result = f(*args)
                 lastUpdated, cached = currentTime, result
-                return result
+                cache[key] = lastUpdated, cached
+            lock.release()
             return cached
         return cached
     return make_cache
 
+DATA = {
+    'KiB': (2 ** 10),
+    'MiB': (2 ** 20),
+    'GiB': (2 ** 30),
+    'TiB': (2 ** 40),
+    'PiB': (2 ** 50),
+}
+
+def validNodeName(f):
+    def inner(node, *args, **kwargs):
+        if not re.match('^[A-Za-z0-9-_\.]+$', node):
+            # If you give a bad node name, don't do anything
+            print("Invalid node name! {}".format(node))
+            return
+        return f(node, *args, **kwargs)
+    return inner
+    
+@validNodeName
+def powerCycleNode(node):
+    powerStatus = checkPowerStatus(node)
+    if powerStatus == "on":
+        # Power cycle
+        print("Power cycle {}".format(node))
+        command = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh cycle {node}".format(node=node)
+    elif powerStatus == "off":
+        # Power on
+        print("Power on {}".format(node))
+        command = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh on {node}".format(node=node)
+    return
+    return executeLocalCommand(command)
+
+@validNodeName
+def resumeNode(node):
+    command = "sudo scontrol update {node} state=resume".format(node=node)
+    print("Resume {}".format(node))
+    return
+    return executeLocalCommand(command)
+
+nodeResumeQueue = set()
+nodeResumeQueueLock = threading.Lock()
+
+@validNodeName
+def addNodeToResumeQueue(node):
+    nodeResumeQueueLock.acquire()
+    nodeResumeQueue.add(node)
+    nodeResumeQueueLock.release()
+
+RESUME_CHECK_INTERVAL = 60 # seconds
+
+def processResumeQueue():
+    nodeResumeQueueLock.acquire()
+    if nodeResumeQueue:
+        for node in list(nodeResumeQueue):
+            results = getDataFromSsh(node)
+            if results['OVERALL']:
+                resumeNode(node)
+                nodeResumeQueue.remove(node)
+    nodeResumeQueueLock.release()
+    t = threading.Timer(RESUME_CHECK_INTERVAL, processResumeQueue)
+    t.start()
+
+processResumeQueue()
+
+""" Get node list by group name 
+    Group name comes from /etc/pdsh/groups or 'sinfo'
+    Invalid group name returns None"""
+@cache(timeout = 300)
+def getNodesByGroup(group):
+    if group == 'sinfo':
+        return buildSinfoDataFrame()['NODELIST']
+    group_dir = '/etc/pdsh/group'
+    groups = os.listdir(group_dir)
+    if group not in groups:
+        return [] # Invalid group name so there are no nodes in it
+    # Beware of path injection... (group name contains /../ or similar)
+    # Should be okay because we are only allowing valid group
+    return [ node.strip() for node in open(os.path.join(group_dir, group), 'r') ]
+
+def overallCheck(results):
+    for k, v in results.items():
+        if v == None:
+            return False
+    return (results['LOAD'] < 1) and (len(results['USERS']) == 0) and (results['SCRATCH'] > 1 * DATA['PiB']) and (results['SOFTWARE'] > 700 * DATA['GiB']) and (results['TMP'] > 2 * DATA['GiB'])
+
 """ Given a hostname, SSH to node if possible and perform checks.
     Returns a dictionary of the check results."""
 def getDataFromSsh(hostname):
-    sshStatus = checks['SSH'](hostname)
-    return { k: f(hostname) if sshStatus == 'up' else None for k, f in checks.items() }
+    localResults = { k: f(hostname) for k, f in local_checks.items() }
+    sshResults = { k: f(hostname) if localResults['SSH'] == 'up' else None for k, f in ssh_checks.items() }
+    return { **localResults, **sshResults, 'OVERALL': overallCheck(sshResults) }
 
 """ Return a DataFrame containing sinfo + SSH check data """
 @cache(timeout = 300)
-def getFullNodeData():
-    df = buildSinfoDataFrame()
+def getFullNodeData(group):
+    node_list = getNodesByGroup(group)
+    df = pd.DataFrame(node_list, columns = ['NODELIST'])
+    sinfo_df = buildSinfoDataFrame()
+    df = pd.merge(df, sinfo_df, on='NODELIST', how='left')
     pool = Pool(cpu_count())
     results = pool.map(getDataFromSsh, df['NODELIST'])
-    for k in results[0].keys():
-        df[k] = [ result[k] for result in results ]
+    if len(results):
+        for k in results[0].keys():
+            df[k] = [ result[k] for result in results ]
     df.index = df['NODELIST']
     return df
 

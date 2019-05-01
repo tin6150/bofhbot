@@ -16,6 +16,8 @@ from   bofhbot_lib import *
 import argparse
 import re # regular expression
 from multiprocessing import Pool, cpu_count
+import shlex
+import json
 
 ## class wide variables
 sinfoGenerationTime = 0     # store a timestamp of when sinfo-RSE was collected (it not using -s)
@@ -52,6 +54,29 @@ class botD_hello(Resource):
     def post(self, post_body):
         return {'botD_hello__post': 'not implemented' }
 # botD_hello class end ##################################################################
+
+class botD_cycle(Resource):
+    def post(self):
+        nodes = request.get_json(force = True)
+        for node in nodes:
+            powerCycleNode(node)
+        return jsonify({})
+
+class botD_resume(Resource):
+    def post(self):
+        nodes = request.get_json(force = True)
+        for node in nodes:
+            resumeNode(node)
+        return jsonify({})
+
+class botD_cycle_resume(Resource):
+    def post(self):
+        nodes = request.get_json(force = True)
+        for node in nodes:
+            powerCycleNode(node)
+            addNodeToResumeQueue(node)
+        return jsonify({})
+        
       
 class botD_status(Resource):
     def get(self):
@@ -82,7 +107,7 @@ class botD_status(Resource):
             map_fn = lambda f, x: list(map(f, x))
         #end-if
 
-        sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
+        #sinfoList = buildSinfoList() # fn use "OOP/Global" file containing sinfo output
         # useColor = False;
         ## nick did some double for to get the node in single line
         #nodeList = [ (node, line, args.color) for line in sinfoList for node in getNodeList(line) ]
@@ -91,7 +116,7 @@ class botD_status(Resource):
 
         #dbg( 2, sinfoList )  ## dbg
         #nodeList  = getNodeList( sinfoList )         # nope.  getNodeList process one line at a time, (sinfo may list several node in a single line)
-        nodeList  = sinfoList2nodeList( sinfoList )   # this take whole file?   yes but get a list of list ... 
+        #nodeList  = sinfoList2nodeList( sinfoList )   # this take whole file?   yes but get a list of list ... 
 
         ## ++ continue here FIXME
 ## actually get parseLine to return hash/obj  (json only used when needing to serialize)
@@ -127,8 +152,8 @@ class botD_status(Resource):
         history[node][timestamp] = sinfoMsg
         timestamp uses sinfo format yyyy-mm-ddThh:mm ??
         """
-        dbg( 2, nodeList )   
-        df = getFullNodeData()
+        #dbg( 2, nodeList )   
+        df = getFullNodeData(request.args.get('group'))
 
         # Allow user to request orientation
         # Available options are: dict, list, series, split, records, index
@@ -136,10 +161,12 @@ class botD_status(Resource):
         valid_orients = ['dict', 'list', 'series', 'split', 'records', 'index']
         orient = request.args.get('orient') if request.args.get('orient') in valid_orients else 'index'
 
-        restReturn = jsonify(df.to_dict(orient = orient))
+        # This is kind of strange...
+        # I do this to avoid getting NaNs in the JSON
+        restReturn = jsonify(json.loads(df.to_json(orient = orient)))
 
         #+ map_fn(processLine, nodeList)   ## this is place of main work and need to be redone for REST/json ++ 
-        cleanUp()
+        # cleanUp()
 
 
         #return {'botD_sinfo': 'tba'}   # tmp code
@@ -154,7 +181,9 @@ def root():
 
 api.add_resource(botD_hello, '/hello')
 api.add_resource(botD_status, '/status')   # ie respond to two URL.  eventually need to parse status?group=sinfo vs status?group=lr6
-
+api.add_resource(botD_cycle, '/cycle')
+api.add_resource(botD_resume, '/resume')
+api.add_resource(botD_cycle_resume, '/cycle-resume')
 
 if __name__ == '__main__':
     args = process_cli()
