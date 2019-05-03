@@ -5,13 +5,13 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
     <link href="https://unpkg.com/tabulator-tables@4.2.4/dist/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.4/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.4/dist/js/tabulator.min.js"></script>
     <script>
-        let table;
+        let table
 
         const MEMORY_NAMES = ['B', 'K', 'M', 'G', 'T', 'P']
         function memoryFormat(cell, formatterParams, onRendered) {
-            const bytes = cell.getValue();
+            const bytes = cell.getValue()
             if (!bytes) {
                 return null
             }
@@ -31,11 +31,11 @@
             { title: "State", field: "STATE" },
             { title: "Overall", field: "OVERALL", formatter: "tickCross" },
             { title: "SSH", field: "SSH", formatter: (cell, formatterParams, onRendered) => {
-                const node = document.createElement('span');
-                node.style.color = (cell.getValue() == 'up') ? 'green' : 'red';
-                const text = document.createTextNode(cell.getValue());
-                node.appendChild(text);
-                return node;
+                const node = document.createElement('span')
+                node.style.color = (cell.getValue() == 'up') ? 'green' : 'red'
+                const text = document.createTextNode(cell.getValue())
+                node.appendChild(text)
+                return node
             } },
             { title: "Load", field: "LOAD" },
             { title: "Users", field: "USERS" },
@@ -45,13 +45,13 @@
             { title: "TMP", field: "TMP", formatter: memoryFormat },
             { title: "Uptime", field: "UPTIME" },
             { title: "Power Status", field: "POWER" },
-        ];
+        ]
         function confirmNodes(action, url) {
             return function() {
-                const selection = table.getSelectedData().map(x => x.NODELIST);
-                const response = confirm(`${action} ${selection.length} nodes?\n${selection.join(', ')}`);
+                const selection = table.getSelectedData().map(x => x.NODELIST)
+                const response = confirm(`${action} ${selection.length} nodes?\n${selection.join(', ')}`)
                 if (response) {
-                    table.deselectRow();
+                    table.deselectRow()
                     return $.ajax({
                         type: 'POST',
                         url,
@@ -60,46 +60,46 @@
                 }
             }
         }
-        const powerCycle = confirmNodes('Power cycle', '/api/v1/cycle');
-        const resume = confirmNodes('Resume', '/api/v1/resume');
-        const powerCycleAndResume = confirmNodes('Power cycle & resume', '/api/v1/cycle-resume');
+        const powerCycle = confirmNodes('Power cycle', '/api/v1/cycle')
+        const resume = confirmNodes('Resume', '/api/v1/resume')
+        const powerCycleAndResume = confirmNodes('Power cycle & resume', '/api/v1/cycle-resume')
 
         function makeRefreshData(table) {
             return async function() {
                 const group = new URLSearchParams(window.location.search).get('group') || 'sinfo'
-                $('#message').show();
-                $('#message').text('Loading...');
+                $('#message').show()
+                $('#message').text('Loading...')
                 const sinfoData = (await $.get(`/api/v1/status?orient=records&group=${group}`)).map(x => {
-                    x.id = x.NODELIST;
-                    return x;
-                });
+                    x.id = x.NODELIST
+                    return x
+                })
                 $('#message').text(`Last updated ${new Date().toLocaleTimeString()}`)
-                table.updateOrAddData(sinfoData);
-                table.redraw();
+                table.updateOrAddData(sinfoData)
+                table.redraw()
             }
         }
 
         function toggleColumn(col) {
-            let shown = true;
+            let shown = true
             return e => {
-                shown = !shown;
+                shown = !shown
                 if (shown) {
-                    table.addColumn(col, false);
-                    $(e.target).css('borderStyle', 'inset');
+                    table.addColumn(col, false)
+                    $(e.target).css('borderStyle', 'inset')
                 } else {
-                    table.deleteColumn(col.field);
-                    $(e.target).css('borderStyle', 'outset');
+                    table.deleteColumn(col.field)
+                    $(e.target).css('borderStyle', 'outset')
                 }
-            };
+            }
         }
         $(document).ready(async function () {
             for (const col of columns) {
-                const button = document.createElement("input");
-                button.type = 'button';
-                button.value = col.title;
-                button.onclick = toggleColumn(col);
-                $(button).css('borderStyle', 'inset');
-                $('#buttons').append(button);
+                const button = document.createElement("input")
+                button.type = 'button'
+                button.value = col.title
+                button.onclick = toggleColumn(col)
+                $(button).css('borderStyle', 'inset')
+                $('#buttons').append(button)
             }
 
             table = new Tabulator('#nice-table', {
@@ -113,18 +113,18 @@
                 columns,
                 rowDeselected: row => {
                     if (table.getSelectedData().length == 0) {
-                        $('.actions').prop('disabled', true);
+                        $('.actions').prop('disabled', true)
                     }
                 },
                 rowSelected: row => {
-                    $('.actions').prop('disabled', false);
+                    $('.actions').prop('disabled', false)
                 }
-            });
+            })
 
             const refresh = makeRefreshData(table)
             refresh()
             setInterval(refresh, 60 * 1000)
-        });
+        })
     </script>
 </head>
 <body>
