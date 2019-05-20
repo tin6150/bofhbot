@@ -62,6 +62,20 @@ class botD_cycle(Resource):
             powerCycleNode(node)
         return jsonify({})
 
+class botD_power_on(Resource):
+    def post(self):
+        nodes = request.get_json(force = True)
+        for node in nodes:
+            powerOnNode(node)
+        return jsonify({})
+
+class botD_power_off(Resource):
+    def post(self):
+        nodes = request.get_json(force = True)
+        for node in nodes:
+            powerOffNode(node)
+        return jsonify({})
+
 class botD_resume(Resource):
     def post(self):
         nodes = request.get_json(force = True)
@@ -183,6 +197,8 @@ api.add_resource(botD_hello, '/hello')
 api.add_resource(botD_status, '/status')   # ie respond to two URL.  eventually need to parse status?group=sinfo vs status?group=lr6
 api.add_resource(botD_cycle, '/cycle')
 api.add_resource(botD_resume, '/resume')
+api.add_resource(botD_power_on, '/power-on')
+api.add_resource(botD_power_off, '/power-off')
 api.add_resource(botD_cycle_resume, '/cycle-resume')
 
 if __name__ == '__main__':

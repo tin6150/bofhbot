@@ -63,6 +63,8 @@
         const powerCycle = confirmNodes('Power cycle', '/api/v1/cycle')
         const resume = confirmNodes('Resume', '/api/v1/resume')
         const powerCycleAndResume = confirmNodes('Power cycle & resume', '/api/v1/cycle-resume')
+        const powerOn = confirmNodes('Power On', '/api/v1/power-on')
+        const powerOff = confirmNodes('Power Off', '/api/v1/power-off')
 
         function makeRefreshData(table) {
             return async function() {
@@ -135,6 +137,8 @@
     <input type="button" disabled class="actions" value="Power Cycle" onclick="powerCycle()">
     <input type="button" disabled class="actions" value="Resume" onclick="resume()">
     <input type="button" disabled class="actions" value="Power Cycle & Resume" onclick="powerCycleAndResume()">
+    <input type="button" disabled class="actions" value="Power On" onclick="powerOn()">
+    <input type="button" disabled class="actions" value="Power Off" onclick="powerOff()">
     <hr>
     <div id="message"></div>
 </body>

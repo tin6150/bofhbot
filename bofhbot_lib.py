@@ -24,6 +24,13 @@ from dateutil import parser
 import time
 import threading
 
+PDSH_GROUP_DIR = "/etc/pdsh/group"
+POWER_STATUS_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh status {node}"
+POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh cycle {node}"
+POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh on {node}"
+POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh off {node}"
+SLURM_RESUME_COMMAND = "sudo scontrol update {node} state=resume"
+
 # global param :)  better as OOP get() fn or some such.  
 sinfoRSfile = '/var/tmp/sinfo-RSE.txt'
 #sinfoRSfile = 'sinfo-RSE-eg.txt.head5'
@@ -192,7 +199,7 @@ def checkSsh( node ) :
 # checkSsh()-end 
 
 def executeCommand(node, command, timeout=5):
-    sshCommand = "ssh {node} \"{command}\"".format(node=node, command=command)
+    sshCommand = "ssh {node} {command}".format(node=node, command=shlex.quote(command))
     return executeLocalCommand(sshCommand, timeout=timeout)
 # executeCommand()-end
 
@@ -365,26 +372,34 @@ def validNodeName(f):
             return
         return f(node, *args, **kwargs)
     return inner
-    
+
+@validNodeName
+def powerOnNode(node):
+    command = POWER_ON_COMMAND.format(node=node)
+    return executeLocalCommand(command)
+
+@validNodeNae
+def powerOffNode(node):
+    command = POWER_OFF_COMMAND.format(node=node)
+    return executeLocalCommand(command)
+
 @validNodeName
 def powerCycleNode(node):
     powerStatus = checkPowerStatus(node)
     if powerStatus == "on":
         # Power cycle
         print("Power cycle {}".format(node))
-        command = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh cycle {node}".format(node=node)
+        command = POWER_CYCLE_COMMAND.format(node=node)
     elif powerStatus == "off":
         # Power on
         print("Power on {}".format(node))
-        command = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh on {node}".format(node=node)
-    return
-    return executeLocalCommand(command)
+        command = POWER_ON_COMMAND.format(node=node)
+    # return executeLocalCommand(command)
 
 @validNodeName
 def resumeNode(node):
-    command = "sudo scontrol update {node} state=resume".format(node=node)
+    command = SLURM_RESUME_COMMAND.format(node=node)
     print("Resume {}".format(node))
-    return
     return executeLocalCommand(command)
 
 nodeResumeQueue = set()
@@ -419,8 +434,7 @@ processResumeQueue()
 def getNodesByGroup(group):
     if group == 'sinfo':
         return buildSinfoDataFrame()['NODELIST']
-    group_dir = '/etc/pdsh/group'
-    groups = os.listdir(group_dir)
+    groups = os.listdir(PDSH_GROUP_DIR)
     if group not in groups:
         return [] # Invalid group name so there are no nodes in it
     # Beware of path injection... (group name contains /../ or similar)
