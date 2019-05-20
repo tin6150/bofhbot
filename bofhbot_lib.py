@@ -378,7 +378,7 @@ def powerOnNode(node):
     command = POWER_ON_COMMAND.format(node=node)
     return executeLocalCommand(command)
 
-@validNodeNae
+@validNodeName
 def powerOffNode(node):
     command = POWER_OFF_COMMAND.format(node=node)
     return executeLocalCommand(command)
