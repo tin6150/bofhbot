@@ -376,12 +376,14 @@ def validNodeName(f):
 @validNodeName
 def powerOnNode(node):
     command = POWER_ON_COMMAND.format(node=node)
+    print("Power on {}".format(node))
     return executeLocalCommand(command)
 
 @validNodeName
 def powerOffNode(node):
     command = POWER_OFF_COMMAND.format(node=node)
-    return executeLocalCommand(command)
+    print("Power off {}".format(node))
+    # return executeLocalCommand(command)
 
 @validNodeName
 def powerCycleNode(node):
@@ -461,6 +463,7 @@ def getFullNodeData(group):
     df = pd.DataFrame(node_list, columns = ['NODELIST'])
     sinfo_df = buildSinfoDataFrame()
     df = pd.merge(df, sinfo_df, on='NODELIST', how='left')
+    #pool = Pool(cpu_count())
     pool = Pool(cpu_count())
     results = pool.map(getDataFromSsh, df['NODELIST'])
     if len(results):
