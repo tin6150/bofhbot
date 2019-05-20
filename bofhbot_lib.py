@@ -439,7 +439,7 @@ def getNodesByGroup(group):
         return [] # Invalid group name so there are no nodes in it
     # Beware of path injection... (group name contains /../ or similar)
     # Should be okay because we are only allowing valid group
-    return [ node.strip() for node in open(os.path.join(group_dir, group), 'r') ]
+    return [ node.strip() for node in open(os.path.join(PDSH_GROUP_DIR, group), 'r') ]
 
 def overallCheck(results):
     for k, v in results.items():
