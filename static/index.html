@@ -29,7 +29,7 @@
             { title: "Node List", field: "NODELIST" },
             { title: "Reason", field: "REASON" },
             { title: "State", field: "STATE" },
-            { title: "Overall", field: "OVERALL", formatter: "tickCross" },
+            { title: "OK to Restart", field: "OVERALL", formatter: "tickCross" },
             { title: "SSH", field: "SSH", formatter: (cell, formatterParams, onRendered) => {
                 const node = document.createElement('span')
                 node.style.color = (cell.getValue() == 'up') ? 'green' : 'red'

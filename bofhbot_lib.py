@@ -232,7 +232,7 @@ def checkMountUsage(mount):
 # checkMountUsage()-end
 
 def checkProcesses(node):
-    command = 'ps -eo uname | egrep -v \\"^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$\\" | uniq'.format(username=getpass.getuser())
+    command = 'ps -eo uname | egrep -v "^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$" | uniq'.format(username=getpass.getuser())
     ## when placed as module lib for import, need to catch exception or it will returnt None and mess up all other ssh checks. -Sn
     return list(filter(lambda x: x, executeCommand(node, command).split('\n')))
 # checkProcesses()-end
