@@ -243,7 +243,7 @@ def checkLoad(node):
     uptime = executeCommand(node, command)
     try:
         return float(uptime)
-    except ValueError:
+    except:
         return None
 
 def secondsToString(sec):
