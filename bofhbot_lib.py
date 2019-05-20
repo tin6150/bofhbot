@@ -239,7 +239,7 @@ def checkProcesses(node):
 
 
 def checkLoad(node):
-    command = "cat /proc/loadavg | awk -F' ' { print $3 }"
+    command = "cat /proc/loadavg | awk -F' ' '{ print $3 }'"
     uptime = executeCommand(node, command)
     try:
         return float(uptime)
