@@ -29,7 +29,7 @@ POWER_STATUS_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh sta
 POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh cycle {node}"
 POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh on {node}"
 POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh down {node}"
-SLURM_RESUME_COMMAND = "sudo scontrol update {node} state=resume"
+SLURM_RESUME_COMMAND = "sudo scontrol update node={node} state=resume"
 
 # global param :)  better as OOP get() fn or some such.  
 sinfoRSfile = '/var/tmp/sinfo-RSE.txt'
