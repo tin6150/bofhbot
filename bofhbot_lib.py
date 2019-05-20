@@ -217,7 +217,7 @@ def executeLocalCommand(command, timeout=5):
 # executeLocalCommand()-end
 
 def checkPowerStatus(node):
-    command = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh status {node}".format(node=node)
+    command = POWER_STATUS_COMMAND.format(node=node)
     output = executeLocalCommand(command)
     if output:
         return output.split('\n')[0].split(' ')[-1]
