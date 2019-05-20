@@ -28,7 +28,7 @@ PDSH_GROUP_DIR = "/etc/pdsh/group"
 POWER_STATUS_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh status {node}"
 POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh cycle {node}"
 POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh on {node}"
-POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh off {node}"
+POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh down {node}"
 SLURM_RESUME_COMMAND = "sudo scontrol update {node} state=resume"
 
 # global param :)  better as OOP get() fn or some such.  
