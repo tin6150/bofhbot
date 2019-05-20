@@ -464,7 +464,7 @@ def getFullNodeData(group):
     sinfo_df = buildSinfoDataFrame()
     df = pd.merge(df, sinfo_df, on='NODELIST', how='left')
     #pool = Pool(cpu_count())
-    pool = Pool(cpu_count())
+    pool = Pool(cpu_count() * 24)
     results = pool.map(getDataFromSsh, df['NODELIST'])
     if len(results):
         for k in results[0].keys():
