@@ -1,9 +1,12 @@
 <!doctype html>
 <html>
+
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
     <link href="https://unpkg.com/tabulator-tables@4.2.4/dist/css/tabulator.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.4/dist/js/tabulator.min.js"></script>
     <script>
@@ -26,17 +29,20 @@
         }
 
         const columns = [
-            { title: "Node List", field: "NODELIST" },
+            { title: "Node List", field: "HOSTNAMES" },
             { title: "Reason", field: "REASON" },
             { title: "State", field: "STATE" },
             { title: "OK to Restart", field: "OVERALL", formatter: "tickCross" },
-            { title: "SSH", field: "SSH", formatter: (cell, formatterParams, onRendered) => {
-                const node = document.createElement('span')
-                node.style.color = (cell.getValue() == 'up') ? 'green' : 'red'
-                const text = document.createTextNode(cell.getValue())
-                node.appendChild(text)
-                return node
-            } },
+            { title: "SSH", field: "SSH", formatter: "tickCross" },
+            // {
+            //     title: "SSH", field: "SSH", formatter: (cell, formatterParams, onRendered) => {
+            //         const node = document.createElement('span')
+            //         node.style.color = (cell.getValue() == 'up') ? 'green' : 'red'
+            //         const text = document.createTextNode(cell.getValue())
+            //         node.appendChild(text)
+            //         return node
+            //     }
+            // },
             { title: "Load", field: "LOAD" },
             { title: "Users", field: "USERS" },
             { title: "Scratch", field: "SCRATCH", formatter: memoryFormat },
@@ -47,7 +53,7 @@
             { title: "Power Status", field: "POWER" },
         ]
         function confirmNodes(action, url) {
-            return function() {
+            return function () {
                 const selection = table.getSelectedData().map(x => x.NODELIST)
                 const response = confirm(`${action} ${selection.length} nodes?\n${selection.join(', ')}`)
                 if (response) {
@@ -67,14 +73,15 @@
         const powerOff = confirmNodes('Power Off', '/api/v1/power-off')
 
         function makeRefreshData(table) {
-            return async function() {
+            return async function () {
                 const group = new URLSearchParams(window.location.search).get('group') || 'sinfo'
                 $('#message').show()
                 $('#message').text('Loading...')
-                const sinfoData = (await $.get(`/api/v1/status?orient=records&group=${group}`)).map(x => {
-                    x.id = x.NODELIST
+                const sinfoData = (await $.get(`../results.json`)).map(x => {
+                    x.id = x.HOSTNAMES
                     return x
                 })
+                console.log(sinfoData)
                 $('#message').text(`Last updated ${new Date().toLocaleTimeString()}`)
                 table.updateOrAddData(sinfoData)
                 table.redraw()
@@ -94,6 +101,22 @@
                 }
             }
         }
+
+        function openFile(event) {
+            const reader = new FileReader()
+            reader.onload = function () {
+                const result = JSON.parse(reader.result)
+                const nodes = []
+                for (const hostname in result) {
+                    nodes.push(result[hostname])
+                }
+                console.log(nodes)
+                table.replaceData(nodes)
+                table.redraw()
+            }
+            reader.readAsText(event.target.files[0])
+        }
+
         $(document).ready(async function () {
             for (const col of columns) {
                 const button = document.createElement("input")
@@ -123,23 +146,21 @@
                 }
             })
 
-            const refresh = makeRefreshData(table)
-            refresh()
-            setInterval(refresh, 2 * 60 * 60 * 1000)
+            // const refresh = makeRefreshData(table)
+            // refresh()
+            // setInterval(refresh, 2 * 60 * 60 * 1000)
         })
     </script>
 </head>
+
 <body>
     <div id="buttons"></div>
     <hr>
     <div id="nice-table"></div>
     <hr>
-    <input type="button" disabled class="actions" value="Power Cycle" onclick="powerCycle()">
-    <input type="button" disabled class="actions" value="Resume" onclick="resume()">
-    <input type="button" disabled class="actions" value="Power Cycle & Resume" onclick="powerCycleAndResume()">
-    <input type="button" disabled class="actions" value="Power On" onclick="powerOn()">
-    <input type="button" disabled class="actions" value="Power Off" onclick="powerOff()">
+    <input type="file" id="file" onchange="openFile(event)">
     <hr>
     <div id="message"></div>
 </body>
+
 </html>
