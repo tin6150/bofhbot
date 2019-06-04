@@ -20,16 +20,43 @@ import argparse
 import json
 import sys
 
-from bot_lib import check_nodes
+from bot_lib import check_nodes, show_partition_info
+from bot_analyzer import analyze
+from bot_actions import suggest, interactive_suggest
+from convert_json import show_table
 
 def process_cli() :
     # https://docs.python.org/3/howto/argparse.html#id1
     parser = argparse.ArgumentParser(prog='bofhbot')
     subparsers = parser.add_subparsers(dest='subparser_name')
+
     check_parser = subparsers.add_parser('check')
     check_parser.add_argument('nodes', nargs='*', default=['sinfo'])
+
+    analyze_parser = subparsers.add_parser('analyze')
+    analyze_parser.add_argument('nodes', nargs='*', default=['sinfo'])
+
+    show_parser = subparsers.add_parser('show')
+
+    suggest_parser = subparsers.add_parser('suggest')
+
+    fix_parser = subparsers.add_parser('fix')
+    fix_parser.add_argument('nodes', nargs='*', default=['sinfo'])
+
+    report_parser = subparsers.add_parser('report')
+
     return parser.parse_args()
 # process_cli()-end 
+
+def read_stdin():
+    return json.loads(''.join(sys.stdin.readlines()))
+
+def get_analysis(node_info):
+    return { node: analyze(status) for node, status in node_info.items() }
+
+def get_suggestions(node_info):
+    status = get_analysis(node_info)
+    return { node: suggest(node, state) for node, state in status.items() }
 
 async def main(): 
     args = process_cli()
@@ -38,8 +65,20 @@ async def main():
         results = await check_nodes(args.nodes)
         results_json = json.dumps(results)
         return print(results_json)
+    if args.subparser_name == 'analyze':
+        print(get_analysis(read_stdin()))
+    if args.subparser_name == 'show':
+        show_table(read_stdin())
+    if args.subparser_name == 'suggest':
+        print(get_suggestions(read_stdin()))
+    if args.subparser_name == 'fix':
+        status = await check_nodes(args.nodes)
+        suggestions = get_suggestions(status)
+        await interactive_suggest(suggestions, status)
     if args.subparser_name == 'list':
         return show_status(args.nodes)
+    if args.subparser_name == 'report':
+        return print(await show_partition_info())
 # main()-end
 
 loop = asyncio.get_event_loop()

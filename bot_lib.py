@@ -19,6 +19,14 @@ CHECKS = [
     ('USERS', bot_checks.check_users)
 ]
 
+async def show_partition_info():
+    result = await bot_checks.run_local_command("sinfo -o '%P %A'")
+    _, *partitions = [ entry.split(' ') for entry in result[0].split('\n') ]
+    partitions = [ (partition, availability.split('/')) for partition, availability in partitions ]
+    partitions = [ (partition, int(idle) / (int(available)  + int(idle))) for partition, (available, idle) in partitions ]
+    partitions = [ str(partition) + '\t' + str(percentage * 100) + '%' for partition, percentage in partitions ]
+    return '\n'.join(partitions)
+
 async def get_sinfo_nodes():
     result = await bot_checks.run_local_command('sinfo -R -o "%n" | tail -n+2')
     return result[0].split('\n')

@@ -5,10 +5,6 @@ import getpass
 import pandas as pd
 
 POWER_STATUS_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh status {node}"
-POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh cycle {node}"
-POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh on {node}"
-POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh down {node}"
-SLURM_RESUME_COMMAND = "sudo scontrol update node={node} state=resume"
 
 def run_command(node, command, timeout=3.0):
     ssh_command = 'ssh {} {}'.format(shlex.quote(node), shlex.quote(command))
