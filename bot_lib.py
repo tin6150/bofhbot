@@ -5,6 +5,9 @@ import itertools
 import time
 from progress.bar import Bar
 
+import bot_actions
+import bot_analyzer
+
 PDSH_GROUP_DIR = "/etc/pdsh/group"
 
 GROUPS = os.listdir(PDSH_GROUP_DIR)
@@ -60,4 +63,5 @@ async def check_node(node, sinfo_df):
     sinfo_values = { key: value[0] if len(value) else None for key, value in sinfo.to_dict(orient='list').items() }
     result = { 'SSH': ssh_up, 'POWER': power_status, **sinfo_values, **result }
     result['OVERALL'] = bot_checks.overall(result)
+    result['SUGGESTION'] = bot_actions.suggest(node, bot_analyzer.analyze(result))
     return node, result

@@ -1,5 +1,3 @@
-from bot_lib import check_nodes
-
 STATES = {
     'NODE_KILLED_IPMI_ON': 1,
     'NODE_KILLED_IPMI_OFF': 2,
