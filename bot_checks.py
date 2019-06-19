@@ -82,10 +82,7 @@ DATA = {
 }
 
 def overall(results):
-    for k, v in results.items():
-        if v == None:
-            return False
-    return (results['LOAD'] < 1) and (len(results['USERS']) == 0) and (results['SCRATCH'] > 1 * DATA['PiB']) and (results['SOFTWARE'] > 700 * DATA['GiB']) and (results['TMP'] > 2 * DATA['GiB'])
+    return (results['LOAD'] != None and results['LOAD'] < 1) and (results['USERS'] != None and len(results['USERS']) == 0) and (results['SCRATCH'] != None and results['SCRATCH'] > 1 * DATA['PiB']) and (results['SOFTWARE'] != None and results['SOFTWARE'] > 700 * DATA['GiB']) and (results['TMP'] != None and results['TMP'] > 2 * DATA['GiB'])
 
 def hello_world(node):
     return run_command_stdout(node, 'echo hi from $(hostname)')

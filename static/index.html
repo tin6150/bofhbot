@@ -108,6 +108,7 @@
                 const result = JSON.parse(reader.result)
                 const nodes = []
                 for (const hostname in result) {
+                    result[hostname].HOSTNAMES = hostname
                     nodes.push(result[hostname])
                 }
                 console.log(nodes)
