@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://unpkg.com/tabulator-tables@4.2.4/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.4/dist/js/tabulator.min.js"></script>
+    <script>
+        let table
+
+        const MEMORY_NAMES = ['B', 'K', 'M', 'G', 'T', 'P']
+        function memoryFormat(cell, formatterParams, onRendered) {
+            const bytes = cell.getValue()
+            if (!bytes) {
+                return null
+            }
+            let exponent = 0
+            for (const letter of MEMORY_NAMES) {
+                if (bytes / (2 ** exponent) <= (2 ** 10)) {
+                    return (bytes / 2 ** exponent).toFixed(2) + letter
+                }
+                exponent += 10
+            }
+            return (bytes / (2 ** (exponent - 10))).toFixed(2) + MEMORY_NAMES[MEMORY_NAMES.length - 1]
+        }
+
+        const columns = [
+            { title: "Node List", field: "HOSTNAMES" },
+            { title: "Reason", field: "REASON" },
+            { title: "State", field: "STATE" },
+            { title: "OK to Restart", field: "OVERALL", formatter: "tickCross" },
+            { title: "SSH", field: "SSH", formatter: "tickCross" },
+            // {
+            //     title: "SSH", field: "SSH", formatter: (cell, formatterParams, onRendered) => {
+            //         const node = document.createElement('span')
+            //         node.style.color = (cell.getValue() == 'up') ? 'green' : 'red'
+            //         const text = document.createTextNode(cell.getValue())
+            //         node.appendChild(text)
+            //         return node
+            //     }
+            // },
+            { title: "Load", field: "LOAD" },
+            { title: "Users", field: "USERS" },
+            { title: "Scratch", field: "SCRATCH", formatter: memoryFormat },
+            { title: "Software", field: "SOFTWARE", formatter: memoryFormat },
+            { title: "Timestamp", field: "TIMESTAMP" },
+            { title: "TMP", field: "TMP", formatter: memoryFormat },
+            { title: "Uptime", field: "UPTIME" },
+            { title: "Power Status", field: "POWER" },
+        ]
+
+        function makeRefreshData(table) {
+            return async function () {
+                const group = new URLSearchParams(window.location.search).get('group') || 'sinfo'
+                $('#message').show()
+                $('#message').text('Loading...')
+                const sinfoData = (await $.get(`../results.json`)).map(x => {
+                    x.id = x.HOSTNAMES
+                    return x
+                })
+                console.log(sinfoData)
+                $('#message').text(`Last updated ${new Date().toLocaleTimeString()}`)
+                table.updateOrAddData(sinfoData)
+                table.redraw()
+            }
+        }
+
+        function toggleColumn(col) {
+            let shown = true
+            return e => {
+                shown = !shown
+                if (shown) {
+                    table.addColumn(col, false)
+                    $(e.target).css('borderStyle', 'inset')
+                } else {
+                    table.deleteColumn(col.field)
+                    $(e.target).css('borderStyle', 'outset')
+                }
+            }
+        }
+
+        function openFile(event) {
+            const reader = new FileReader()
+            reader.onload = function () {
+                const result = JSON.parse(reader.result)
+                const nodes = []
+                for (const hostname in result) {
+                    result[hostname].HOSTNAMES = hostname
+                    nodes.push(result[hostname])
+                }
+                console.log(nodes)
+                table.replaceData(nodes)
+                table.redraw()
+            }
+            reader.readAsText(event.target.files[0])
+        }
+
+        $(document).ready(async function () {
+            for (const col of columns) {
+                const button = document.createElement("input")
+                button.type = 'button'
+                button.value = col.title
+                button.onclick = toggleColumn(col)
+                $(button).css('borderStyle', 'inset')
+                $('#buttons').append(button)
+            }
+
+            table = new Tabulator('#nice-table', {
+                height: '70vh',
+                data: [],
+                selectable: true,
+                movableColumns: true,
+                layout: "fitColumns",
+                layoutColumnsOnNewData: true,
+                selectableRangeMode: 'click',
+                columns,
+                rowDeselected: row => {
+                    if (table.getSelectedData().length == 0) {
+                        $('.actions').prop('disabled', true)
+                    }
+                },
+                rowSelected: row => {
+                    $('.actions').prop('disabled', false)
+                }
+            })
+
+            // const refresh = makeRefreshData(table)
+            // refresh()
+            // setInterval(refresh, 2 * 60 * 60 * 1000)
+        })
+    </script>
+</head>
+
+<body>
+    <div id="buttons"></div>
+    <hr>
+    <div id="nice-table"></div>
+    <hr>
+    <input type="file" id="file" onchange="openFile(event)">
+    <hr>
+    <div id="message"></div>
+</body>
+
+</html>
