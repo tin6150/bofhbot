@@ -40,11 +40,12 @@ def nothing(node, state):
     return []
 
 SUGGESTION = {
-    STATES['NODE_KILLED_IPMI_ON']: power_cycle,
-    STATES['NODE_KILLED_IPMI_OFF']: power_on,
-    STATES['SLURM_FAILED']: restart_slurm,
-    STATES['NODE_WORKING']: slurm_resume,
-    STATES['UNKNOWN']: nothing
+    'NODE_KILLED_IPMI_ON': power_cycle,
+    'NODE_KILLED_IPMI_OFF': power_on,
+    'SLURM_FAILED_USER_PROCESSES_ALIVE': power_cycle,
+    'SLURM_FAILED_NO_USER_PROCESS': restart_slurm,
+    'NODE_WORKING': slurm_resume,
+    'UNKNOWN': nothing
 }
 
 def suggest(node, state):

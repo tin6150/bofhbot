@@ -41,6 +41,10 @@ def check_mount_usage(mount):
             return None
     return check_node
 
+async def check_slurmd_log(node):
+    command = 'sudo cat /var/log/slurm/slurmd.log | grep -i \'error\\|signal\' | tail -n10 && sudo cat /var/log/slurm/slurmd.log | tail -n1'
+    return run_command_stdout(node, command)
+
 async def check_power_status(node):
     command = POWER_STATUS_COMMAND.format(node=shlex.quote(node))
     output, _ = await run_local_command(command)

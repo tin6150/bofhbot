@@ -22,7 +22,8 @@ CHECKS = [
     ('TMP', bot_checks.check_mount_usage('/tmp')),
     ('LOAD', bot_checks.check_load),
     ('UPTIME', bot_checks.check_uptime),
-    ('USERS', bot_checks.check_users)
+    ('USERS', bot_checks.check_users),
+    ('SLURMD_LOG', bot_checks.check_slurmd_log)
 ]
 
 async def show_partition_info():
