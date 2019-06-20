@@ -5,12 +5,11 @@ import shlex
 from termcolor import colored
 from bot_analyzer import STATES
 
-POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh cycle {node}"
-POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh on {node}"
-POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh down {node}"
+POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power cycle"
+POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power on"
+POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power off"
 SLURM_RESUME_COMMAND = "sudo scontrol update node={node} state=resume"
-SYSTEMCTL_DAEMON_RELOAD_COMMAND = "sudo systemctl daemon-reload"
-SYSTEMCTL_START_SLURM_COMMAND = "sudo systemctl start slurmd"
+SYSTEMCTL_DAEMON_RELOAD_COMMAND = "sudo systemctl daemon-reload && sudo systemctl start slurmd"
 
 def ssh(node):
     def ssh_command(command):
@@ -29,8 +28,7 @@ def power_on(node, state):
 
 def restart_slurm(node, state):
     return [
-        ssh(node)(SYSTEMCTL_DAEMON_RELOAD_COMMAND),
-        ssh(node)(SYSTEMCTL_START_SLURM_COMMAND),
+        ssh(node)(SYSTEMCTL_DAEMON_RELOAD_COMMAND)
     ]
 
 def slurm_resume(node, state):
