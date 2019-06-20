@@ -4,9 +4,6 @@
 <head>
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8"
-        src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
     <link href="https://unpkg.com/tabulator-tables@4.2.4/dist/css/tabulator.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.4/dist/js/tabulator.min.js"></script>
     <script>
@@ -52,25 +49,6 @@
             { title: "Uptime", field: "UPTIME" },
             { title: "Power Status", field: "POWER" },
         ]
-        function confirmNodes(action, url) {
-            return function () {
-                const selection = table.getSelectedData().map(x => x.NODELIST)
-                const response = confirm(`${action} ${selection.length} nodes?\n${selection.join(', ')}`)
-                if (response) {
-                    table.deselectRow()
-                    return $.ajax({
-                        type: 'POST',
-                        url,
-                        data: JSON.stringify(selection),
-                    })
-                }
-            }
-        }
-        const powerCycle = confirmNodes('Power cycle', '/api/v1/cycle')
-        const resume = confirmNodes('Resume', '/api/v1/resume')
-        const powerCycleAndResume = confirmNodes('Power cycle & resume', '/api/v1/cycle-resume')
-        const powerOn = confirmNodes('Power On', '/api/v1/power-on')
-        const powerOff = confirmNodes('Power Off', '/api/v1/power-off')
 
         function makeRefreshData(table) {
             return async function () {
