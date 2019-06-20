@@ -10,7 +10,10 @@ import bot_analyzer
 
 PDSH_GROUP_DIR = "/etc/pdsh/group"
 
-GROUPS = os.listdir(PDSH_GROUP_DIR)
+try:
+    GROUPS = os.listdir(PDSH_GROUP_DIR)
+except:
+    GROUPS = []
 
 # checks to run using SSH
 CHECKS = [
