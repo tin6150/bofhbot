@@ -37,8 +37,6 @@ def check_mount_usage(mount):
         usage = await run_command_stdout(node, command)
         try:
             return int(usage) * (2 ** 10) if usage else None
-        except:
-            return None
     return check_node
 
 async def check_slurmd_log(node):

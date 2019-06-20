@@ -42,11 +42,8 @@ async def expand_groups(group):
     if group == 'sinfo':
         return await get_sinfo_nodes()
     if group in GROUPS:
-        try:
-            *contents, = open(os.path.join(PDSH_GROUP_DIR, group), 'r')
-            return [ node.strip() for node in contents ]
-        except:
-            # do nothing...
+        *contents, = open(os.path.join(PDSH_GROUP_DIR, group), 'r')
+        return [ node.strip() for node in contents ]
     return [group]
 
 async def with_progress(bar, futures):
