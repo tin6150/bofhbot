@@ -3,7 +3,6 @@ import bot_checks
 import shlex
 
 from termcolor import colored
-from bot_analyzer import STATES
 
 POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power cycle"
 POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power on"
