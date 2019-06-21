@@ -4,9 +4,9 @@ import shlex
 
 from termcolor import colored
 
-POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power cycle"
-POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power on"
-POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} power off"
+POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power cycle"
+POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power on"
+POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power off"
 SLURM_RESUME_COMMAND = "sudo scontrol update node={node} state=resume"
 SYSTEMCTL_DAEMON_RELOAD_COMMAND = "sudo systemctl daemon-reload && sudo systemctl start slurmd"
 

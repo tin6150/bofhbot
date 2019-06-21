@@ -4,7 +4,7 @@ import getpass
 
 import pandas as pd
 
-POWER_STATUS_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.tin.sh status {node}"
+POWER_STATUS_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power status"
 
 def run_command(node, command, timeout=3.0):
     ssh_command = 'ssh {} {}'.format(shlex.quote(node), shlex.quote(command))
