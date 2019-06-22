@@ -1,6 +1,8 @@
 import asyncio
+import re
 import shlex
 import getpass
+from functools import lru_cache
 
 import pandas as pd
 
@@ -22,14 +24,19 @@ async def run_local_command(command, timeout=3.0):
     except asyncio.TimeoutError:
         return None, 'Timed out'
 
-async def run_command_stdout(node, command):
-    return (await run_command(node, command))[0]
+async def run_command_stdout(node, command, timeout=3.0):
+    return (await run_command(node, command, timeout=timeout))[0]
 
 def string_to_float(str):
     try:
         return float(str)
     except:
         return None
+
+async def check_ping(node):
+    command = 'ping -c1 {} | sed -n 2p | awk \'{{ print $NF }}\''.format(shlex.quote(node))
+    result, _ = await run_local_command(command)
+    return result == 'ms'
 
 def check_mount_usage(mount):
     async def check_node(node):
@@ -41,9 +48,19 @@ def check_mount_usage(mount):
             return None
     return check_node
 
-def check_slurmd_log(node):
+# JobId=4497298 UserId=jianlicheng(43988) GroupId=ucb(501) Name=knl_launcher JobState=COMPLETED Partition=savio2_knl TimeLimit=2880 StartTime=2019-06-19T09:31:56 EndTime=2019-06-19T09:32:03 NodeList=n0281.savio2 NodeCnt=1 ProcCnt=64 WorkDir=/clusterfs/cloudcuckoo/jianli/block_2019-06-17-16-19-29-023806/launcher_2019-06-19-16-31-49-043372 ReservationName= Gres= Account=co_lsdi QOS=lsdi_knl2_normal WcKey= Cluster=brc SubmitTime=2019-06-19T09:31:49 EligibleTime=2019-06-19T09:31:49 DerivedExitCode=0:0 ExitCode=0:0
+async def check_last_job(node):
+    command = 'tac /var/log/slurm/jobcomp.log | grep {} | head -n1'.format(shlex.quote(node))
+    result, _ = await run_local_command(command)
+    if result:
+        result_dict = { data_pair.split('=')[0]: data_pair.split('=')[1] for data_pair in result.split(' ') }
+        return { 'JobId': result_dict['JobId'], 'UserId': result_dict['UserId'], 'Account': result_dict['Account'] }
+
+async def check_slurmd_log(node):
+    ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]') # https://stackoverflow.com/a/14693789/8706910
     command = 'sudo cat /var/log/slurm/slurmd.log | grep -i \'error\\|signal\' | tail -n10 && sudo cat /var/log/slurm/slurmd.log | tail -n1'
-    return run_command_stdout(node, command)
+    result = await run_command_stdout(node, command)
+    return ansi_escape.sub('', result) if result else None
 
 async def check_power_status(node):
     command = POWER_STATUS_COMMAND.format(node=shlex.quote(node))
@@ -86,7 +103,7 @@ DATA = {
 }
 
 def overall(results):
-    return (results['LOAD'] != None and results['LOAD'] < 1) and (results['USERS'] != None and len(results['USERS']) == 0) and (results['SCRATCH'] != None and results['SCRATCH'] > 1 * DATA['PiB']) and (results['SOFTWARE'] != None and results['SOFTWARE'] > 700 * DATA['GiB']) and (results['TMP'] != None and results['TMP'] > 2 * DATA['GiB'])
+    return (results['LOAD'] != None and results['LOAD'] < 1) and (results['USER_PROCESSES'] != None and len(results['USER_PROCESSES']) == 0) and (results['SCRATCH'] != None and results['SCRATCH'] > 1 * DATA['PiB']) and (results['SOFTWARE'] != None and results['SOFTWARE'] > 700 * DATA['GiB']) and (results['TMP'] != None and results['TMP'] > 2 * DATA['GiB'])
 
 def hello_world(node):
     return run_command_stdout(node, 'echo hi from $(hostname)')

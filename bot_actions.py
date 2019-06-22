@@ -1,8 +1,12 @@
 import asyncio
 import bot_checks
 import shlex
+import yaml
 
 from termcolor import colored
+from pygments import highlight
+from pygments.lexers import YamlLexer
+from pygments.formatters import TerminalFormatter
 
 POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power cycle"
 POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power on"
@@ -51,7 +55,7 @@ def suggest(node, state):
     return SUGGESTION[state](node, state)
 
 def display_status(status):
-    return str(status)
+    return highlight(yaml.dump(status, sort_keys=True, indent=2), YamlLexer(), TerminalFormatter())
 
 def display_suggestion(suggestion):
     return colored('\n'.join([ '\t' + command for command in suggestion ]), attrs=['bold'])
@@ -61,7 +65,8 @@ async def interactive_suggest(suggestions, status):
     suggestions = { node: suggestion for node, suggestion in suggestions.items() if suggestion }
     print('{}/{} nodes have suggestions'.format(len(suggestions.keys()), len(status.keys())))
     for node, suggestion in suggestions.items():
-        print(colored(node, 'green' if status[node]['SSH'] else 'red', attrs=['bold']), '-', display_status(status[node]))
+        print(colored(node, 'green' if status[node]['SSH'] else 'red', attrs=['bold']))
+        print(display_status(status[node]))
         print(display_suggestion(suggestion))
         response = input(colored('Run suggestion? (y/[n]) ', 'grey', attrs=['bold']))
         if response == 'y':

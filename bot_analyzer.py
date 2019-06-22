@@ -15,7 +15,7 @@ def analyze(status):
 
     # All of these are when SSH is working
     if status['REASON'] == 'Not responding':
-        if len(status['USERS']):
+        if len(status['USER_PROCESSES']):
             return 'SLURM_FAILED_USER_PROCESSES_ALIVE'
         else:
             return 'SLURM_FAILED_NO_USER_PROCESSES'

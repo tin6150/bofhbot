@@ -22,8 +22,15 @@ CHECKS = [
     ('TMP', bot_checks.check_mount_usage('/tmp')),
     ('LOAD', bot_checks.check_load),
     ('UPTIME', bot_checks.check_uptime),
-    ('USERS', bot_checks.check_users),
+    ('USER_PROCESSES', bot_checks.check_users),
     ('SLURMD_LOG', bot_checks.check_slurmd_log)
+]
+
+PRE_SSH_CHECKS = [
+    ('PING', bot_checks.check_ping),
+    ('POWER', bot_checks.check_power_status),
+    ('SSH', bot_checks.check_ssh),
+    ('LAST_JOB', bot_checks.check_last_job)
 ]
 
 async def show_partition_info():
@@ -56,16 +63,20 @@ async def check_nodes(nodes):
     results = await with_progress(Bar('Checking nodes', max=len(checks)), checks)
     return { node: result for node, result in results }
 
+def make_run_checks(checks):
+    async def run_checks(node):
+      return { name: await check(node) for name, check in checks }
+    return run_checks
+
 async def check_node(node, sinfo_df):
     sinfo = await bot_checks.get_sinfo(node, sinfo_df)
-    power_status = await bot_checks.check_power_status(node)
-    ssh_up = await bot_checks.check_ssh(node)
-    if ssh_up:
+    sinfo_values = { key: value[0] if len(value) else None for key, value in sinfo.to_dict(orient='list').items() }
+    pre_ssh = await make_run_checks(PRE_SSH_CHECKS)(node)
+    if pre_ssh['SSH']:
         result = { name: await check(node) for name, check in CHECKS }
     else:
         result = { name: None for name, _ in CHECKS }
-    sinfo_values = { key: value[0] if len(value) else None for key, value in sinfo.to_dict(orient='list').items() }
-    result = { 'SSH': ssh_up, 'POWER': power_status, **sinfo_values, **result }
+    result = { **pre_ssh, **sinfo_values, **result }
     result['OVERALL'] = bot_checks.overall(result)
     result['SUGGESTION'] = bot_actions.suggest(node, bot_analyzer.analyze(result))
     return node, result

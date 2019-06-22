@@ -25,6 +25,10 @@ from bot_analyzer import analyze
 from bot_actions import suggest, interactive_suggest
 from convert_json import show_table
 
+from pygments import highlight
+from pygments.lexers import JsonLexer 
+from pygments.formatters import TerminalFormatter
+
 def process_cli() :
     # https://docs.python.org/3/howto/argparse.html#id1
     parser = argparse.ArgumentParser(prog='bofhbot')
@@ -63,7 +67,9 @@ async def main():
     print(args, file=sys.stderr)
     if args.subparser_name == 'check':
         results = await check_nodes(args.nodes)
-        results_json = json.dumps(results)
+        results_json = json.dumps(results, sort_keys=True, indent=2)
+        if sys.stdout.isatty():
+            return print(highlight(results_json, JsonLexer(), TerminalFormatter()))
         return print(results_json)
     if args.subparser_name == 'analyze':
         print(get_analysis(read_stdin()))
