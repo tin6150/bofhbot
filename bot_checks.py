@@ -54,7 +54,8 @@ async def check_last_job(node):
     result, _ = await run_local_command(command)
     if result:
         result_dict = { data_pair.split('=')[0]: data_pair.split('=')[1] for data_pair in result.split(' ') }
-        return { 'JobId': result_dict['JobId'], 'UserId': result_dict['UserId'], 'Account': result_dict['Account'] }
+        keys = ['JobId', 'UserId', 'Account', 'JobState']
+        return { key: result_dict[key] for key in result_dict.keys() if key in keys }
 
 async def check_slurmd_log(node):
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]') # https://stackoverflow.com/a/14693789/8706910
