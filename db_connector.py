@@ -50,7 +50,7 @@ for i in range(0,df.shape[0])]  #Add a boolean column to identify if there are "
 	user_df = user_table(df)
 	df = df.drop(["USER_PROCESSES"], axis=1) #Drop "USER_PROCESS" for storage concerns
 	connection = sqlite3.connect(db_url) #Connect to the db
-	df["LogTime"] = [str(pd.Timestamp.now()) for i in range(0,df.shape[0])]
+	df["LogTime"] = [pd.Timestamp.now() for i in range(0,df.shape[0])]
 	df.to_sql('History', con= connection,  if_exists = "append", index = False)
 	user_df.to_sql("User", con= connection,  if_exists = "append", index = False) #Store the two tables
 	print ("done")

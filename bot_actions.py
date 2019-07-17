@@ -71,7 +71,7 @@ async def interactive_suggest(suggestions, status):
         response = input(colored('Run suggestion? (y/[n]) ', 'grey', attrs=['bold']))
         if response == 'y':
             for command in suggestion:
-                await asyncio.sleep(1) # bot_checks.run_local_command(suggestion)
+                await bot_checks.run_local_command(command)
             accepted_nodes.append(node)
             print('Accepted suggestion\n')
         else:
