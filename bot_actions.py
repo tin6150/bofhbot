@@ -8,6 +8,8 @@ from pygments import highlight
 from pygments.lexers import YamlLexer
 from pygments.formatters import TerminalFormatter
 
+from db_connector import action
+
 POWER_CYCLE_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power cycle"
 POWER_ON_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power on"
 POWER_OFF_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power off"
@@ -57,8 +59,8 @@ def suggest(node, state):
 def display_status(status):
     return highlight(yaml.dump(status, sort_keys=True, indent=2), YamlLexer(), TerminalFormatter())
 
-def display_suggestion(suggestion):
-    return colored('\n'.join([ '\t' + command for command in suggestion ]), attrs=['bold'])
+def display_suggestion(index, suggestion):
+    return str(index) + ') ' + colored(';'.join([ command for command in suggestion ]), attrs=['bold'])
 
 async def interactive_suggest(suggestions, status):
     accepted_nodes = []
@@ -67,12 +69,15 @@ async def interactive_suggest(suggestions, status):
     for node, suggestion in suggestions.items():
         print(colored(node, 'green' if status[node]['SSH'] else 'red', attrs=['bold']))
         print(display_status(status[node]))
-        print(display_suggestion(suggestion))
-        response = input(colored('Run suggestion? (y/[n]) ', 'grey', attrs=['bold']))
-        if response == 'y':
-            for command in suggestion:
-                await bot_checks.run_local_command(command)
-            accepted_nodes.append(node)
-            print('Accepted suggestion\n')
-        else:
+        choices = [ power_cycle(node, None), suggestion ]
+        for index, choice in enumerate(choices):
+            print(display_suggestion(index, choice)) 
+        response = input(colored('Run suggestion? (#/[n]) ', 'grey', attrs=['bold']))
+        try:
+            index = int(response)
+            if choices[index]:
+                for command in choices[index]:
+                    print('Running: ' + command)
+                    # await bot_checks.run_local_command(command)
+        except:
             print('Rejected suggestion\n')

@@ -24,6 +24,7 @@ from bot_lib import check_nodes, show_partition_info
 from bot_analyzer import analyze
 from bot_actions import suggest, interactive_suggest
 from convert_json import show_table
+from db_connector import db_storage
 
 from pygments import highlight
 from pygments.lexers import JsonLexer 
