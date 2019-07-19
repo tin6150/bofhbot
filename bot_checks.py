@@ -8,11 +8,11 @@ import pandas as pd
 
 POWER_STATUS_COMMAND = "sudo /global/home/groups/scs/sbin/ipmiwrapper.sh {node} chassis power status"
 
-def run_command(node, command, timeout=3.0):
+def run_command(node, command, timeout=8.0):
     ssh_command = 'ssh {} {}'.format(shlex.quote(node), shlex.quote(command))
     return run_local_command(ssh_command, timeout=timeout)
 
-async def run_local_command(command, timeout=3.0):
+async def run_local_command(command, timeout=8.0):
     # Reference: https://docs.python.org/3/library/asyncio-subprocess.html
     proc = await asyncio.create_subprocess_shell(
         command, 
@@ -24,7 +24,7 @@ async def run_local_command(command, timeout=3.0):
     except asyncio.TimeoutError:
         return None, 'Timed out'
 
-async def run_command_stdout(node, command, timeout=3.0):
+async def run_command_stdout(node, command, timeout=8.0):
     return (await run_command(node, command, timeout=timeout))[0]
 
 def string_to_float(str):
