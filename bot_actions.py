@@ -78,6 +78,6 @@ async def interactive_suggest(suggestions, status):
             if choices[index]:
                 for command in choices[index]:
                     print('Running: ' + command)
-                    # await bot_checks.run_local_command(command)
+                    await bot_checks.run_local_command(command)
         except:
             print('Rejected suggestion\n')
