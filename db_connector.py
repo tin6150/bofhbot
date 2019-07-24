@@ -13,7 +13,9 @@ try:
 except AttributeError:
     collectionsAbc = collections
 
+
 def db_storage(data, db_url):
+    data2 = data
     def flatten(d, parent_key = "", sep = "_"):
         items = []
         for k, v in d.items():
@@ -23,16 +25,22 @@ def db_storage(data, db_url):
             else:
                 items.append((new_key, v))
         return dict(items)   #Function to flatten the dictionary in the dictionary object
-    for x in data:
-        data[x] = flatten(data[x])
-    df = pd.DataFrame(data).T  #Transpose the dataframe to get what we want
+    for x in data2:
+        data2[x] = flatten(data2[x])
+    df = pd.DataFrame(data2).T  #Transpose the dataframe to get what we want
     df["USER_BOOL"] = ["None" if df["USER_PROCESSES"][i] is None else "Empty" if len(df["USER_PROCESSES"][i]) == 0 else "Yes"
 for i in range(0,df.shape[0])]  #Add a boolean column to identify if there are "empty", "none" and "user list" 3 senarios
     connection = sqlite3.connect(db_url) #Connect to the db
     if connection.cursor().execute("SELECT count(*) FROM sqlite_master WHERE type='table';").fetchall()[0][0] < 1:
-       cur = 0 #Check if the table already exists. If not, the index starts from 0
+        cur = 0 #Check if the table already exists. If not, the index starts from 0
+        connection.cursor().execute("CREATE TABLE IF NOT EXISTs History(HOSTNAMES TEXT, LAST_JOB TEXT, LAST_JOB_Account TEXT, LAST_JOB_JobId NUMBER,\
+       LAST_JOB_UserId TEXT, LOAD NUMBER, OVERALL NUMBER, PING NUMBER, POWER NUMBER, REASON TEXT,\
+       SCRATCH NUMBER, SLURMD_LOG TEXT, SOFTWARE NUMBER, SSH NUMBER, STATE TEXT, TIMESTAMP STRING, TMP NUMBER,\
+       UPTIME NUMBER, USER TEXT, USER_BOOL NUMBER, Index_ID NUMBER, LogTime TIMESTAMP)")
+        connection.cursor().execute("CREATE TABLE IF NOT EXISTs User(History_ID NUMBER, USER TEXT)")
+        print ("yes")
     else:
-       cur = connection.cursor().execute("SELECT COUNT(HOSTNAMES) FROM History").fetchall()[0][0] #If yes, start from the next index
+        cur = connection.cursor().execute("SELECT COUNT(HOSTNAMES) FROM History").fetchall()[0][0] #If yes, start from the next index
     df["Index_ID"] = range(cur, cur + df.shape[0]) #Drop the column "SUGGESTION"
     df = df.reset_index(drop = True)
     df = df.drop(["SUGGESTION"], axis = 1)
@@ -41,7 +49,7 @@ for i in range(0,df.shape[0])]  #Add a boolean column to identify if there are "
         hist_l = []
         id_l = []
         for i in range(0,df.shape[0]):
-           if df["USER_BOOL"][i] == "Yes":
+            if df["USER_BOOL"][i] == "Yes":
                 hist_l = hist_l + df["USER_PROCESSES"][i]
                 id_l = id_l + [df["Index_ID"][i]] * len(df["USER_PROCESSES"][i])
         user_df["History_ID"] = id_l
@@ -53,6 +61,7 @@ for i in range(0,df.shape[0])]  #Add a boolean column to identify if there are "
     df["LogTime"] = [pd.Timestamp.now() for i in range(0,df.shape[0])]
     df.to_sql('History', con= connection,  if_exists = "append", index = False)
     user_df.to_sql("User", con= connection,  if_exists = "append", index = False) #Store the two tables
+    print ("done")
 
 def action(Hostname, Command, db_url):
     connection = sqlite3.connect(db_url)
@@ -60,3 +69,5 @@ def action(Hostname, Command, db_url):
     rows = (Hostname, Command, pd.datetime.now())
     connection.cursor().execute("INSERT INTO action values (?,?,?)", rows)
     connection.commit()
+    print("done")
+
