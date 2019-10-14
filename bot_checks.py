@@ -14,14 +14,16 @@ def run_command(node, command, timeout=8.0):
 
 async def run_local_command(command, timeout=8.0):
     # Reference: https://docs.python.org/3/library/asyncio-subprocess.html
-    proc = await asyncio.create_subprocess_shell(
-        command, 
+    proc = await asyncio.create_subprocess_exec(
+        'bash', '-c', command,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE)
+        stderr=asyncio.subprocess.PIPE,
+        shell=False)
     try:
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
         return stdout.decode().strip(), stderr.decode().strip()
     except asyncio.TimeoutError:
+        proc.kill()
         return None, 'Timed out'
 
 async def run_command_stdout(node, command, timeout=8.0):

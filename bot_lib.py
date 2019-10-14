@@ -23,7 +23,7 @@ CHECKS = [
     (('LOAD', bot_checks.check_load), False),
     (('UPTIME', bot_checks.check_uptime), False),
     (('USER_PROCESSES', bot_checks.check_users), False),
-    (('SLURMD_LOG', bot_checks.check_slurmd_log), False)
+    (('SLURMD_LOG', bot_checks.check_slurmd_log), True)
 ]
 
 PRE_SSH_CHECKS = [
