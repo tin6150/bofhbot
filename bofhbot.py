@@ -19,6 +19,8 @@ import asyncio
 import argparse
 import json
 import sys
+from os import path
+from pathlib import Path
 
 from bot_lib import check_nodes, show_partition_info
 from bot_analyzer import analyze
@@ -37,6 +39,9 @@ def process_cli() :
 
     check_parser = subparsers.add_parser('check')
     check_parser.add_argument('nodes', nargs='*', default=['sinfo'])
+    check_parser.add_argument('--no-sudo', dest='use_sudo', action='store_false')
+    check_parser.add_argument('--concurrency', type=int)
+    check_parser.set_defaults(use_sudo=True, concurrency=50)
 
     analyze_parser = subparsers.add_parser('analyze')
     analyze_parser.add_argument('nodes', nargs='*', default=['sinfo'])
@@ -67,7 +72,8 @@ async def main():
     args = process_cli()
     print(args, file=sys.stderr)
     if args.subparser_name == 'check':
-        results = await check_nodes(args.nodes)
+        results = await check_nodes(args.nodes, use_sudo=args.use_sudo, concurrency=args.concurrency)
+        # db_storage(results, path.join(Path.home(), 'bofhbot.db'))
         results_json = json.dumps(results, sort_keys=True, indent=2)
         if sys.stdout.isatty():
             return print(highlight(results_json, JsonLexer(), TerminalFormatter()))

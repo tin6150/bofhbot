@@ -15,6 +15,7 @@ except AttributeError:
 
 
 def db_storage(data, db_url):
+    print(db_url)
     data2 = data
     def flatten(d, parent_key = "", sep = "_"):
         items = []

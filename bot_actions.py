@@ -71,7 +71,7 @@ async def interactive_suggest(suggestions, status):
         print(display_status(status[node]))
         choices = [ power_cycle(node, None), suggestion ]
         for index, choice in enumerate(choices):
-            print(display_suggestion(index, choice)) 
+            print(display_suggestion(index, choice))
         response = input(colored('Run suggestion? (#/[n]) ', 'grey', attrs=['bold']))
         try:
             index = int(response)

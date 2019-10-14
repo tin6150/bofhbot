@@ -5,9 +5,9 @@ P(ssh = up | state = ok) = 1
 
 """ Determine the state based on the indicators """
 def analyze(status):
-    if not status['SSH'] and status['REASON'] == 'Not responding' and status['POWER'] == 'on':
+    if not status['SSH'] and status['REASON'] == 'Not responding' and 'POWER' in status and status['POWER'] == 'on':
         return 'NODE_KILLED_IPMI_ON'
-    if not status['SSH'] and status['REASON'] == 'Not responding' and status['POWER'] == 'off':
+    if not status['SSH'] and status['REASON'] == 'Not responding' and 'POWER' in status and status['POWER'] == 'off':
         return 'NODE_KILLED_IPMI_OFF'
 
     if not status['SSH']:

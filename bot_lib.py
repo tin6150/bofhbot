@@ -17,20 +17,20 @@ except:
 
 # checks to run using SSH
 CHECKS = [
-    ('SCRATCH', bot_checks.check_mount_usage('/global/scratch')),
-    ('SOFTWARE', bot_checks.check_mount_usage('/global/software')),
-    ('TMP', bot_checks.check_mount_usage('/tmp')),
-    ('LOAD', bot_checks.check_load),
-    ('UPTIME', bot_checks.check_uptime),
-    ('USER_PROCESSES', bot_checks.check_users),
-    ('SLURMD_LOG', bot_checks.check_slurmd_log)
+    (('SCRATCH', bot_checks.check_mount_usage('/global/scratch')), False),
+    (('SOFTWARE', bot_checks.check_mount_usage('/global/software')), False),
+    (('TMP', bot_checks.check_mount_usage('/tmp')), False),
+    (('LOAD', bot_checks.check_load), False),
+    (('UPTIME', bot_checks.check_uptime), False),
+    (('USER_PROCESSES', bot_checks.check_users), False),
+    (('SLURMD_LOG', bot_checks.check_slurmd_log), False)
 ]
 
 PRE_SSH_CHECKS = [
-    ('PING', bot_checks.check_ping),
-    ('POWER', bot_checks.check_power_status),
-    ('SSH', bot_checks.check_ssh),
-    ('LAST_JOB', bot_checks.check_last_job)
+    (('PING', bot_checks.check_ping), False),
+    (('POWER', bot_checks.check_power_status), True),
+    (('SSH', bot_checks.check_ssh), False),
+    (('LAST_JOB', bot_checks.make_check_last_job([])), False)
 ]
 
 async def show_partition_info():
@@ -53,13 +53,19 @@ async def expand_groups(group):
         return [ node.strip() for node in contents ]
     return [group]
 
+async def limit(sem, future):
+    async with sem:
+        return await future
+
 async def with_progress(bar, futures):
     return [ await result for result in bar.iter(asyncio.as_completed(futures)) ]
 
-async def check_nodes(nodes):
+async def check_nodes(nodes, use_sudo=True, concurrency=50):
     sinfo_df = await bot_checks.gather_sinfo()
     *nodes, = itertools.chain(*await asyncio.gather(*map(expand_groups, nodes)))
-    checks = [ check_node(node, sinfo_df) for node in nodes ]
+    checks = [ check_node(node, sinfo_df, use_sudo=use_sudo) for node in nodes ]
+    sem = asyncio.Semaphore(concurrency)
+    checks = [ limit(sem, check) for check in checks ]
     results = await with_progress(Bar('Checking nodes', max=len(checks)), checks)
     return { node: result for node, result in results }
 
@@ -68,14 +74,17 @@ def make_run_checks(checks):
       return { name: await check(node) for name, check in checks }
     return run_checks
 
-async def check_node(node, sinfo_df):
+async def check_node(node, sinfo_df, use_sudo=True):
+    pre_ssh_checks = [ check for check, sudo in PRE_SSH_CHECKS if not sudo or use_sudo ]
+    checks = [ check for check, sudo in CHECKS if not sudo or use_sudo ]
+
     sinfo = await bot_checks.get_sinfo(node, sinfo_df)
     sinfo_values = { key: value[0] if len(value) else None for key, value in sinfo.to_dict(orient='list').items() }
-    pre_ssh = await make_run_checks(PRE_SSH_CHECKS)(node)
+    pre_ssh = await make_run_checks(pre_ssh_checks)(node)
     if pre_ssh['SSH']:
-        result = { name: await check(node) for name, check in CHECKS }
+        result = { name: await check(node) for name, check in checks }
     else:
-        result = { name: None for name, _ in CHECKS }
+        result = { name: None for name, _ in checks }
     result = { **pre_ssh, **sinfo_values, **result }
     result['OVERALL'] = bot_checks.overall(result)
     result['SUGGESTION'] = bot_actions.suggest(node, bot_analyzer.analyze(result))
