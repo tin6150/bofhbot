@@ -80,7 +80,7 @@ async def check_power_status(node):
     return output.split('\n')[0].split(' ')[-1] if output else 'error'
 
 async def check_users(node):
-    command = 'ps -eo uname | egrep -v "^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^{username}$" | sort | uniq'.format(username=getpass.getuser())
+    command = 'ps -eo uname | egrep -v "^root$|^29$|^USER$|^telegraf$|^munge$|^rpc$|^chrony$|^dbus$|^ntp$|^postfix$|^rpcuser$|^{username}$" | sort | uniq'.format(username=getpass.getuser())
     result = await run_command_stdout(node, command)
     return [ val for val in result.split('\n') if val ] if result else []
 
