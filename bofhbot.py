@@ -28,6 +28,7 @@ from bot_actions import suggest, interactive_suggest
 from convert_json import show_table
 from db_connector import db_storage
 
+from termcolor import colored
 from pygments import highlight
 from pygments.lexers import JsonLexer 
 from pygments.formatters import TerminalFormatter
@@ -39,19 +40,19 @@ def process_cli() :
 
     check_parser = subparsers.add_parser('check')
     check_parser.add_argument('nodes', nargs='*', default=['sinfo'])
-    check_parser.add_argument('--no-sudo', dest='use_sudo', action='store_false')
-    check_parser.add_argument('--concurrency', type=int)
+    check_parser.add_argument('-x', '--no-sudo', dest='use_sudo', action='store_false', help='only run commands that do not require sudo')
+    check_parser.add_argument('-c', '--concurrency', type=int, help='maximum number of nodes to check at once', default=50)
     check_parser.set_defaults(use_sudo=True, concurrency=50)
 
     analyze_parser = subparsers.add_parser('analyze')
     analyze_parser.add_argument('nodes', nargs='*', default=['sinfo'])
 
+    filter_parser = subparsers.add_parser('filter')
+    filter_parser.add_argument('nodes', nargs='*', default=[])
+
     show_parser = subparsers.add_parser('show')
 
     suggest_parser = subparsers.add_parser('suggest')
-
-    fix_parser = subparsers.add_parser('fix')
-    fix_parser.add_argument('nodes', nargs='*', default=['sinfo'])
 
     report_parser = subparsers.add_parser('report')
 
@@ -66,7 +67,7 @@ def get_analysis(node_info):
 
 def get_suggestions(node_info):
     status = get_analysis(node_info)
-    return { node: suggest(node, state) for node, state in status.items() }
+    return { node: (suggest(node, state), state) for node, state in status.items() }
 
 async def main(): 
     args = process_cli()
@@ -83,13 +84,18 @@ async def main():
     if args.subparser_name == 'show':
         show_table(read_stdin())
     if args.subparser_name == 'suggest':
-        print(get_suggestions(read_stdin()))
-    if args.subparser_name == 'fix':
-        status = await check_nodes(args.nodes)
+        status = read_stdin()
         suggestions = get_suggestions(status)
         await interactive_suggest(suggestions, status)
     if args.subparser_name == 'list':
         return show_status(args.nodes)
+    if args.subparser_name == 'filter':
+        status = read_stdin()
+        results = { node: data for node, data in status.items() if node in args.nodes }
+        results_json = json.dumps(results, sort_keys=True, indent=2)
+        if sys.stdout.isatty():
+            return print(highlight(results_json, JsonLexer(), TerminalFormatter()))
+        return print(results_json)
     if args.subparser_name == 'report':
         return print(await show_partition_info())
 # main()-end
