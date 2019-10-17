@@ -30,7 +30,7 @@ PRE_SSH_CHECKS = [
     (('PING', bot_checks.check_ping), False),
     (('POWER', bot_checks.check_power_status), True),
     (('SSH', bot_checks.check_ssh), False),
-    (('LAST_JOB', bot_checks.make_check_last_job([])), False)
+    (('LAST_JOB', bot_checks.check_last_job), False)
 ]
 
 async def show_partition_info():

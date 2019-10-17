@@ -23,7 +23,10 @@ async def run_local_command(command, timeout=8.0):
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
         return stdout.decode().strip(), stderr.decode().strip()
     except asyncio.TimeoutError:
-        proc.kill()
+        try:
+            proc.kill()
+        except:
+            pass
         return None, 'Timed out'
 
 async def run_command_stdout(node, command, timeout=8.0):
@@ -57,14 +60,13 @@ def find_first(data, search):
     return None
 
 # JobId=4497298 UserId=jianlicheng(43988) GroupId=ucb(501) Name=knl_launcher JobState=COMPLETED Partition=savio2_knl TimeLimit=2880 StartTime=2019-06-19T09:31:56 EndTime=2019-06-19T09:32:03 NodeList=n0281.savio2 NodeCnt=1 ProcCnt=64 WorkDir=/clusterfs/cloudcuckoo/jianli/block_2019-06-17-16-19-29-023806/launcher_2019-06-19-16-31-49-043372 ReservationName= Gres= Account=co_lsdi QOS=lsdi_knl2_normal WcKey= Cluster=brc SubmitTime=2019-06-19T09:31:49 EligibleTime=2019-06-19T09:31:49 DerivedExitCode=0:0 ExitCode=0:0
-def make_check_last_job(jobcomp_log):
-    async def check_last_job(node):
-        result = find_first(jobcomp_log, node)
-        if result:
-            result_dict = { data_pair.split('=')[0]: data_pair.split('=')[1] for data_pair in result.split(' ') }
-            keys = ['JobId', 'UserId', 'Account', 'JobState']
-            return { key: result_dict[key] for key in result_dict.keys() if key in keys }
-    return check_last_job
+async def check_last_job(node):
+    command = 'tac /var/log/slurm/jobcomp.log | grep {} | head -n1'.format(shlex.quote(node))
+    result, _ = await run_local_command(command)
+    if result:
+        result_dict = { data_pair.split('=')[0]: data_pair.split('=')[1] for data_pair in result.split(' ') }
+        keys = ['JobId', 'UserId', 'Account', 'JobState']
+        return { key: result_dict[key] for key in result_dict.keys() if key in keys }
 
 async def check_slurmd_log(node):
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]') # https://stackoverflow.com/a/14693789/8706910
