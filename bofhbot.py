@@ -53,6 +53,8 @@ def process_cli() :
     show_parser = subparsers.add_parser('show')
 
     suggest_parser = subparsers.add_parser('suggest')
+    suggest_parser.add_argument('-i', '--ignore-reason', dest='use_reason', action='store_false', help='make suggestions ignoring sinfo reason')
+    suggest_parser.set_defaults(use_reason=True)
 
     report_parser = subparsers.add_parser('report')
 
@@ -62,11 +64,11 @@ def process_cli() :
 def read_stdin():
     return json.loads(''.join(sys.stdin.readlines()))
 
-def get_analysis(node_info):
-    return { node: analyze(status) for node, status in node_info.items() }
+def get_analysis(node_info, use_reason=True):
+    return { node: analyze(status, use_reason=use_reason) for node, status in node_info.items() }
 
-def get_suggestions(node_info):
-    status = get_analysis(node_info)
+def get_suggestions(node_info, use_reason=True):
+    status = get_analysis(node_info, use_reason=use_reason)
     return { node: (suggest(node, state), state) for node, state in status.items() }
 
 async def main(): 
@@ -85,7 +87,7 @@ async def main():
         show_table(read_stdin())
     if args.subparser_name == 'suggest':
         status = read_stdin()
-        suggestions = get_suggestions(status)
+        suggestions = get_suggestions(status, use_reason=args.use_reason)
         await interactive_suggest(suggestions, status)
     if args.subparser_name == 'list':
         return show_status(args.nodes)

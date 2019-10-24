@@ -66,7 +66,9 @@ async def check_last_job(node):
     if result:
         result_dict = { data_pair.split('=')[0]: data_pair.split('=')[1] for data_pair in result.split(' ') }
         keys = ['JobId', 'UserId', 'Account', 'JobState']
-        return { key: result_dict[key] for key in result_dict.keys() if key in keys }
+        result = { key: result_dict[key] for key in result_dict.keys() if key in keys }
+        end_date = (await run_local_command('sacct -j {} -o End -Pn | head -n1'.format(shlex.quote(result_dict['JobId']))))[0]
+        return { **result, 'End': end_date }
 
 async def check_slurmd_log(node):
     ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]') # https://stackoverflow.com/a/14693789/8706910

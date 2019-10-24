@@ -51,7 +51,7 @@ async def expand_groups(group):
     if group in GROUPS:
         *contents, = open(os.path.join(PDSH_GROUP_DIR, group), 'r')
         return [ node.strip() for node in contents ]
-    return [group]
+    return group.split(',')
 
 async def limit(sem, future):
     async with sem:
