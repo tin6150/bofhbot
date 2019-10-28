@@ -15,7 +15,13 @@ jobs:
       run: |
         echo Add other actions to build,
         echo test, and deploy your project.
-    - uses: nicolaschan/pyinstaller-action
+    - name: Pyinstaller
+      uses: nicolaschan/pyinstaller-action@v1
       with:
         input: bofhbot.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: bofhbot
+        path: dist/bofhbot
     
