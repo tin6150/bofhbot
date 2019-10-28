@@ -20,7 +20,7 @@ SYSTEMCTL_DAEMON_RELOAD_COMMAND = "sudo systemctl daemon-reload && sudo systemct
 
 def ssh(node):
     def ssh_command(command):
-        return 'ssh {node} {command}'.format(node=shlex.quote(node),command=shlex.quote(command))
+        return 'ssh -t {node} {command}'.format(node=shlex.quote(node),command=shlex.quote(command))
     return ssh_command
 
 def power_cycle(node, state):
