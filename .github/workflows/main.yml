@@ -11,6 +11,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: |
+        apt install -y python3 pip3
+        pip install virtualenv
         virtualenv venv
         source activate venv/bin/activate
         pip install -r requirements.txt
