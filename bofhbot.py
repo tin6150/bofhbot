@@ -22,7 +22,7 @@ import sys
 from os import path
 from pathlib import Path
 
-from bot_lib import check_nodes, show_partition_info
+from bot_lib import check_nodes, node_string_to_nodes, show_partition_info
 from bot_analyzer import analyze
 from bot_actions import suggest, interactive_suggest
 from convert_json import show_table
@@ -48,6 +48,7 @@ def process_cli() :
     analyze_parser.add_argument('nodes', nargs='*', default=['sinfo'])
 
     filter_parser = subparsers.add_parser('filter')
+    filter_parser.add_argument('-p', '--property', action='append', help='filter based on node property:value')
     filter_parser.add_argument('nodes', nargs='*', default=[])
 
     show_parser = subparsers.add_parser('show')
@@ -93,7 +94,18 @@ async def main():
         return show_status(args.nodes)
     if args.subparser_name == 'filter':
         status = read_stdin()
-        results = { node: data for node, data in status.items() if node in args.nodes }
+        if args.nodes:
+            nodes = await node_string_to_nodes(args.nodes)
+            results = { node: data for node, data in status.items() if node in nodes }
+        else:
+            results = status
+        properties = { p.split(':')[0].upper(): p.split(':')[1] for p in args.property }
+        def matches(data):
+            for k, v in properties.items():
+                if k not in data:
+                    return False
+                return str(data[k]).upper() == v.upper()
+        results = { node: data for node, data in results.items() if matches(data) }
         results_json = json.dumps(results, sort_keys=True, indent=2)
         if sys.stdout.isatty():
             return print(highlight(results_json, JsonLexer(), TerminalFormatter()))

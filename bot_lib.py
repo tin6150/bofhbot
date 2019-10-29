@@ -49,9 +49,18 @@ async def expand_groups(group):
     if group == 'sinfo':
         return await get_sinfo_nodes()
     if group in GROUPS:
-        *contents, = open(os.path.join(PDSH_GROUP_DIR, group), 'r')
-        return [ node.strip() for node in contents ]
-    return group.split(',')
+        with open(os.path.join(PDSH_GROUP_DIR, group), 'r') as f:
+            *contents, = f
+            return [ node.strip() for node in contents ]
+    return [group]
+
+async def node_string_to_nodes(node_strings):
+    nodes = set()
+    for nodelist in node_strings:
+        for node in nodelist.split(','):
+            nodes.add(node)
+    *nodes, = itertools.chain(*await asyncio.gather(*map(expand_groups, nodes)))
+    return nodes
 
 async def limit(sem, future):
     async with sem:
@@ -62,7 +71,7 @@ async def with_progress(bar, futures):
 
 async def check_nodes(nodes, use_sudo=True, concurrency=50):
     sinfo_df = await bot_checks.gather_sinfo()
-    *nodes, = itertools.chain(*await asyncio.gather(*map(expand_groups, nodes)))
+    nodes = await node_string_to_nodes(nodes)
     checks = [ check_node(node, sinfo_df, use_sudo=use_sudo) for node in nodes ]
     sem = asyncio.Semaphore(concurrency)
     checks = [ limit(sem, check) for check in checks ]
