@@ -99,7 +99,7 @@ async def main():
             results = { node: data for node, data in status.items() if node in nodes }
         else:
             results = status
-        properties = { p.split(':')[0].upper(): p.split(':')[1] for p in args.property }
+        properties = { p.split(':')[0].upper(): p.split(':')[1] for p in (args.property or []) }
         def matches(data):
             for k, v in properties.items():
                 if k not in data:
