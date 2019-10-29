@@ -9,10 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: |
-        sudo apt-get install -y python3-setuptools
-        pip3 install -r requirements.txt
     - name: Pyinstaller
       uses: nicolaschan/pyinstaller-action@v2
       with:
