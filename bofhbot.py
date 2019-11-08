@@ -39,19 +39,21 @@ def process_cli() :
     subparsers = parser.add_subparsers(dest='subparser_name')
 
     check_parser = subparsers.add_parser('check')
-    check_parser.add_argument('nodes', nargs='*', default=['sinfo'])
+    check_parser.add_argument('nodes', nargs='*', default=[])
     check_parser.add_argument('-x', '--no-sudo', dest='use_sudo', action='store_false', help='only run commands that do not require sudo')
     check_parser.add_argument('-c', '--concurrency', type=int, help='maximum number of nodes to check at once', default=50)
-    check_parser.set_defaults(use_sudo=True, concurrency=50)
+    check_parser.add_argument('-s', '--stdin', dest='read_stdin', action='store_true', help='read node list from stdin')
+    check_parser.set_defaults(read_stdin=False, use_sudo=True, concurrency=50)
 
     analyze_parser = subparsers.add_parser('analyze')
-    analyze_parser.add_argument('nodes', nargs='*', default=['sinfo'])
+    analyze_parser.add_argument('nodes', nargs='*', default=[])
 
     filter_parser = subparsers.add_parser('filter')
     filter_parser.add_argument('-p', '--property', action='append', help='filter based on node property:value')
     filter_parser.add_argument('nodes', nargs='*', default=[])
 
     show_parser = subparsers.add_parser('show')
+    show_parser.add_argument('-f', '--fields', nargs='*', default=[], help='show only selected fields in columns')
 
     suggest_parser = subparsers.add_parser('suggest')
     suggest_parser.add_argument('-i', '--ignore-reason', dest='use_reason', action='store_false', help='make suggestions ignoring sinfo reason')
@@ -76,7 +78,9 @@ async def main():
     args = process_cli()
     print(args, file=sys.stderr)
     if args.subparser_name == 'check':
-        results = await check_nodes(args.nodes, use_sudo=args.use_sudo, concurrency=args.concurrency)
+        nodes = (args.nodes + (sys.stdin.readlines() if args.read_stdin else [])) or ['sinfo']
+        nodes = [ node.strip() for node in nodes ]
+        results = await check_nodes(nodes, use_sudo=args.use_sudo, concurrency=args.concurrency)
         # db_storage(results, path.join(Path.home(), 'bofhbot.db'))
         results_json = json.dumps(results, sort_keys=True, indent=2)
         if sys.stdout.isatty():
@@ -85,7 +89,9 @@ async def main():
     if args.subparser_name == 'analyze':
         print(get_analysis(read_stdin()))
     if args.subparser_name == 'show':
-        show_table(read_stdin())
+        selected_fields = [ f.upper() for f in args.fields ]
+        data = { node: { k: v for k, v in data.items() if k.upper() in selected_fields or not args.fields } for node, data in read_stdin().items() }
+        show_table(data)
     if args.subparser_name == 'suggest':
         status = read_stdin()
         suggestions = get_suggestions(status, use_reason=args.use_reason)
@@ -96,7 +102,7 @@ async def main():
         status = read_stdin()
         if args.nodes:
             nodes = await node_string_to_nodes(args.nodes)
-            results = { node: data for node, data in status.items() if node in nodes }
+            results = { node: data for node, data in status.items() if node in nodes or node.split('.')[1] in args.nodes }
         else:
             results = status
         properties = { p.split(':')[0].upper(): p.split(':')[1] for p in (args.property or []) }
@@ -104,7 +110,9 @@ async def main():
             for k, v in properties.items():
                 if k not in data:
                     return False
-                return str(data[k]).upper() == v.upper()
+                if not str(data[k]).upper() == v.upper():
+                    return False
+            return True
         results = { node: data for node, data in results.items() if matches(data) }
         results_json = json.dumps(results, sort_keys=True, indent=2)
         if sys.stdout.isatty():
