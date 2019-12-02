@@ -95,6 +95,7 @@ async def check_node(node, sinfo_df, use_sudo=True):
     else:
         result = { name: None for name, _ in checks }
     result = { **pre_ssh, **sinfo_values, **result }
+    result['HOSTNAMES'] = node
     result['OVERALL'] = bot_checks.overall(result)
     result['SUGGESTION'] = bot_actions.suggest(node, bot_analyzer.analyze(result))
     return node, result
