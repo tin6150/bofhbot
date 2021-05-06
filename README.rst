@@ -36,3 +36,11 @@ module load python/3.6
         :align: center
         :alt: bofhbot output screenshot
 
+
+bofhbot "v1.1"
+==============
+
+As of 2021.0505
+the stable/regular use of bofhbot.py, is actually in 
+branch rest_draft_plan fd22ec4 tagged as v1.1_regUseBofhbot
+
