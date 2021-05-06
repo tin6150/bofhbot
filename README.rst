@@ -59,3 +59,8 @@ Known issues
 
 - terminal may get corrupted after runnint the `bot` command, use `reset` to restore terminal functionality.
   
+
+Credit
+------
+
+The bot code in this branch is almost entirely written by Nick.
