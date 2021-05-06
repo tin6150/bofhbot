@@ -36,3 +36,13 @@ module load python/3.6
         :align: center
         :alt: bofhbot output screenshot
 
+Known issues
+------------
+
+* std out redirect may truncate output.  Use | tee filename.out instead.  Affects v 0.2 with parallelized ssh.
+
+::
+
+  ./bofhbot.py > result.out      # this will get last few lines truncated
+  ./bofhbot.py | tee result.out  # this works correctly.
+
