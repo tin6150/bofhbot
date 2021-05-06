@@ -1,0 +1,21 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Pyinstaller
+      uses: nicolaschan/pyinstaller-action@v2
+      with:
+        script: bofhbot.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: bofhbot
+        path: dist/bofhbot
+    
