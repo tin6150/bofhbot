@@ -236,7 +236,7 @@ example of sinfo -R that are easy to fix:
 API vs CLI
 ==========
 
-* Programmatically, getting input data from API provided by Slurm or DRMAA should provide for a more stable input interface.
+* Programmatically, getting input data from API provided by Slurm or DRMAA should provide for a more stable input interface.   But Slurm didn't really have an API I could have used for this purpose (at the time when this bot was being designed).
 * But I want to minimize on requirement needed to run tool, thus handling output from cli tool like "sinfo -RSE" is easier on the user
 * Would be nice if sinfo or qhost can output in machne format like json, xml or even comma- or pipe- delimited.
 
