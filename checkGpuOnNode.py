@@ -9,12 +9,15 @@
 ## exp: 2 ## pdsh -w n0[209-217,262-264].savio3 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 ## exp: 2 ## pdsh -w n0[004-005].savio3 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 
+## version/changes
+## 0.1 Tin usable deviceQuery detection 
+
 
 import socket 
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
 from bofhbot_lib import *
-# could be set by argparse -v
+# could be set by argparse -v, recycle from bofhbot.py ++FIXME++
 bofhbot_lib.verboseLevel = 0 #6
 bofhbot_lib.dbgLevel = 0 #6
 
@@ -70,18 +73,26 @@ def queryOsDevPresent() :
 # queryOsDevPresent()-end
   
 
-# queryOsDevicePresent()-end
+def  findExpectedGpu() :
+  # ++FIXME++  stubcode below
+  # this function will parse /etc/slurm/gres.conf 
+  # use the current hostname ( machineName could be passed as fn argument )
+  # return how many gpu this machine should have
+  # node that have no gpu should return 0
+  return 0  
+# findExpectedGpu()-end
+
 
 def main():
   bofhbot_lib.dbg(5, "bofhbot I am")
   vprint(1, "## checkGpuOnNode.py begin  ##")
+  machineName = socket.gethostname()
   devQueryFound = queryDevicePresent()
-  gpuExpect = "2,4,8" # need parse gres.conf
+  gpuExpect = "2,4,8" # need parse gres.conf  # ++FIXME++ findExpectedGpu($machineName)
   osDevCount  = queryOsDevPresent()
-  maquina = socket.gethostname()
-  #print( "host: %s ; deviceQuery found: %s ; gpuExpected: %s ; /dev/nvidia* count: %s"  % (maquina, devQueryFound, gpuExpect, osDevCount ) )
-  print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (maquina, gpuExpect, osDevCount, devQueryFound ) )
-  # main()-end
+  #print( "host: %s ; deviceQuery found: %s ; gpuExpected: %s ; /dev/nvidia* count: %s"  % (machineName, devQueryFound, gpuExpect, osDevCount ) )
+  print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ) )
+# main()-end
 
 
 main()
