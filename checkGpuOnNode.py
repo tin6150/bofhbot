@@ -39,6 +39,7 @@ def queryDevicePresent() :
   devPattern = 'Device\ [0-9]'
   command = "/usr/local/bin/deviceQuery" + " > " + devQueryOutFile 
   runDevQueryExitCode = os.system(command) 
+  os.chmod(devQueryOutFile, 0o777)  # that strange 0o777 is needed by python
   devQueryFH = open( devQueryOutFile, 'r' )
   for line in devQueryFH : 
     dbg(4, "processing '%s'" % line.rstrip() )
@@ -59,6 +60,7 @@ def queryOsDevPresent() :
   osDevPattern = '/dev/nvidia[0-9]'
   command = "ls -l %s*" % osDevPattern + " > " + osDevOutFile 
   runQueryOsDevPresentExitCode = os.system(command) 
+  os.chmod(osDevOutFile, 0o777)
   osDevFH = open( osDevOutFile, 'r' )
   for line in osDevFH : 
     dbg(4, "processing '%s'" % line.rstrip() )
@@ -92,6 +94,8 @@ def main():
   osDevCount  = queryOsDevPresent()
   #print( "host: %s ; deviceQuery found: %s ; gpuExpected: %s ; /dev/nvidia* count: %s"  % (machineName, devQueryFound, gpuExpect, osDevCount ) )
   print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ) )
+
+	# stricly should clean up the /var/tmp/*out files created.  but they are 777 mode for now and maybe useful to have them around.
 # main()-end
 
 
