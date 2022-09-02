@@ -58,7 +58,7 @@ def queryOsDevPresent() :
   # count /dev/nvidia0 .. nvidia7 , but may include dead device
   osDevCount = 0
   osDevPattern = '/dev/nvidia[0-9]'
-  command = "ls -l %s*" % osDevPattern + " > " + osDevOutFile 
+  command = "ls -l %s*" % osDevPattern + " 2>/dev/null " + " > " + osDevOutFile
   runQueryOsDevPresentExitCode = os.system(command) 
   osDevFH = open( osDevOutFile, 'r' )
   for line in osDevFH : 
