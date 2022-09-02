@@ -132,6 +132,12 @@ def main():
   osDevCount  = queryOsDevPresent()
   #print( "host: %s ; deviceQuery found: %s ; gpuExpected: %s ; /dev/nvidia* count: %s"  % (machineName, devQueryFound, gpuExpect, osDevCount ) )
   print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ) )
+  if (gpuExpect != osDevCount):
+    print( "ERROR: expected %s gpu but found %s" % (gpuExpect, osDevCount) )
+    vprint(1, "## checkGpuOnNode.py end (error) ##")
+    return 1 
+  vprint(1, "## checkGpuOnNode.py end ##")
+  return 0
 # main()-end
 
 
