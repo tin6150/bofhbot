@@ -23,8 +23,8 @@ bofhbot_lib.verboseLevel = 0 #6
 bofhbot_lib.dbgLevel = 0 #6
 
 # global param :)  better as OOP get() fn or some such.
-devQueryOutFile = '/var/tmp/devQuery.out' # store deviceQuery output
-osDevOutFile = '/var/tmp/osDev.out'       # store ls -l /dev/nvidia* 
+devQueryOutFile = f'/var/tmp/devQuery.{os.getlogin()}.out' # store deviceQuery output
+osDevOutFile = f'/var/tmp/osDev.{os.getlogin()}.out'       # store ls -l /dev/nvidia* 
 
 
 def queryDevicePresent() : 
