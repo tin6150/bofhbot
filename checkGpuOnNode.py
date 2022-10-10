@@ -26,6 +26,7 @@ bofhbot_lib.dbgLevel = 0 #6
 devQueryOutFile = f'/var/tmp/devQuery.{os.getlogin()}.out' # store deviceQuery output
 osDevOutFile = f'/var/tmp/osDev.{os.getlogin()}.out'       # store ls -l /dev/nvidia* 
 
+emailRecipients = []
 
 def queryDevicePresent() : 
   # run command /usr/local/bin/deviceQuery  to detect number of live GPU on a system
@@ -123,6 +124,21 @@ def findExpectedGpu(machineName):
             return gresConf[nodeName]['Count']
     return 0
 
+def errorActions():
+  # sends email to admin
+  # TODO: finish this
+  pass
+
+def email(recipients, subject, body):
+  # sends emails to recipients
+  # TODO: finish this
+  pass
+
+def shouldEmail():
+  # returns true if email should be sent
+  # TODO: finish this
+  pass
+
 def main():
   bofhbot_lib.dbg(5, "bofhbot I am")
   vprint(1, "## checkGpuOnNode.py begin  ##")
@@ -130,19 +146,19 @@ def main():
   devQueryFound = queryDevicePresent()
   gpuExpect = findExpectedGpu(machineName)
   osDevCount  = queryOsDevPresent()
-  #print( "host: %s ; deviceQuery found: %s ; gpuExpected: %s ; /dev/nvidia* count: %s"  % (machineName, devQueryFound, gpuExpect, osDevCount ) )
-  print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ) )
+  print("host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ))
   if (gpuExpect != osDevCount):
-    print( "ERROR: expected %s gpu but found %s" % (gpuExpect, osDevCount) )
+    print("ERROR: expected %s gpu but found %s" % (gpuExpect, osDevCount))
+    errorActions()
+    if shouldEmail():
+      email(emailRecipients, '', '')
     vprint(1, "## checkGpuOnNode.py end (error) ##")
-    return 1 
+    exit(1)
   vprint(1, "## checkGpuOnNode.py end ##")
-  return 0
+  exit(0)
 # main()-end
 
-
 main()
-
 
 #### vim modeline , but don't seems to fork on brc login node :(
 #### vim: syntax=python
