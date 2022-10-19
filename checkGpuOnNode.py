@@ -124,37 +124,37 @@ def findExpectedGpu(machineName):
             return gresConf[nodeName]['Count']
     return 0
 
-def errorActions():
-  # sends email to admin
-  # TODO: finish this
-  pass
+def gpuErrorActions(message):
+  # Actions to run when a gpu error is detected
+  logGpuError(message)
+  emailGpuError(message)
 
-def email(recipients, subject, body):
-  # sends emails to recipients
-  # TODO: finish this
-  pass
+def logGpuError(message):
+  # Logs in syslog
+  os.system('logger -p local0.error -t gpuError "%s"' % message)
 
-def shouldEmail():
-  # returns true if email should be sent
-  # TODO: finish this
+def emailGpuError(message):
+  # Emails the error to the recipients in emailRecipients
+  # TODO
   pass
 
 def main():
   bofhbot_lib.dbg(5, "bofhbot I am")
-  vprint(1, "## checkGpuOnNode.py begin  ##")
+  vprint(2, "## checkGpuOnNode.py begin  ##")
   machineName = socket.gethostname()
   devQueryFound = queryDevicePresent()
   gpuExpect = findExpectedGpu(machineName)
   osDevCount  = queryOsDevPresent()
-  print("host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ))
+  message =  "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ;" \
+             "deviceQuery found: %s" \
+             % (machineName, gpuExpect, osDevCount, devQueryFound )
+  vprint(1, message)
   if (gpuExpect != osDevCount):
-    print("ERROR: expected %s gpu but found %s" % (gpuExpect, osDevCount))
-    errorActions()
-    if shouldEmail():
-      email(emailRecipients, '', '')
-    vprint(1, "## checkGpuOnNode.py end (error) ##")
+    vprint(1, "ERROR: expected %s gpu but found %s" % (gpuExpect, osDevCount))
+    gpuErrorActions(message)
+    vprint(2, "## checkGpuOnNode.py end (error) ##")
     exit(1)
-  vprint(1, "## checkGpuOnNode.py end ##")
+  vprint(2, "## checkGpuOnNode.py end ##")
   exit(0)
 # main()-end
 
