@@ -10,7 +10,8 @@
 ## exp: 2 ## pdsh -w n0[004-005].savio3 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 
 ## version/changes
-## 0.1 Tin usable deviceQuery detection 
+## 0.1  Tin usable deviceQuery detection 
+## 0.1a Prepping for Hamza's PR
 
 
 import socket 
