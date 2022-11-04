@@ -12,6 +12,7 @@
 ## version/changes
 ## 0.1  Tin usable deviceQuery detection 
 ## 0.1a Prepping for Hamza's PR
+## 0.2  merged with Hamza's code
 
 
 import socket 
@@ -20,8 +21,8 @@ import os
 import bofhbot_lib
 from bofhbot_lib import *
 # could be set by argparse -v, recycle from bofhbot.py ++FIXME++
-bofhbot_lib.verboseLevel = 0 #6
-bofhbot_lib.dbgLevel = 0 #6
+bofhbot_lib.verboseLevel  = 6 #6
+bofhbot_lib.dbgLevel      = 6 #6
 
 # global param :)  better as OOP get() fn or some such.
 devQueryOutFile = f'/var/tmp/devQuery.{os.getlogin()}.out' # store deviceQuery output
@@ -150,11 +151,13 @@ def main():
   osDevCount  = queryOsDevPresent()
   # stricly should clean up the /var/tmp/*out files created.  but they are 777 mode for now and maybe useful to have them around.
   #print( "host: %s ; deviceQuery found: %s ; gpuExpected: %s ; /dev/nvidia* count: %s"  % (machineName, devQueryFound, gpuExpect, osDevCount ) )
-  print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ) )    ## // old print by tin
-  message =  "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ;" \
+  #print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ) )    ## // old print by tin
+
+  message =  "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; " \
              "deviceQuery found: %s" \
              % (machineName, gpuExpect, osDevCount, devQueryFound )
   vprint(1, message)
+
   if (gpuExpect != osDevCount):
     vprint(1, "ERROR: expected %s gpu but found %s" % (gpuExpect, osDevCount))
     gpuErrorActions(message)
