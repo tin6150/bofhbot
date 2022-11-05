@@ -141,6 +141,7 @@ def logGpuError(message):
 
 def emailGpuError(message):
   # Emails the error to the recipients in emailRecipients
+  # send-mail: Cannot open mail:25
   # Check: node seems to have problem executing mailx.  ++FIXME++
   os.system('echo "%s" | mailx -s "gpuOffline - %s" %s' % (message,message,emailRecipient) )
   pass
