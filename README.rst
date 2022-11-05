@@ -39,16 +39,28 @@ The salient branches are:
 
 - v1_classic_cli : bofhbot with wide screen output, color coded for sys admin eval
 - v2_rest+client : bot check | bot suggest # commands that could be cron'd for automatic node fix
+- checkGpu       : script to check GPU status, maybe take corrective action.
 
 see README in the corresponding branches for more details of each version
 
+Future work
+===========
+
+- Connect to slack to show error status, get confirmation from sysadmin before taking corrective action 
+  (eg rebooting an already drained node).
+  Connectivity to slack need to be worked on, which may need adding a fat library to this.
+  If bot truly become reactive, need to explore security aspects.  
+  Receiving command is obvious first challenge for HPC center.
+  But DoS attack can likely be largely mitigated if commands allowed are time bound, only valid when node is already drained and thus no effect on running jobs.
+  
+- Other scripts to check hardware health status (eg alert LED shown on chassis)
 
 Credit
 ======
 
-- Nicolas Chan wrote most of the code that is currently in use.
+- Nicolas Chan wrote most of the code for v2
 - Tin Ho seeded this project.
-- Other who have contributed: Frank Chen, Zashary.  
+- Other who have contributed: Hamza Kundi, Frank Chen, Zashary.  
 
 Thank you!
 
