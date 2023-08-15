@@ -19,6 +19,7 @@
 
 import socket 
 import os
+import getpass
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
 from bofhbot_lib import *
@@ -27,8 +28,8 @@ bofhbot_lib.verboseLevel  = 1 #6 = very verbose; 0 = silent (check exist code, s
 bofhbot_lib.dbgLevel      = 1 #6
 
 # global param :)  better as OOP get() fn or some such.
-devQueryOutFile = f'/var/tmp/devQuery.{os.getlogin()}.out' # store deviceQuery output
-osDevOutFile = f'/var/tmp/osDev.{os.getlogin()}.out'       # store ls -l /dev/nvidia* 
+devQueryOutFile = f'/var/tmp/devQuery.{getpass.getuser()}.out' # store deviceQuery output
+osDevOutFile = f'/var/tmp/osDev.{getpass.getuser()}.out'       # store ls -l /dev/nvidia* 
 
 emailRecipient = 'tin@berkeley.edu'
 
@@ -97,7 +98,7 @@ def parseGresConf():
     with open('/etc/slurm/gres.conf', 'r') as f:
         for line in f:
             line = line.strip()
-            if not line.startswith('NodeName='):
+            if not line.startswith('Nodename='):
                 continue
             fields = line.split()
             nodeName = fields[0].split('=')[1]
@@ -108,15 +109,16 @@ def parseGresConf():
             gresConf[nodeName]['Count'] = int(gresConf[nodeName]['Count'])
 
             gresConf[nodeName]['Nodes'] = set()
-            prefix = nodeName[:nodeName.index('[')]
-            suffix = nodeName[nodeName.index(']') + 1:]
-            suffixPrefix = suffix[:suffix.index('[')]
-            suffixSuffix = suffix[suffix.index(']') + 1:]
-            suffixRange = suffix[suffix.index('[') + 1:suffix.index(']')]   
-            nodeRange = nodeName[nodeName.index('[') + 1:nodeName.index(']')]
-            for i in parseRange(nodeRange):
-                for j in parseRange(suffixRange):
-                    gresConf[nodeName]['Nodes'].add(f'%s%0{5-len(prefix)}d%s%s%s' % (prefix, i, suffixPrefix, j, suffixSuffix))
+            gresConf[nodeName]['Nodes'].add((nodeName.replace('[','')).replace(']',''))
+            #prefix = nodeName[:nodeName.index('[')]
+            #suffix = nodeName[nodeName.index(']') + 1:]
+            #suffixPrefix = suffix[:suffix.index('[')]
+            #suffixSuffix = suffix[suffix.index(']') + 1:]
+            #suffixRange = suffix[suffix.index('[') + 1:suffix.index(']')]   
+            #nodeRange = nodeName[nodeName.index('[') + 1:nodeName.index(']')]
+            #for i in parseRange(nodeRange):
+                #for j in parseRange(suffixRange):
+                    #gresConf[nodeName]['Nodes'].add(f'%s%0{5-len(prefix)}d%s%s%s' % (prefix, i, suffixPrefix, j, suffixSuffix))
     return gresConf
 
 def findExpectedGpu(machineName):
