@@ -1,3 +1,4 @@
+
 #!/global/software/sl-7.x86_64/modules/langs/python/3.6/bin/python3
 
 ## #!/usr/bin/env python3
@@ -23,6 +24,10 @@ import getpass
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
 from bofhbot_lib import *
+import csv, datetime
+import smtplib
+from tools import *
+from jinja2 import Environment, FileSystemLoader
 # TODO: use argparse -v, recycle from bofhbot.py ++FIXME++
 bofhbot_lib.verboseLevel  = 1 #6 = very verbose; 0 = silent (check exist code, syslog/email, eg use in cron) 
 bofhbot_lib.dbgLevel      = 1 #6
@@ -31,7 +36,7 @@ bofhbot_lib.dbgLevel      = 1 #6
 devQueryOutFile = f'/var/tmp/devQuery.{getpass.getuser()}.out' # store deviceQuery output
 osDevOutFile = f'/var/tmp/osDev.{getpass.getuser()}.out'       # store ls -l /dev/nvidia* 
 
-emailRecipient = 'tin@berkeley.edu'
+emailRecipient = 'hchristopher@lbl.gov'
 
 def queryDevicePresent() : 
   # run command /usr/local/bin/deviceQuery  to detect number of live GPU on a system
@@ -145,7 +150,33 @@ def emailGpuError(message):
   # Emails the error to the recipients in emailRecipients
   # send-mail: Cannot open mail:25
   # Check: node seems to have problem executing mailx.  ++FIXME++
-  os.system('echo "%s" | mailx -s "gpuOffline - %s" %s' % (message,message,emailRecipient) )
+  # os.system('echo "%s" | mailx -s "gpuOffline - %s" %s' % (message,message,emailRecipient) )
+  # notest = True
+  # server = 'smtp.lbl.gov'
+  # From = 'High Performance Computing Services <hpcs@lbl.gov>'
+  # Cc = []
+  # Bcc = ['High Performance Computing Services <hpcs@lbl.gov>']
+  # subject = "test"
+  # To = [emailRecipient]
+  # Cc = []
+  # Bcc = []
+  # feeder = ""
+  content_of_email = f"gpuOffline - {message}"
+  # feeder = content_of_email
+  # try:
+    # info('Sending email to \"%s\" ...' % To)
+    # email = send_email(server, From, To, Cc, Bcc, subject, feeder, notest)
+  # except:
+    # error('Error sending email to \"%s\", abort.' % To)
+  # Open the file in append & read mode ('a+')
+  with open("/global/home/users/hchristopher/errorEmail.txt", "a+") as file_object:
+    file_object.seek(0)
+    # If file is not empty then append '\n'
+    data = file_object.read(100)
+    if len(data) > 0 :
+        file_object.write("\n")
+    # Append text at the end of file
+    file_object.write(content_of_email)
   pass
 
 
