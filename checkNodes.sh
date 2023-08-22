@@ -16,6 +16,10 @@ wait
 > /global/home/users/hchristopher/bofhbot/data/fullReport.txt
 python sshCheck.py
 wait
+truncate -s -1 /global/home/users/hchristopher/bofhbot/data/reachableNodes.txt
+truncate -s -1 /global/home/users/hchristopher/bofhbot/data/unreachableNodes.txt
+
+clush -w $(cat /global/home/users/hchristopher/bofhbot/data/reachableNodes.txt) python /global/home/users/hchristopher/bofhbot/checkGpuOnNode.py
 echo >> /global/home/users/hchristopher/bofhbot/data/errorEmail.txt
 echo >> /global/home/users/hchristopher/bofhbot/data/errorEmail.txt
 echo "Down Nodes, can't SSH" >> /global/home/users/hchristopher/bofhbot/data/errorEmail.txt
