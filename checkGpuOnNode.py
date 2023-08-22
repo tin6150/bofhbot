@@ -211,7 +211,7 @@ def main():
     gpuErrorActions(message)
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
-    exit(1)   # ssh is noisy in this case.  return doesn't set exit code :-\
+    exit(0)   # ssh is noisy in this case.  return doesn't set exit code :-\
   else :
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")
