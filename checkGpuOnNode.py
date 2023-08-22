@@ -100,7 +100,6 @@ def parseRange(rangeStr):
 def parseGresConf():
     """Parse /etc/slurm/gres.conf and return a dictionary of gpu counts."""
     cluster = os.popen('sacctmgr list cluster | tail -1 | awk \'{print $1;}\'').read().split('\n')[0]
-    print(cluster)
     gresConf = {}
     with open('/etc/slurm/gres.conf', 'r') as f:
         for line in f:
