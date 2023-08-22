@@ -1,4 +1,4 @@
-#!/global/software/sl-7.x86_64/modules/langs/python/2.7/bin/python
+#!/global/software/sl-7.x86_64/modules/langs/python/3.6/bin/python
 
 import csv, datetime, os
 import smtplib
@@ -10,18 +10,18 @@ from jinja2 import Environment, FileSystemLoader
 def main():
   notest = True
   # Email info.
-  server = 'smtp.lbl.gov'
+  server = 'master.brc.berkeley.edu'
   From = 'High Performance Computing Services <hpcs@lbl.gov>'
   Cc = []
   Bcc = ['High Performance Computing Services <hpcs@lbl.gov>']
 
   # Sends a test email 
-  subject = "[LRC GPU error]"
+  subject = "[BRC GPU error]"
   To = ['hchristopher@lbl.gov']
   Cc = ['tin@lbl.gov']
   Bcc = []
   feeder = ""
-  with open("/global/home/users/hchristopher/errorEmail.txt", "r") as file_in:
+  with open("/global/home/users/hchristopher/bofhbot/data/fullReport.txt", "r") as file_in:
    feeder = file_in.read()
   try:
     if(len(feeder)!=0):

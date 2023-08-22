@@ -99,31 +99,39 @@ def parseRange(rangeStr):
 
 def parseGresConf():
     """Parse /etc/slurm/gres.conf and return a dictionary of gpu counts."""
+    cluster = os.popen('sacctmgr list cluster | tail -1 | awk \'{print $1;}\'').read().split('\n')[0]
+    print(cluster)
     gresConf = {}
     with open('/etc/slurm/gres.conf', 'r') as f:
         for line in f:
             line = line.strip()
-            if not line.startswith('Nodename='):
+            if(cluster == 'brc'):
+              if not line.startswith('NodeName='):
+                continue
+            else:
+              if not line.startswith('Nodename='):
                 continue
             fields = line.split()
             nodeName = fields[0].split('=')[1]
             gresConf[nodeName] = {}
             for field in fields[1:]:
+              if('=' in field):
                 key, value = field.split('=')
                 gresConf[nodeName][key] = value
             gresConf[nodeName]['Count'] = int(gresConf[nodeName]['Count'])
-
             gresConf[nodeName]['Nodes'] = set()
-            gresConf[nodeName]['Nodes'].add((nodeName.replace('[','')).replace(']',''))
-            #prefix = nodeName[:nodeName.index('[')]
-            #suffix = nodeName[nodeName.index(']') + 1:]
-            #suffixPrefix = suffix[:suffix.index('[')]
-            #suffixSuffix = suffix[suffix.index(']') + 1:]
-            #suffixRange = suffix[suffix.index('[') + 1:suffix.index(']')]   
-            #nodeRange = nodeName[nodeName.index('[') + 1:nodeName.index(']')]
-            #for i in parseRange(nodeRange):
-                #for j in parseRange(suffixRange):
-                    #gresConf[nodeName]['Nodes'].add(f'%s%0{5-len(prefix)}d%s%s%s' % (prefix, i, suffixPrefix, j, suffixSuffix))
+            if(cluster == 'brc'):
+              prefix = nodeName[:nodeName.index('[')]
+              suffix = nodeName[nodeName.index(']') + 1:]
+              suffixPrefix = suffix[:suffix.index('[')]
+              suffixSuffix = suffix[suffix.index(']') + 1:]
+              suffixRange = suffix[suffix.index('[') + 1:suffix.index(']')]   
+              nodeRange = nodeName[nodeName.index('[') + 1:nodeName.index(']')]
+              for i in parseRange(nodeRange):
+                for j in parseRange(suffixRange):
+                  gresConf[nodeName]['Nodes'].add(f'%s%0{5-len(prefix)}d%s%s%s' % (prefix, i, suffixPrefix, j, suffixSuffix))
+            else:
+              gresConf[nodeName]['Nodes'].add((nodeName.replace('[','')).replace(']',''))
     return gresConf
 
 def findExpectedGpu(machineName):
@@ -169,7 +177,7 @@ def emailGpuError(message):
   # except:
     # error('Error sending email to \"%s\", abort.' % To)
   # Open the file in append & read mode ('a+')
-  with open("/global/home/users/hchristopher/errorEmail.txt", "a+") as file_object:
+  with open("/global/home/users/hchristopher/bofhbot/data/errorEmail.txt", "a+") as file_object:
     file_object.seek(0)
     # If file is not empty then append '\n'
     data = file_object.read(100)
