@@ -17,6 +17,8 @@
 ## 0.2  merged with Hamza's code
 ## 0.3  Tin - better error detection, output
 
+## required software
+## Clustershell: module load python/3.6, pip install --user ClusterShell
 
 import socket 
 import os
