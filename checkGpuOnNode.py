@@ -18,7 +18,7 @@
 ## 0.3  Tin - better error detection, output
 
 ## required software
-## Clustershell: module load python/3.6, pip install --user ClusterShell
+## ClusterShell: pip install --user ClusterShell
 
 import socket 
 import os
@@ -109,9 +109,11 @@ def parseGresConf():
             if(cluster == 'brc'):
               if not line.startswith('NodeName='):
                 continue
-            else:
+            elif(cluster == 'perceus-00'):
               if not line.startswith('Nodename='):
                 continue
+            else:
+              break
             fields = line.split()
             nodeName = fields[0].split('=')[1]
             gresConf[nodeName] = {}
@@ -131,8 +133,10 @@ def parseGresConf():
               for i in parseRange(nodeRange):
                 for j in parseRange(suffixRange):
                   gresConf[nodeName]['Nodes'].add(f'%s%0{5-len(prefix)}d%s%s%s' % (prefix, i, suffixPrefix, j, suffixSuffix))
-            else:
+            elif(cluster == 'perceus-00'):
               gresConf[nodeName]['Nodes'].add((nodeName.replace('[','')).replace(']',''))
+            else:
+              break
     return gresConf
 
 def findExpectedGpu(machineName):
