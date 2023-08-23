@@ -28,7 +28,6 @@ wait
 python sshCheck.py
 wait
 truncate -s -1 ~/bofhbot/data/reachableNodes.txt
-echo
 clush -w $(cat ~/bofhbot/data/reachableNodes.txt) python ~/bofhbot/checkGpuOnNode.py
 ~/bofhbot/sortNodes.sh
 echo >> ~/bofhbot/data/errorEmail.txt
