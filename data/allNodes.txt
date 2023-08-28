@@ -1,19 +1,12 @@
-n0136.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0137.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0129.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0128.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0130.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0131.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0132.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0133.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0134.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0135.savio4: Permission denied (publickey,gssapi-keyex,gssapi-with-mic,keyboard-interactive).
-n0279.savio3: ssh: connect to host n0279.savio3 port 22: No route to host
-n0143.savio4: ssh: connect to host n0143.savio4 port 22: No route to host
-n0278.savio3: ssh: connect to host n0278.savio3 port 22: No route to host
+n0228.savio2: ssh: connect to host n0228.savio2 port 22: No route to host
+n0300.savio2: ssh: connect to host n0300.savio2 port 22: No route to host
+n0142.savio4: ssh: connect to host n0142.savio4 port 22: No route to host
 n0277.savio3: ssh: connect to host n0277.savio3 port 22: No route to host
+n0143.savio4: ssh: connect to host n0143.savio4 port 22: No route to host
 n0144.savio4: ssh: connect to host n0144.savio4 port 22: No route to host
 n0145.savio4: ssh: connect to host n0145.savio4 port 22: No route to host
+n0278.savio3: ssh: connect to host n0278.savio3 port 22: No route to host
+n0279.savio3: ssh: connect to host n0279.savio3 port 22: No route to host
 n0281.savio3: ssh: connect to host n0281.savio3 port 22: No route to host
 n0280.savio3: ssh: connect to host n0280.savio3 port 22: No route to host
 n0016.savio2: ssh: connect to host n0016.savio2 port 22: No route to host
@@ -21,107 +14,100 @@ n0017.savio2: ssh: connect to host n0017.savio2 port 22: No route to host
 n0020.savio2: ssh: connect to host n0020.savio2 port 22: No route to host
 n0021.savio2: ssh: connect to host n0021.savio2 port 22: No route to host
 n0022.savio2: ssh: connect to host n0022.savio2 port 22: No route to host
-n0024.savio2: ssh: connect to host n0024.savio2 port 22: No route to host
 n0023.savio2: ssh: connect to host n0023.savio2 port 22: No route to host
+n0024.savio2: ssh: connect to host n0024.savio2 port 22: No route to host
 n0025.savio2: ssh: connect to host n0025.savio2 port 22: No route to host
 n0026.savio2: ssh: connect to host n0026.savio2 port 22: No route to host
-n0228.savio2: ssh: connect to host n0228.savio2 port 22: No route to host
-n0300.savio2: ssh: connect to host n0300.savio2 port 22: No route to host
-n0140.savio4: ssh: connect to host n0140.savio4 port 22: No route to host
-n0141.savio4: ssh: connect to host n0141.savio4 port 22: No route to host
-n0142.savio4: ssh: connect to host n0142.savio4 port 22: No route to host
-clush: n0136.savio4: exited with exit code 255
-clush: n0137.savio4: exited with exit code 255
-clush: n0128.savio4: exited with exit code 255
-clush: n0129.savio4: exited with exit code 255
-clush: n0130.savio4: exited with exit code 255
-clush: n0131.savio4: exited with exit code 255
-clush: n0132.savio4: exited with exit code 255
-clush: n0133.savio4: exited with exit code 255
-clush: n0134.savio4: exited with exit code 255
-clush: n0135.savio4: exited with exit code 255
-clush: n0279.savio3: exited with exit code 255
-clush: n0143.savio4: exited with exit code 255
-clush: n0278.savio3: exited with exit code 255
-clush: n0144.savio4: exited with exit code 255
+clush: n0228.savio2: exited with exit code 255
+clush: n0300.savio2: exited with exit code 255
+clush: n0142.savio4: exited with exit code 255
 clush: n0277.savio3: exited with exit code 255
+clush: n0143.savio4: exited with exit code 255
+clush: n0144.savio4: exited with exit code 255
 clush: n0145.savio4: exited with exit code 255
-clush: n0280.savio3: exited with exit code 255
+clush: n0278.savio3: exited with exit code 255
+clush: n0279.savio3: exited with exit code 255
 clush: n0281.savio3: exited with exit code 255
+clush: n0280.savio3: exited with exit code 255
 clush: n0016.savio2: exited with exit code 255
 clush: n0017.savio2: exited with exit code 255
 clush: n0020.savio2: exited with exit code 255
 clush: n0021.savio2: exited with exit code 255
 clush: n0022.savio2: exited with exit code 255
-clush: n0024.savio2: exited with exit code 255
 clush: n0023.savio2: exited with exit code 255
+clush: n0024.savio2: exited with exit code 255
 clush: n0025.savio2: exited with exit code 255
 clush: n0026.savio2: exited with exit code 255
-clush: n0228.savio2: exited with exit code 255
-clush: n0300.savio2: exited with exit code 255
-clush: n0140.savio4: exited with exit code 255
-clush: n0141.savio4: exited with exit code 255
-clush: n0142.savio4: exited with exit code 255
-n0159.savio3:  14:51:30 up 121 days,  4:55,  0 users,  load average: 3.99, 3.97, 3.95
-n0137.savio3:  14:51:31 up 139 days, 22:38,  0 users,  load average: 3.77, 3.89, 3.94
-n0138.savio3:  14:51:31 up 26 days,  3:59,  0 users,  load average: 3.74, 3.79, 3.79
-n0274.savio3:  14:51:31 up 121 days,  5:10,  0 users,  load average: 2.03, 2.02, 2.03
-n0264.savio3:  14:51:31 up 115 days,  1:38,  0 users,  load average: 2.03, 2.02, 1.98
-n0217.savio3:  14:51:31 up 116 days, 22:23,  0 users,  load average: 0.00, 0.01, 0.05
-n0161.savio3:  14:51:31 up 121 days,  4:54,  0 users,  load average: 3.80, 3.91, 3.94
-n0273.savio3:  14:51:31 up 115 days,  1:39,  0 users,  load average: 1.86, 1.94, 1.94
-n0160.savio3:  14:51:31 up 116 days, 22:23,  0 users,  load average: 3.96, 3.97, 3.96
-n0262.savio3:  14:51:31 up 139 days, 22:36,  4 users,  load average: 2.10, 1.98, 1.96
-n0210.savio3:  14:51:31 up 139 days, 22:36,  2 users,  load average: 3.00, 3.01, 3.05
-n0263.savio3:  14:51:31 up 116 days, 22:23,  0 users,  load average: 1.95, 1.97, 1.97
-n0212.savio3:  14:51:31 up 119 days,  4:58,  0 users,  load average: 2.00, 1.99, 1.95
-n0211.savio3:  14:51:31 up 121 days,  5:14,  0 users,  load average: 1.98, 1.99, 1.96
-n0215.savio3:  14:51:31 up 139 days, 22:34,  0 users,  load average: 2.00, 2.00, 1.97
-n0209.savio3:  14:51:31 up 139 days, 22:34,  0 users,  load average: 0.11, 0.12, 0.08
-n0276.savio3:  14:51:31 up 134 days,  2:18,  0 users,  load average: 1.21, 1.07, 1.06
-n0275.savio3:  14:51:31 up 116 days, 22:23,  0 users,  load average: 1.94, 1.97, 1.95
-n0018.savio2:  14:51:31 up 107 days,  5:11,  1 user,  load average: 0.14, 0.07, 0.05
-n0213.savio3:  14:51:31 up 115 days,  1:31,  0 users,  load average: 1.93, 1.97, 1.95
-n0214.savio3:  14:51:31 up 121 days,  5:08,  0 users,  load average: 2.10, 2.02, 1.97
-n0216.savio3:  14:51:31 up 115 days,  1:34,  0 users,  load average: 2.01, 1.98, 1.96
-n0143.savio3:  14:51:31 up 25 days, 22:00,  0 users,  load average: 18.08, 16.13, 15.72
-n0012.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.03, 0.03, 0.05
-n0227.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 2.39, 2.53, 2.56
-n0144.savio3:  14:51:31 up 9 days,  5:07,  0 users,  load average: 6.69, 6.56, 6.92
-n0013.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.07, 0.06, 0.05
-n0015.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.06, 0.05, 0.05
-n0014.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.00, 0.01, 0.05
-n0229.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 2.68, 2.38, 2.28
-n0145.savio3:  14:51:31 up 9 days,  5:07,  0 users,  load average: 6.38, 5.99, 6.12
-n0019.savio2:  14:51:31 up 139 days, 22:26,  1 user,  load average: 0.00, 0.01, 0.05
-n0223.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.00, 0.01, 0.05
-n0225.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.00, 0.02, 0.05
-n0224.savio2:  14:51:31 up 139 days, 22:26,  1 user,  load average: 0.00, 0.01, 0.05
-n0176.savio3:  14:51:31 up 56 days, 21:57,  0 users,  load average: 9.25, 8.28, 7.92
-n0298.savio2:  14:51:31 up 7 days, 22:43,  0 users,  load average: 0.00, 0.01, 0.05
-n0299.savio2:  14:51:31 up 14 days, 21:46,  0 users,  load average: 0.00, 0.02, 0.05
-n0226.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.04, 0.05, 0.05
-n0174.savio3:  14:51:31 up 9 days,  5:07,  0 users,  load average: 6.52, 6.22, 6.16
-n0175.savio3:  14:51:31 up 30 days,  3:39,  0 users,  load average: 7.30, 6.63, 6.67
-n0259.savio3:  14:51:31 up 83 days, 13 min,  0 users,  load average: 9.88, 9.78, 9.82
-n0261.savio3:  14:51:31 up 83 days, 13 min,  0 users,  load average: 12.29, 11.72, 11.64
-n0005.savio3:  14:51:31 up 83 days, 15 min,  0 users,  load average: 1.03, 1.02, 1.05
-n0138.savio4:  14:51:31 up 1 day, 36 min,  0 users,  load average: 0.18, 0.23, 24.08
-n0258.savio3:  14:51:31 up 30 days,  3:37,  0 users,  load average: 3.89, 4.78, 4.95
-n0301.savio2:  14:51:31 up 15 days,  1:14,  0 users,  load average: 0.06, 0.06, 0.05
-n0260.savio3:  14:51:31 up 83 days, 13 min,  0 users,  load average: 5.50, 5.53, 5.27
-n0134.savio3:  14:51:31 up 121 days,  5:14,  0 users,  load average: 3.98, 3.93, 3.95
-n0158.savio3:  14:51:31 up 116 days, 22:23,  0 users,  load average: 3.96, 3.92, 3.90
-n0135.savio3:  14:51:31 up 103 days,  3:30,  0 users,  load average: 3.73, 3.87, 3.93
-n0136.savio3:  14:51:31 up 102 days, 20:13,  0 users,  load average: 3.85, 3.70, 3.68
-n0302.savio2:  14:51:31 up 139 days, 22:26,  0 users,  load average: 0.05, 0.04, 0.05
-n0004.savio3:  14:51:31 up 106 days, 16:29,  0 users,  load average: 11.53, 11.39, 11.35
-n0123.savio4:  14:51:31 up 5 days, 3 min,  1 user,  load average: 10.08, 10.57, 10.79
-n0124.savio4:  14:51:31 up 5 days, 3 min,  0 users,  load average: 11.86, 12.42, 12.61
-n0120.savio4:  14:51:31 up 22 days, 21:06,  0 users,  load average: 10.40, 10.46, 10.00
-n0125.savio4:  14:51:31 up 5 days, 2 min,  0 users,  load average: 0.31, 0.18, 0.10
-n0121.savio4:  14:51:31 up 20 days, 21:11,  2 users,  load average: 11.24, 11.31, 10.87
-n0127.savio4:  14:51:31 up 5 days, 2 min,  0 users,  load average: 0.43, 0.18, 0.10
-n0122.savio4:  14:51:31 up 5 days, 3 min,  0 users,  load average: 0.33, 0.23, 2.36
-n0126.savio4:  14:51:31 up 5 days, 2 min,  0 users,  load average: 0.36, 0.18, 0.10
-n0139.savio4:  14:51:31 up 39 min,  0 users,  load average: 0.29, 0.14, 0.09
+n0134.savio3:  09:24:19 up 125 days, 23:47,  0 users,  load average: 3.02, 3.04, 3.27
+n0161.savio3:  09:24:19 up 125 days, 23:27,  0 users,  load average: 0.05, 0.03, 0.05
+n0135.savio3:  09:24:19 up 107 days, 22:03,  0 users,  load average: 0.06, 0.04, 0.43
+n0136.savio3:  09:24:19 up 107 days, 14:46,  0 users,  load average: 2.02, 2.02, 2.29
+n0211.savio3:  09:24:19 up 125 days, 23:47,  0 users,  load average: 0.99, 1.03, 1.04
+n0138.savio3:  09:24:19 up 30 days, 22:32,  0 users,  load average: 1.97, 1.96, 2.01
+n0159.savio3:  09:24:19 up 125 days, 23:27,  0 users,  load average: 0.02, 0.02, 0.05
+n0160.savio3:  09:24:19 up 121 days, 16:56,  0 users,  load average: 0.02, 0.02, 0.05
+n0210.savio3:  09:24:19 up 144 days, 17:09,  2 users,  load average: 5.30, 4.19, 2.53
+n0262.savio3:  09:24:19 up 144 days, 17:09,  4 users,  load average: 2.66, 2.78, 2.78
+n0137.savio3:  09:24:19 up 144 days, 17:10,  0 users,  load average: 3.98, 3.99, 4.03
+n0214.savio3:  09:24:19 up 125 days, 23:41,  0 users,  load average: 0.04, 0.04, 0.05
+n0263.savio3:  09:24:19 up 121 days, 16:56,  0 users,  load average: 3.82, 2.19, 0.93
+n0215.savio3:  09:24:19 up 144 days, 17:06,  0 users,  load average: 0.00, 0.01, 0.05
+n0213.savio3:  09:24:19 up 119 days, 20:04,  0 users,  load average: 1.03, 1.07, 1.06
+n0209.savio3:  09:24:19 up 144 days, 17:06,  0 users,  load average: 0.00, 0.01, 0.05
+n0217.savio3:  09:24:19 up 121 days, 16:56,  0 users,  load average: 0.02, 0.02, 0.05
+n0216.savio3:  09:24:19 up 119 days, 20:06,  0 users,  load average: 0.00, 0.01, 0.05
+n0212.savio3:  09:24:19 up 123 days, 23:30,  0 users,  load average: 0.03, 0.03, 0.05
+n0276.savio3:  09:24:19 up 138 days, 20:51,  0 users,  load average: 0.00, 0.01, 0.05
+n0227.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 1.30, 1.27, 1.24
+n0229.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 2.25, 2.19, 2.15
+n0226.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.12, 0.06, 0.05
+n0223.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.07, 0.06, 0.06
+n0143.savio3:  09:24:19 up 30 days, 16:33,  0 users,  load average: 3.69, 3.14, 3.32
+n0225.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.01, 0.02, 0.05
+n0224.savio2:  09:24:19 up 144 days, 16:59,  1 user,  load average: 0.05, 0.04, 0.05
+n0299.savio2:  09:24:19 up 19 days, 16:19,  0 users,  load average: 0.02, 0.02, 0.05
+n0175.savio3:  09:24:19 up 34 days, 22:11,  0 users,  load average: 13.47, 16.09, 16.82
+n0302.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.02, 0.04, 0.05
+n0174.savio3:  09:24:19 up 13 days, 23:40,  0 users,  load average: 0.02, 0.02, 0.05
+n0176.savio3:  09:24:19 up 61 days, 16:30,  0 users,  load average: 11.91, 12.36, 12.69
+n0004.savio3:  09:24:19 up 111 days, 11:02,  0 users,  load average: 11.17, 11.34, 11.39
+n0130.savio4:  09:24:19 up 3 days, 11:02,  0 users,  load average: 8.04, 8.02, 7.08
+n0259.savio3:  09:24:19 up 87 days, 18:46,  0 users,  load average: 13.05, 12.87, 12.77
+n0137.savio4:  09:24:19 up 3 days, 11:01,  0 users,  load average: 0.25, 9.40, 8.95
+n0275.savio3:  09:24:19 up 121 days, 16:56,  0 users,  load average: 1.02, 1.02, 1.02
+n0273.savio3:  09:24:19 up 119 days, 20:12,  0 users,  load average: 0.02, 0.02, 0.05
+n0128.savio4:  09:24:19 up 3 days, 11:02,  0 users,  load average: 0.02, 0.03, 0.05
+n0129.savio4:  09:24:19 up 3 days, 11:01,  0 users,  load average: 8.02, 8.01, 7.08
+n0258.savio3:  09:24:19 up 34 days, 22:10,  0 users,  load average: 12.93, 12.97, 12.99
+n0274.savio3:  09:24:19 up 125 days, 23:43,  0 users,  load average: 1.05, 1.04, 1.02
+n0158.savio3:  09:24:19 up 121 days, 16:55,  0 users,  load average: 0.94, 1.03, 1.04
+n0140.savio4:  09:24:19 up 2 days, 16:03,  2 users,  load average: 1.00, 1.37, 3.83
+n0122.savio4:  09:24:19 up 9 days, 18:36,  0 users,  load average: 6.75, 6.47, 6.33
+n0124.savio4:  09:24:19 up 9 days, 18:35,  0 users,  load average: 5.44, 5.42, 5.37
+n0134.savio4:  09:24:19 up 3 days, 11:01,  0 users,  load average: 0.23, 9.22, 8.85
+n0121.savio4:  09:24:19 up 25 days, 15:43,  2 users,  load average: 6.91, 6.72, 6.53
+n0126.savio4:  09:24:19 up 9 days, 18:35,  0 users,  load average: 0.00, 0.01, 0.05
+n0135.savio4:  09:24:19 up 3 days, 11:01,  0 users,  load average: 0.21, 8.99, 8.69
+n0125.savio4:  09:24:19 up 9 days, 18:35,  0 users,  load average: 4.52, 4.89, 4.89
+n0132.savio4:  09:24:19 up 3 days, 11:01,  0 users,  load average: 0.25, 9.40, 8.94
+n0141.savio4:  09:24:19 up 2 days, 16:03,  1 user,  load average: 8.00, 8.01, 7.47
+n0120.savio4:  09:24:19 up 27 days, 15:38,  0 users,  load average: 6.38, 7.04, 7.36
+n0005.savio3:  09:24:19 up 87 days, 18:48,  0 users,  load average: 2.94, 3.30, 3.44
+n0127.savio4:  09:24:19 up 9 days, 18:35,  0 users,  load average: 0.02, 0.02, 0.05
+n0133.savio4:  09:24:19 up 3 days, 11:01,  0 users,  load average: 0.40, 9.84, 9.21
+n0138.savio4:  09:24:19 up 5 days, 19:08,  0 users,  load average: 0.25, 9.28, 8.87
+n0123.savio4:  09:24:19 up 9 days, 18:36,  1 user,  load average: 5.11, 5.26, 5.32
+n0139.savio4:  09:24:19 up 4 days, 19:12,  0 users,  load average: 0.24, 9.20, 8.82
+n0261.savio3:  09:24:19 up 87 days, 18:46,  0 users,  load average: 0.00, 0.01, 0.05
+n0136.savio4:  09:24:19 up 3 days, 11:00,  0 users,  load average: 0.27, 9.37, 8.87
+n0144.savio3:  09:24:19 up 13 days, 23:40,  0 users,  load average: 11.74, 12.75, 12.39
+n0131.savio4:  09:24:19 up 3 days, 11:02,  0 users,  load average: 0.31, 9.21, 8.82
+n0018.savio2:  09:24:19 up 111 days, 23:44,  1 user,  load average: 0.00, 0.01, 0.05
+n0260.savio3:  09:24:19 up 87 days, 18:46,  0 users,  load average: 0.00, 0.02, 0.06
+n0145.savio3:  09:24:19 up 13 days, 23:40,  0 users,  load average: 11.62, 11.61, 11.66
+n0013.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.00, 0.01, 0.05
+n0015.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.00, 0.01, 0.05
+n0014.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.00, 0.02, 0.05
+n0012.savio2:  09:24:19 up 144 days, 16:59,  0 users,  load average: 0.09, 0.03, 0.05
+n0019.savio2:  09:24:20 up 144 days, 16:59,  1 user,  load average: 0.08, 0.03, 0.05
+n0264.savio3:  09:24:20 up 119 days, 20:11,  0 users,  load average: 10.48, 3.78, 2.06

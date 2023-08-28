@@ -23,6 +23,7 @@
 import socket 
 import os
 import getpass
+import re
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
 from bofhbot_lib import *
@@ -37,6 +38,8 @@ bofhbot_lib.dbgLevel      = 1 #6
 # global param :)  better as OOP get() fn or some such.
 devQueryOutFile = f'/var/tmp/devQuery.{getpass.getuser()}.out' # store deviceQuery output
 osDevOutFile = f'/var/tmp/osDev.{getpass.getuser()}.out'       # store ls -l /dev/nvidia* 
+REBOOT_RECORD = f'/global/home/users/{getpass.getuser()}/bofhbot/data/rebooted.txt'
+EMAIL_CONTENT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/errorEmail.txt'
 
 emailRecipient = 'hchristopher@lbl.gov'
 
@@ -182,7 +185,7 @@ def emailGpuError(message):
   # except:
     # error('Error sending email to \"%s\", abort.' % To)
   # Open the file in append & read mode ('a+')
-  with open("/global/home/users/hchristopher/bofhbot/data/errorEmail.txt", "a+") as file_object:
+  with open(EMAIL_CONTENT, "a+") as file_object:
     file_object.seek(0)
     # If file is not empty then append '\n'
     data = file_object.read(100)
@@ -192,13 +195,27 @@ def emailGpuError(message):
     file_object.write(content_of_email)
   pass
 
+def markNodeFixed(node):
+  file_object = open(REBOOT_RECORD, "r")
+  lines = file_object.readlines()
+  new_lines = []
+  for line in lines:
+    if node not in line.strip():
+      new_lines.append(line)
+  file_object.close()
+  file_object = open(REBOOT_RECORD, "w")
+  file_object.writelines(new_lines)
+  file_object.close()
+  pass
+  
 
 ############################################################
 
 def main():
   bofhbot_lib.dbg(5, "bofhbot I am")
   vprint(2, "## checkGpuOnNode.py begin  ##")
-  machineName = socket.gethostname()
+  reg = r'^([\w]+\.[\w]+)'
+  machineName = re.match(reg, socket.gethostname()).group()
   devQueryFound = queryDevicePresent()
   gpuExpect = findExpectedGpu(machineName)
   osDevCount  = queryOsDevPresent()
@@ -215,10 +232,12 @@ def main():
   if ( errorState ):
     message = message + " == DISCREPANCY ==" 
     gpuErrorActions(message)
+    os.system('echo $HOSTNAME > ~/bofhbot/data/discrepantNodes.txt')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
     exit(0)   # ssh is noisy in this case.  return doesn't set exit code :-\
   else :
+    markNodeFixed(machineName)
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")
     exit(0)

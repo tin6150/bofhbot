@@ -5,10 +5,11 @@ import getpass
 import bofhbot_lib
 from bofhbot_lib import *
 
-SINFO = '/global/home/users/hchristopher/bofhbot/data/gpuNodes.txt'
-CLUSH_OUTPUT = '/global/home/users/hchristopher/bofhbot/data/allNodes.txt'
-REACHABLE_NODES = "/global/home/users/hchristopher/bofhbot/data/reachableNodes.txt"
-UNREACHABLE_NODES = "/global/home/users/hchristopher/bofhbot/data/unreachableNodes.txt"
+SINFO = f'/global/home/users/{getpass.getuser()}/bofhbot/data/gpuNodes.txt'
+CLUSH_OUTPUT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/allNodes.txt'
+REACHABLE_NODES = f"/global/home/users/{getpass.getuser()}/bofhbot/data/reachableNodes.txt"
+UNREACHABLE_NODES = f"/global/home/users/{getpass.getuser()}/bofhbot/data/unreachableNodes.txt"
+IGNORE_LIST = f'/global/home/users/{getpass.getuser()}/bofhbot/data/.ignore.txt'
 
 ############################################################
 
@@ -18,7 +19,9 @@ def parseSINFO():
         for line in f:
             line = line.strip()
             fields = line.split()
-            nodes.add(fields[1])
+            with open(IGNORE_LIST, 'r') as i:
+                if fields[1] not in i.read():
+                    nodes.add(fields[1])
     return nodes
     
 ############################################################
@@ -43,28 +46,8 @@ def main():
                 with open(REACHABLE_NODES, "a+") as file_object:
                     file_object.seek(0)
                     data = file_object.read(100)                                                                            
-                    file_object.write(fields[0][:-1] + ',')
-    """
-    for n in nodeList:
-        if(checkSsh(n) == 'up'):
-            with open(REACHABLE_NODES, "a+") as file_object:
-                file_object.seek(0)
-                # If file is not empty then append '\n
-                data = file_object.read(100)
-                #if len(data) > 0 :
-                    #file_object.write("\n")
-                # Append text at the end of file
-                file_object.write(n + ',')
-        else:
-            with open(UNREACHABLE_NODES, "a+") as file_object:
-                file_object.seek(0)
-                # If file is not empty then append '\n
-                data = file_object.read(100)
-                if len(data) > 0 :
-                    file_object.write("\n")
-                # Append text at the end of file
-                file_object.write(n)
-"""                
+                    file_object.write(fields[0][:-1] + ',')    
+
 ############################################################
 
 main()

@@ -1,5 +1,7 @@
-gpuOffline - host: n0301.savio2 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 3 == DISCREPANCY ==
-gpuOffline - host: n0298.savio2 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 3 == DISCREPANCY ==
+
+
+Nodes still missing GPU(s) after reboot
+
 
 Down Nodes, can't SSH
 
@@ -19,18 +21,6 @@ n0278.savio3
 n0279.savio3
 n0280.savio3
 n0281.savio3
-n0128.savio4
-n0129.savio4
-n0130.savio4
-n0131.savio4
-n0132.savio4
-n0133.savio4
-n0134.savio4
-n0135.savio4
-n0136.savio4
-n0137.savio4
-n0140.savio4
-n0141.savio4
 n0142.savio4
 n0143.savio4
 n0144.savio4

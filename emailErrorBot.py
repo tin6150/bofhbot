@@ -2,6 +2,7 @@
 
 import csv, datetime, os
 import smtplib
+import getpass
 from tools import *
 from jinja2 import Environment, FileSystemLoader
 
@@ -21,7 +22,7 @@ def main():
   Cc = ['tin@lbl.gov']
   Bcc = []
   feeder = ""
-  with open("/global/home/users/hchristopher/bofhbot/data/fullReport.txt", "r") as file_in:
+  with open(f"/global/home/users/{getpass.getuser()}/bofhbot/data/fullReport.txt", "r") as file_in:
    feeder = file_in.read()
   try:
     if(len(feeder)!=0):
