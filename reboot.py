@@ -6,10 +6,9 @@ import bofhbot_lib
 from bofhbot_lib import *
 
 SINFO = f'/global/home/users/{getpass.getuser()}/bofhbot/data/gpuNodes.txt'
-REACHABLE_NODES = f"/global/home/users/{getpass.getuser()}/bofhbot/data/reachableNodes.txt"
-UNREACHABLE_NODES = f"/global/home/users/{getpass.getuser()}/bofhbot/data/unreachableNodes.txt"
-CHECKGPU_DISCREPANCIES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/errorEmail.txt'
+CHECKGPU_DISCREPANCIES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/discrepantNodes.txt'
 REBOOTED_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/rebooted.txt'
+REPORT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/errorEmail.txt'
 
 ############################################################
 
@@ -53,42 +52,39 @@ def main():
     with open(CHECKGPU_DISCREPANCIES, 'r') as f:
         for line in f:
             line = line.strip()
-            fields = line.split()
-            if(len(fields) == 0):
+            if(len(line) == 0):
                 continue
-            if(fields[0] != 'gpuOffline'):
-                continue
-            nodeState = findNodeState(fields[3])
-            if(firstReboot(fields[3])):
-                if(nodeState == 'idle' or nodeState == 'down'):
+            nodeState = findNodeState(line)
+            if(firstReboot(line)):
+                if(nodeState == 'idle' or nodeState == 'down' or nodeState == 'down*'):
                     #ssh node to reboot
-                    # os.system(f'ssh {fields[1]} reboot')
+                    # os.system(f'ssh {fields[0]} reboot')
                     # add node to reboot list
-                    addNodeToRebootRecord(fields[3])
+                    addNodeToRebootRecord(line)
                 elif(nodeState == 'alloc' or nodeState == 'mix' or nodeState == 'resv'):
                     # submit job to reboot node once exclusive access is available
                     # also add node to reboot list in job
-                    partition = findNodePartition(fields[3])
-                    os.system(f'sbatch --nodelist={fields[3]} --partition={partition} ~/bofhbot/reboot.sh')
+                    partition = findNodePartition(line)
+                    os.system(f'sbatch --nodelist={line} --partition={partition} ~/bofhbot/reboot.sh')
                 elif(nodeState == 'drain'):
                     # check if any jobs are running on node with squeue -w, if not reboot with ssh
-                    if(os.popen(f'squeue -w {fields[3]} | wc -l').read().split('\n')[0] == '1'):
-                        # os.system(f'ssh {fields[3]} reboot')
+                    if(os.popen(f'squeue -w {line} | wc -l').read().split('\n')[0] == '1'):
+                        # os.system(f'ssh {line} reboot')
                         # add node to reboot list
-                        addNodeToRebootRecord(fields[3])
-                elif(nodeState == f'{fields[3]} not found'):
+                        addNodeToRebootRecord(line)
+                elif(nodeState == f'{line} not found'):
                     # do nothing
                     pass
                 else:
                     pass
             else:
                 # add to report that node was not fixed by reboot
-                with open(CHECKGPU_DISCREPANCIES, "a+") as file_object:
+                with open(REPORT, "a+") as file_object:
                     file_object.seek(0)
                     data = file_object.read(100)
                     if(len(data) > 0):
                         file_object.write("\n")
-                    file_object.write(fields[3])                
+                    file_object.write(line)                
 
 ############################################################
 

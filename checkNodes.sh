@@ -10,7 +10,7 @@ then
     sinfo -N -S %E --format="%P %N %6t %19H %9u %E"  | grep 'savio2_gpu\|savio2_1080ti\|savio3_gpu\|savio4_gpu' > ~/bofhbot/data/gpuNodes.txt
 elif [[ $CLUSTER = $LRC ]]
 then
-    sinfo -N -S %E --format="%P %N %6t %19H %9u %E"  | grep 'es1' > ~/bofhbot/data/gpuNodes.txt    
+    sinfo -N -S %E --format="%P %N %6t %19H %9u %E"  | grep 'es1\|etna_gpu\|alice' > ~/bofhbot/data/gpuNodes.txt    
 else
     echo "Unknown Cluster; can't parse sinfo"
     exit

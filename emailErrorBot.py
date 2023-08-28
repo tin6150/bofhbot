@@ -9,15 +9,22 @@ from jinja2 import Environment, FileSystemLoader
 
 
 def main():
+  cluster = os.popen('sacctmgr list cluster | tail -1 | awk \'{print $1;}\'').read().split('\n')[0]
   notest = True
   # Email info.
-  server = 'master.brc.berkeley.edu'
+  if(cluster == 'brc'):
+    server = 'master.brc.berkeley.edu'
+    subject = "[BRC GPU error]"
+  elif(cluster == 'perceus-00'):
+    server = 'smtp.lbl.gov'
+    subject = "[LRC GPU error]"
+  else:
+    exit(1)
   From = 'High Performance Computing Services <hpcs@lbl.gov>'
   Cc = []
   Bcc = ['High Performance Computing Services <hpcs@lbl.gov>']
 
   # Sends a test email 
-  subject = "[BRC GPU error]"
   To = ['hchristopher@lbl.gov']
   Cc = ['tin@lbl.gov']
   Bcc = []
