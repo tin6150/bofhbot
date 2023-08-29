@@ -35,13 +35,15 @@ def main():
                continue
             line = line.strip()
             fields = line.split()
-            if(fields[1] == "ssh:" or fields[1] == "Permission"):
+            if(fields[1] == "ssh:"):
                 with open(UNREACHABLE_NODES, "a+") as file_object:
                     file_object.seek(0)
                     data = file_object.read(100)
                     if(len(data) > 0):
                         file_object.write("\n")
                     file_object.write(fields[0][:-1])
+            elif(fields[1] == "Permission"):
+                continue
             else:
                 with open(REACHABLE_NODES, "a+") as file_object:
                     file_object.seek(0)

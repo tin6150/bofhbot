@@ -1,4 +1,3 @@
-
 #!/global/software/sl-7.x86_64/modules/langs/python/3.6/bin/python3
 
 ## #!/usr/bin/env python3
@@ -39,6 +38,8 @@ bofhbot_lib.dbgLevel      = 1 #6
 devQueryOutFile = f'/var/tmp/devQuery.{getpass.getuser()}.out' # store deviceQuery output
 osDevOutFile = f'/var/tmp/osDev.{getpass.getuser()}.out'       # store ls -l /dev/nvidia* 
 REBOOT_RECORD = f'/global/home/users/{getpass.getuser()}/bofhbot/data/rebooted.txt'
+DISCREPANT_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/discrepantNodes.txt'
+NON_DISCREPANT_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/nonDiscrepantNodes.txt'
 EMAIL_CONTENT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/errorEmail.txt'
 
 emailRecipient = 'hchristopher@lbl.gov'
@@ -195,20 +196,6 @@ def emailGpuError(message):
     file_object.write(content_of_email)
   pass
 
-def markNodeFixed(node):
-  file_object = open(REBOOT_RECORD, "r")
-  lines = file_object.readlines()
-  new_lines = []
-  for line in lines:
-    if node not in line.strip():
-      new_lines.append(line)
-  file_object.close()
-  file_object = open(REBOOT_RECORD, "w")
-  file_object.writelines(new_lines)
-  file_object.close()
-  pass
-  
-
 ############################################################
 
 def main():
@@ -232,12 +219,12 @@ def main():
   if ( errorState ):
     message = message + " == DISCREPANCY ==" 
     gpuErrorActions(message)
-    os.system('echo $HOSTNAME > ~/bofhbot/data/discrepantNodes.txt')
+    os.system(f'echo $HOSTNAME > {DISCREPANT_NODES}')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
     exit(0)   # ssh is noisy in this case.  return doesn't set exit code :-\
   else :
-    markNodeFixed(machineName)
+    os.system(f'echo $HOSTNAME > {NON_DISCREPANT_NODES}')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")
     exit(0)

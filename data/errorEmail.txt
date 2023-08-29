@@ -1,7 +1,8 @@
-
+gpuOffline - host: n0033.es1 ; gpuExpected: 4 ; /dev/nvidia* count: 3 ; deviceQuery found: 3 == DISCREPANCY ==
 
 Nodes still missing GPU(s) after reboot
 
+n0033.es1
 
 Down Nodes, can't SSH
 

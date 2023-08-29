@@ -30,11 +30,12 @@ python sshCheck.py
 wait
 truncate -s -1 ~/bofhbot/data/reachableNodes.txt
 clush -w $(cat ~/bofhbot/data/reachableNodes.txt) python ~/bofhbot/checkGpuOnNode.py
+wait
 ~/bofhbot/sortNodes.sh
 echo >> ~/bofhbot/data/errorEmail.txt
 echo >> ~/bofhbot/data/errorEmail.txt
 echo "Nodes still missing GPU(s) after reboot" >> ~/bofhbot/data/errorEmail.txt
-python reboot.py
+python -u reboot.py
 wait
 echo >> ~/bofhbot/data/errorEmail.txt
 echo >> ~/bofhbot/data/errorEmail.txt

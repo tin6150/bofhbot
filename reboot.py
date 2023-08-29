@@ -9,23 +9,29 @@ SINFO = f'/global/home/users/{getpass.getuser()}/bofhbot/data/gpuNodes.txt'
 CHECKGPU_DISCREPANCIES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/discrepantNodes.txt'
 REBOOTED_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/rebooted.txt'
 REPORT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/errorEmail.txt'
+NON_DISCREPANT_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/nonDiscrepantNodes.txt'
 
 ############################################################
 
+def updateRebootRecord():
+    with open(NON_DISCREPANT_NODES, 'r') as f:
+        for line in f:
+            os.system(f"sed -i '/{line.strip()}/d' {REBOOTED_NODES}")
+
 def findNodeState(node):
     with open(SINFO, 'r') as f:
-        for line in f:
-            line = line.strip()
-            fields = line.split()
+        for ln in f:
+            ln = ln.strip()
+            fields = ln.split()
             if(fields[1] == node):
                 return fields[2]
     return f'{node} not found'
 
 def findNodePartition(node):
     with open(SINFO, 'r') as f:
-        for line in f:
-            line = line.strip()
-            fields = line.split()
+        for ln in f:
+            ln = ln.strip()
+            fields = ln.split()
             if(fields[1] == node):
                 return fields[0]
     return f'{node} not found'
@@ -39,16 +45,22 @@ def addNodeToRebootRecord(node):
         file_object.write(node)
 
 def firstReboot(node):
-    with open(REBOOTED_NODES, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if(line == node):
-                return False
-    return True
+    file1 = open(REBOOTED_NODES, 'r')
+    file1.seek(0)
+    while True:
+        line = file1.readline()
+        line = line.strip()
+        if(line == node):
+            file1.close()
+            return False
+        if not line:
+            file1.close()
+            return True
 
 ############################################################
 
 def main():
+    updateRebootRecord()
     with open(CHECKGPU_DISCREPANCIES, 'r') as f:
         for line in f:
             line = line.strip()
@@ -66,7 +78,7 @@ def main():
                     # also add node to reboot list in job
                     partition = findNodePartition(line)
                     os.system(f'sbatch --nodelist={line} --partition={partition} ~/bofhbot/reboot.sh')
-                elif(nodeState == 'drain'):
+                elif(nodeState == 'drain' or nodeState == 'drng' or nodeState == 'drain*'):
                     # check if any jobs are running on node with squeue -w, if not reboot with ssh
                     if(os.popen(f'squeue -w {line} | wc -l').read().split('\n')[0] == '1'):
                         # os.system(f'ssh {line} reboot')
