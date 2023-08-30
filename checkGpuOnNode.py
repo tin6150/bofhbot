@@ -164,27 +164,8 @@ def logGpuError(message):
   os.system('logger -p local0.error -t gpuError "%s"' % message)
 
 def emailGpuError(message):
-  # Emails the error to the recipients in emailRecipients
-  # send-mail: Cannot open mail:25
-  # Check: node seems to have problem executing mailx.  ++FIXME++
-  # os.system('echo "%s" | mailx -s "gpuOffline - %s" %s' % (message,message,emailRecipient) )
-  # notest = True
-  # server = 'smtp.lbl.gov'
-  # From = 'High Performance Computing Services <hpcs@lbl.gov>'
-  # Cc = []
-  # Bcc = ['High Performance Computing Services <hpcs@lbl.gov>']
-  # subject = "test"
-  # To = [emailRecipient]
-  # Cc = []
-  # Bcc = []
-  # feeder = ""
+  # writes error message to a text file. Email is handled by emailErrorBot.py
   content_of_email = f"gpuOffline - {message}"
-  # feeder = content_of_email
-  # try:
-    # info('Sending email to \"%s\" ...' % To)
-    # email = send_email(server, From, To, Cc, Bcc, subject, feeder, notest)
-  # except:
-    # error('Error sending email to \"%s\", abort.' % To)
   # Open the file in append & read mode ('a+')
   with open(EMAIL_CONTENT, "a+") as file_object:
     file_object.seek(0)
@@ -219,11 +200,13 @@ def main():
   if ( errorState ):
     message = message + " == DISCREPANCY ==" 
     gpuErrorActions(message)
+    # send discrepant nodes to text file for use in rebooting procedure
     os.system(f'echo $HOSTNAME > {DISCREPANT_NODES}')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
     exit(0)   # ssh is noisy in this case.  return doesn't set exit code :-\
   else :
+    # send working nodes to text file for use in rebooting procedure
     os.system(f'echo $HOSTNAME > {NON_DISCREPANT_NODES}')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")

@@ -6,12 +6,15 @@ import getpass
 from tools import *
 from jinja2 import Environment, FileSystemLoader
 
+# global parameters: file path to final report
+FULL_REPORT = f"/global/home/users/{getpass.getuser()}/bofhbot/data/fullReport.txt"
 
-
+# this script takes the final report and emails it to henry and tin
 def main():
   cluster = os.popen('sacctmgr list cluster | tail -1 | awk \'{print $1;}\'').read().split('\n')[0]
   notest = True
   # Email info.
+  # depending on cluster, email is sent through different servers. Subject is also changed to reflect cluster
   if(cluster == 'brc'):
     server = 'master.brc.berkeley.edu'
     subject = "[BRC GPU error]"
@@ -29,7 +32,7 @@ def main():
   Cc = ['tin@lbl.gov']
   Bcc = []
   feeder = ""
-  with open(f"/global/home/users/{getpass.getuser()}/bofhbot/data/fullReport.txt", "r") as file_in:
+  with open(FULL_REPORT, "r") as file_in:
    feeder = file_in.read()
   try:
     if(len(feeder)!=0):
