@@ -2,12 +2,15 @@
 
 import csv, datetime, os
 import smtplib
-import getpass
+import argparse
 from tools import *
 from jinja2 import Environment, FileSystemLoader
 
 # global parameters: file path to final report
-FULL_REPORT = f"/global/home/users/{getpass.getuser()}/bofhbot/data/fullReport.txt"
+argParser = argparse.ArgumentParser()
+argParser.add_argument("-p", "--path", help="path to bofhbot")
+args = argParser.parse_args()
+FULL_REPORT = f"{args.path}/data/fullReport.txt"
 
 # this script takes the final report and emails it to henry and tin
 def main():

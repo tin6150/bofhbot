@@ -1,26 +1,40 @@
 import socket 
 import os
-import getpass
+import argparse
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
 from bofhbot_lib import *
 
 # global parameters; paths to files used in reboot
-SINFO = f'/global/home/users/{getpass.getuser()}/bofhbot/data/gpuNodes.txt'
-CHECKGPU_DISCREPANCIES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/discrepantNodes.txt'
-REBOOTED_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/rebooted.txt'
-REPORT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/errorEmail.txt'
-NON_DISCREPANT_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/nonDiscrepantNodes.txt'
+argParser = argparse.ArgumentParser()
+argParser.add_argument("-p", "--path", help="path to bofhbot")
+args = argParser.parse_args()
+SINFO = f'{args.path}/data/gpuNodes.txt'
+CHECKGPU_DISCREPANCIES = f'{args.path}/data/discrepantNodes.txt'
+UNREACHABLE_NODES = f'{args.path}/data/unreachableNodes.txt'
+REBOOTED_NODES = f'{args.path}/data/rebooted.txt'
+REBOOT_FAILED_NODES = f'{args.path}/data/failedReboot.txt'
+REPORT = f'{args.path}/data/errorEmail.txt'
+NON_DISCREPANT_NODES = f'{args.path}/data/nonDiscrepantNodes.txt'
 
 ############################################################
 
 def updateRebootRecord():
     # this function updates the list of nodes that have been rebooted
     # if a node was fixed since being rebooted, it can be removed from the reboot list
+    workingNodes = set()
     with open(NON_DISCREPANT_NODES, 'r') as f:
         for line in f:
-            os.system(f"sed -i '/{line.strip()}/d' {REBOOTED_NODES}")
-
+            line = line.strip()
+            workingNodes.add(line)
+    rebootList = []
+    with open(REBOOTED_NODES, 'r') as f:
+        for line in f:
+            if line not in workingNodes:
+                rebootList.append(line)
+    with open(REBOOTED_NODES, 'w') as f:
+        f.write('\n'.join(rebootList))
+                
 def findNodeState(node):
     # this function parses output from sinfo to find the current state of the inputted node
     # this is used to determine how a reboot should take place
@@ -56,18 +70,13 @@ def addNodeToRebootRecord(node):
 
 def firstReboot(node):
     # this function checks whether an inputted node has been rebooted before
-    file1 = open(REBOOTED_NODES, 'r')
-    file1.seek(0)
-    while True:
-        line = file1.readline()
-        line = line.strip()
-        if(line == node):
-            file1.close()
-            return False
-        if not line:
-            file1.close()
-            return True
-
+    with open(REBOOTED_NODES, 'r') as f:
+        for ln in f:
+            ln = ln.strip()
+            if(ln  == node):
+                return False
+    return True
+    
 ############################################################
 
 def main():
@@ -85,9 +94,13 @@ def main():
             if(firstReboot(line)):
                 if(nodeState == 'idle' or nodeState == 'down' or nodeState == 'down*'):
                     # ssh node to reboot
-                    os.system(f'sudo -u tin /global/home/groups/scs/tin/remote_cycle_node.sh {line}')
-                    # add node to reboot list
-                    addNodeToRebootRecord(line)
+                    rebootStatus = os.system(f'sudo -u tin /global/home/groups/scs/tin/remote_cycle_node.sh {line}')
+                    if(rebootStatus != 0):
+                        # add node to reboot failure list
+                        os.system(f'echo {line} >> {REBOOT_FAILED_NODES}')
+                    else:
+                        # add node to reboot list
+                        addNodeToRebootRecord(line)
                 elif(nodeState == 'alloc' or nodeState == 'mix' or nodeState == 'resv'):
                     # submit job to reboot node once exclusive access is available
                     # also add node to reboot list in job
@@ -111,8 +124,42 @@ def main():
                     data = file_object.read(100)
                     if(len(data) > 0):
                         file_object.write("\n")
-                    file_object.write(line)                
-
+                    file_object.write(line)
+    # parse unreachable nodes
+    with open(REPORT, "a+") as file_object:
+        file_object.seek(0)
+        data = file_object.read(100)
+        if(len(data) > 0):
+            file_object.write("\n")
+        file_object.write("\nNodes that failed to reboot\n")
+    with open(UNREACHABLE_NODES, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if(len(line) == 0):
+                continue
+            if(firstReboot(line)):
+                rebootStatus = os.popen(f'sudo -u tin /global/home/groups/scs/tin/remote_cycle_node.sh {line}').read().split('\n')
+                os.system(f'echo {rebootStatus[-2]}')
+                if "Chassis Power Control: Cycle" not in rebootStatus[-2]:
+                    os.system(f'echo {line} >> {REBOOT_FAILED_NODES}')
+                else:
+                    addNodeToRebootRecord(line)
+            else:
+                with open(REPORT, "a+") as file_object:
+                    file_object.seek(0)
+                    data = file_object.read(100)
+                    if(len(data) > 0):
+                        file_object.write("\n")
+                    file_object.write(line)
+    with open(REBOOT_FAILED_NODES, 'r') as f:
+        for line in f:
+            line = line.strip()
+            with open(REPORT, "a+") as file_object:
+                file_object.seek(0)
+                data = file_object.read(100)
+                if(len(data) > 0):
+                    file_object.write("\n")
+                file_object.write(line)
 ############################################################
 
 main()

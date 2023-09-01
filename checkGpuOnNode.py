@@ -21,7 +21,7 @@
 
 import socket 
 import os
-import getpass
+import argparse
 import re
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
@@ -35,14 +35,15 @@ bofhbot_lib.verboseLevel  = 1 #6 = very verbose; 0 = silent (check exist code, s
 bofhbot_lib.dbgLevel      = 1 #6
 
 # global param :)  better as OOP get() fn or some such.
+argParser = argparse.ArgumentParser()
+argParser.add_argument("-p", "--path", help="path to bofhbot")
+args = argParser.parse_args()
 devQueryOutFile = f'/var/tmp/devQuery.{getpass.getuser()}.out' # store deviceQuery output
 osDevOutFile = f'/var/tmp/osDev.{getpass.getuser()}.out'       # store ls -l /dev/nvidia* 
-REBOOT_RECORD = f'/global/home/users/{getpass.getuser()}/bofhbot/data/rebooted.txt'
-DISCREPANT_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/discrepantNodes.txt'
-NON_DISCREPANT_NODES = f'/global/home/users/{getpass.getuser()}/bofhbot/data/nonDiscrepantNodes.txt'
-EMAIL_CONTENT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/errorEmail.txt'
-
-emailRecipient = 'hchristopher@lbl.gov'
+REBOOT_RECORD = f'{args.path}/data/rebooted.txt'
+DISCREPANT_NODES = f'{args.path}/data/discrepantNodes'
+NON_DISCREPANT_NODES = f'{args.path}/data/nonDiscrepantNodes'
+EMAIL_CONTENT = f'{args.path}/data/emailContent'
 
 def queryDevicePresent() : 
   # run command /usr/local/bin/deviceQuery  to detect number of live GPU on a system
@@ -165,16 +166,8 @@ def logGpuError(message):
 
 def emailGpuError(message):
   # writes error message to a text file. Email is handled by emailErrorBot.py
-  content_of_email = f"gpuOffline - {message}"
-  # Open the file in append & read mode ('a+')
-  with open(EMAIL_CONTENT, "a+") as file_object:
-    file_object.seek(0)
-    # If file is not empty then append '\n'
-    data = file_object.read(100)
-    if len(data) > 0 :
-        file_object.write("\n")
-    # Append text at the end of file
-    file_object.write(content_of_email)
+  # content_of_email = f"gpuOffline - {message}"
+  # os.system(f'echo {content_of_email} > {EMAIL_CONTENT}/{content_of_email}.txt')
   pass
 
 ############################################################
@@ -201,13 +194,14 @@ def main():
     message = message + " == DISCREPANCY ==" 
     gpuErrorActions(message)
     # send discrepant nodes to text file for use in rebooting procedure
-    os.system(f'echo $HOSTNAME > {DISCREPANT_NODES}')
+    os.system(f'echo {machineName} > {DISCREPANT_NODES}/{machineName}.txt')
+    os.system(f'echo "gpuOffline - {message}" > {EMAIL_CONTENT}/{machineName}.txt')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
     exit(0)   # ssh is noisy in this case.  return doesn't set exit code :-\
   else :
     # send working nodes to text file for use in rebooting procedure
-    os.system(f'echo $HOSTNAME > {NON_DISCREPANT_NODES}')
+    os.system(f'echo {machineName} > {NON_DISCREPANT_NODES}/{machineName}.txt')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")
     exit(0)

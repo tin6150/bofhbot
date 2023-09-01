@@ -1,16 +1,19 @@
 import socket 
 import os
-import getpass
+import argparse
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
 from bofhbot_lib import *
 
 # global parameters: paths to files used in checking whether nodes can be ssh-ed
-SINFO = f'/global/home/users/{getpass.getuser()}/bofhbot/data/gpuNodes.txt'
-CLUSH_OUTPUT = f'/global/home/users/{getpass.getuser()}/bofhbot/data/allNodes.txt'
-REACHABLE_NODES = f"/global/home/users/{getpass.getuser()}/bofhbot/data/reachableNodes.txt"
-UNREACHABLE_NODES = f"/global/home/users/{getpass.getuser()}/bofhbot/data/unreachableNodes.txt"
-IGNORE_LIST = f'/global/home/users/{getpass.getuser()}/bofhbot/data/.ignore.txt'
+argParser = argparse.ArgumentParser()
+argParser.add_argument("-p", "--path", help="path to bofhbot")
+args = argParser.parse_args()
+SINFO = f'{args.path}/data/gpuNodes.txt'
+CLUSH_OUTPUT = f'{args.path}/data/allNodes.txt'
+REACHABLE_NODES = f"{args.path}/data/reachableNodes.txt"
+UNREACHABLE_NODES = f"{args.path}/data/unreachableNodes.txt"
+IGNORE_LIST = f'{args.path}/.ignore.txt'
 
 ############################################################
 
