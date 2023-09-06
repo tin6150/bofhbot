@@ -12,7 +12,7 @@ touch "$BOFH_PATH"/data/nonDiscrepantNodes.txt
 touch "$BOFH_PATH"/data/reachableNodes.txt
 touch "$BOFH_PATH"/data/rebooted.txt
 touch "$BOFH_PATH"/data/unreachableNodes.txt
-touch "$BOFH_PATH"/data/failedReboot.txt
+touch "$BOFH_PATH"/data/currentReboot.txt
 # clear file containing sinfo output
 > "$BOFH_PATH"/data/gpuNodes.txt
 # get cluster name
@@ -56,7 +56,11 @@ wait
 > "$BOFH_PATH"/data/fullReport.txt
 > "$BOFH_PATH"/data/discrepantNodes.txt
 > "$BOFH_PATH"/data/nonDiscrepantNodes.txt
-> "$BOFH_PATH"/data/failedReboot.txt
+> "$BOFH_PATH"/data/currentReboot.txt
+if [[ $1 = "clean" ]]
+then
+    > "$BOFH_PATH"/data/rebooted.txt
+fi
 # check which nodes can be ssh-ed
 python "$BOFH_PATH"/sshCheck.py -p $BOFH_PATH
 wait
