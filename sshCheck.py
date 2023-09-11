@@ -14,21 +14,49 @@ CLUSH_OUTPUT = f'{args.path}/data/allNodes.txt'
 REACHABLE_NODES = f"{args.path}/data/reachableNodes.txt"
 UNREACHABLE_NODES = f"{args.path}/data/unreachableNodes.txt"
 IGNORE_LIST = f'{args.path}/.ignore.txt'
+CHECK_LIST = f'{args.path}/.checklist.txt'
 
 ############################################################
 
+def parseRange(rangeStr):
+    """Parse a range string and return a list of integers."""
+    result = []
+    for x in rangeStr.split(','):
+        if '-' in x:
+            start, end = x.split('-')
+            result.extend(range(int(start), int(end) + 1))
+        else:
+            result.append(int(x))
+    return result
+
+def parseLIST(filePath):
+    nodes = set()
+    with open(filePath, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if '[' in line:
+                prefix = line[:line.index('[')]
+                suffix = line[line.index(']') + 1:]
+                nodeRange = line[line.index('[') + 1:line.index(']')]
+                for i in parseRange(nodeRange):
+                    nodes.add(f'%s%0{5-len(prefix)}d%s' % (prefix, i, suffix))
+            else:
+                nodes.add(line)
+    return nodes
+    
 def parseSINFO():
     # this function parses an sinfo command that lists all nodes in the cluster that contain a gpu
     # all nodes from sinfo are returned as a set. Any nodes set to be ignored in the .ignore.txt file
     # are skipped in parsing
     nodes = set()
+    ignoreNodes = parseLIST(IGNORE_LIST)
+    checkNodes = parseLIST(CHECK_LIST)
     with open(SINFO, 'r') as f:
         for line in f:
             line = line.strip()
             fields = line.split()
-            with open(IGNORE_LIST, 'r') as i:
-                if fields[1] not in i.read():
-                    nodes.add(fields[1])
+            if(fields[1] in checkNodes and fields[1] not in ignoreNodes):
+                nodes.add(fields[1])
     return nodes
     
 ############################################################

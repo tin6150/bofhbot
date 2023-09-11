@@ -77,17 +77,18 @@ rm -r "$BOFH_PATH"/data/nonDiscrepantNodes/*
 # sort nodes first by cluster, then by node number
 "$BOFH_PATH"/sortNodes.sh
 echo >> "$BOFH_PATH"/data/errorEmail.txt
-echo "Nodes still missing GPU(s) after reboot" >> "$BOFH_PATH"/data/errorEmail.txt
+# echo "Nodes still missing GPU(s) after reboot" >> "$BOFH_PATH"/data/errorEmail.txt
 # attempt to reboot discrepant nodes, add nodes that weren't fixed by reboot to report
 sed -i '/^$/d' "$BOFH_PATH"/data/rebooted.txt
-python -u "$BOFH_PATH"/reboot.py -p $BOFH_PATH
-wait
-echo >> "$BOFH_PATH"/data/errorEmail.txt
-echo >> "$BOFH_PATH"/data/errorEmail.txt
+# python -u "$BOFH_PATH"/reboot.py -p $BOFH_PATH
+# wait
+# echo >> "$BOFH_PATH"/data/errorEmail.txt
+# echo >> "$BOFH_PATH"/data/errorEmail.txt
 # add nodes that could not ssh-ed to section of report
 echo "Down Nodes, can't SSH" >> "$BOFH_PATH"/data/errorEmail.txt
 echo >> "$BOFH_PATH"/data/errorEmail.txt
 cat "$BOFH_PATH"/data/errorEmail.txt "$BOFH_PATH"/data/unreachableNodes.txt >> "$BOFH_PATH"/data/fullReport.txt
 # email report to henry and tin
 python "$BOFH_PATH"/emailErrorBot.py -p $BOFH_PATH
+cp "$BOFH_PATH"/data/fullReport.txt "$BOFH_PATH"/data/logs/$(date +'%m-%d-%Y_%H%M').txt
 exit

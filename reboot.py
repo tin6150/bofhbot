@@ -38,7 +38,7 @@ def updateRebootRecord():
                     for ln in foo:
                         ln = ln.strip()
                         fields = ln.split()
-                        if(fields(5) == "Node unexpectedly rebooted"):
+                        if(fields[5:8] == ['Node','unexpectedly','rebooted']):
                             os.system(f"sudo scontrol update state=resume node={line}")
     with open(REBOOTED_NODES, 'w') as f:
         f.write('\n'.join(rebootList))
