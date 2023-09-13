@@ -56,7 +56,7 @@ def queryDevicePresent() :
   # then no gpu was found (eg n0258.savio3 after all gpu not usable, or n0054 which has no GPU)
   devQueryCount = 0
   devPattern = 'Device\ [0-9]'
-  command = "/usr/local/bin/deviceQuery" + " > " + devQueryOutFile 
+  command = "/usr/local/bin/deviceQuery" + " > " + devQueryOutFile
   runDevQueryExitCode = os.system(command) 
   os.chmod(devQueryOutFile, 0o777)  # that strange 0o777 is needed by python
   devQueryFH = open( devQueryOutFile, 'r' )
@@ -164,6 +164,16 @@ def logGpuError(message):
   # Logs in syslog
   os.system('logger -p local0.error -t gpuError "%s"' % message)
 
+def findWorkingGPUs():
+  workingGPUs = os.popen('nvidia-smi --query-gpu=serial --format=csv').read().split('\n')
+  message = "     Working GPU serial number(s): "
+  for i in workingGPUs[:-1]:
+    if 'serial' not in i:
+      message = message + i
+      if( i != workingGPUs[-2]):
+        message = message + ', '
+  return message
+      
 def emailGpuError(message):
   # writes error message to a text file. Email is handled by emailErrorBot.py
   # content_of_email = f"gpuOffline - {message}"
@@ -196,12 +206,13 @@ def main():
     # send discrepant nodes to text file for use in rebooting procedure
     os.system(f'echo {machineName} > {DISCREPANT_NODES}/{machineName}.txt')
     os.system(f'echo "gpuOffline - {message}" > {EMAIL_CONTENT}/{machineName}.txt')
+    os.system(f'echo "{findWorkingGPUs()}" >> {EMAIL_CONTENT}/{machineName}.txt')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
     exit(0)   # ssh is noisy in this case.  return doesn't set exit code :-\
   else :
     # send working nodes to text file for use in rebooting procedure
-    os.system(f'echo {machineName} > {NON_DISCREPANT_NODES}/{machineName}.txt')
+    os.system(f'echo "{machineName}" > {NON_DISCREPANT_NODES}/{machineName}.txt')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")
     exit(0)

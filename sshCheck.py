@@ -8,6 +8,7 @@ from bofhbot_lib import *
 # global parameters: paths to files used in checking whether nodes can be ssh-ed
 argParser = argparse.ArgumentParser()
 argParser.add_argument("-p", "--path", help="path to bofhbot")
+argParser.add_argument("-l", "--lists", help="whether or not to use allow and ignore lists")
 args = argParser.parse_args()
 SINFO = f'{args.path}/data/gpuNodes.txt'
 CLUSH_OUTPUT = f'{args.path}/data/allNodes.txt'
@@ -55,7 +56,10 @@ def parseSINFO():
         for line in f:
             line = line.strip()
             fields = line.split()
-            if(fields[1] in checkNodes and fields[1] not in ignoreNodes):
+            if(args.lists):
+                if(fields[1] in checkNodes and fields[1] not in ignoreNodes):
+                    nodes.add(fields[1])
+            else:
                 nodes.add(fields[1])
     return nodes
     
