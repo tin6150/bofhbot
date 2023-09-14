@@ -16,21 +16,34 @@
 ## 0.2  merged with Hamza's code
 ## 0.3  Tin - better error detection, output
 
+## required software
+## ClusterShell: pip install --user ClusterShell
 
 import socket 
 import os
+import argparse
+import re
 # bothbot_lib mostly for "import os" and the dbg fn
 import bofhbot_lib
 from bofhbot_lib import *
+import csv, datetime
+import smtplib
+from tools import *
+from jinja2 import Environment, FileSystemLoader
 # TODO: use argparse -v, recycle from bofhbot.py ++FIXME++
 bofhbot_lib.verboseLevel  = 1 #6 = very verbose; 0 = silent (check exist code, syslog/email, eg use in cron) 
 bofhbot_lib.dbgLevel      = 1 #6
 
 # global param :)  better as OOP get() fn or some such.
-devQueryOutFile = f'/var/tmp/devQuery.{os.getlogin()}.out' # store deviceQuery output
-osDevOutFile = f'/var/tmp/osDev.{os.getlogin()}.out'       # store ls -l /dev/nvidia* 
-
-emailRecipient = 'tin@berkeley.edu'
+argParser = argparse.ArgumentParser()
+argParser.add_argument("-p", "--path", help="path to bofhbot")
+args = argParser.parse_args()
+devQueryOutFile = f'/var/tmp/devQuery.{getpass.getuser()}.out' # store deviceQuery output
+osDevOutFile = f'/var/tmp/osDev.{getpass.getuser()}.out'       # store ls -l /dev/nvidia* 
+REBOOT_RECORD = f'{args.path}/data/rebooted.txt'
+DISCREPANT_NODES = f'{args.path}/data/discrepantNodes'
+NON_DISCREPANT_NODES = f'{args.path}/data/nonDiscrepantNodes'
+EMAIL_CONTENT = f'{args.path}/data/emailContent'
 
 def queryDevicePresent() : 
   # run command /usr/local/bin/deviceQuery  to detect number of live GPU on a system
@@ -43,7 +56,7 @@ def queryDevicePresent() :
   # then no gpu was found (eg n0258.savio3 after all gpu not usable, or n0054 which has no GPU)
   devQueryCount = 0
   devPattern = 'Device\ [0-9]'
-  command = "/usr/local/bin/deviceQuery" + " > " + devQueryOutFile 
+  command = "/usr/local/bin/deviceQuery" + " > " + devQueryOutFile
   runDevQueryExitCode = os.system(command) 
   os.chmod(devQueryOutFile, 0o777)  # that strange 0o777 is needed by python
   devQueryFH = open( devQueryOutFile, 'r' )
@@ -93,30 +106,42 @@ def parseRange(rangeStr):
 
 def parseGresConf():
     """Parse /etc/slurm/gres.conf and return a dictionary of gpu counts."""
+    cluster = os.popen('sacctmgr list cluster | tail -1 | awk \'{print $1;}\'').read().split('\n')[0]
     gresConf = {}
     with open('/etc/slurm/gres.conf', 'r') as f:
         for line in f:
             line = line.strip()
-            if not line.startswith('NodeName='):
+            if(cluster == 'brc'):
+              if not line.startswith('NodeName='):
                 continue
+            elif(cluster == 'perceus-00'):
+              if not line.startswith('Nodename='):
+                continue
+            else:
+              break
             fields = line.split()
             nodeName = fields[0].split('=')[1]
             gresConf[nodeName] = {}
             for field in fields[1:]:
+              if('=' in field):
                 key, value = field.split('=')
                 gresConf[nodeName][key] = value
             gresConf[nodeName]['Count'] = int(gresConf[nodeName]['Count'])
-
             gresConf[nodeName]['Nodes'] = set()
-            prefix = nodeName[:nodeName.index('[')]
-            suffix = nodeName[nodeName.index(']') + 1:]
-            suffixPrefix = suffix[:suffix.index('[')]
-            suffixSuffix = suffix[suffix.index(']') + 1:]
-            suffixRange = suffix[suffix.index('[') + 1:suffix.index(']')]   
-            nodeRange = nodeName[nodeName.index('[') + 1:nodeName.index(']')]
-            for i in parseRange(nodeRange):
+            if(cluster == 'brc'):
+              prefix = nodeName[:nodeName.index('[')]
+              suffix = nodeName[nodeName.index(']') + 1:]
+              suffixPrefix = suffix[:suffix.index('[')]
+              suffixSuffix = suffix[suffix.index(']') + 1:]
+              suffixRange = suffix[suffix.index('[') + 1:suffix.index(']')]   
+              nodeRange = nodeName[nodeName.index('[') + 1:nodeName.index(']')]
+              for i in parseRange(nodeRange):
                 for j in parseRange(suffixRange):
-                    gresConf[nodeName]['Nodes'].add(f'%s%0{5-len(prefix)}d%s%s%s' % (prefix, i, suffixPrefix, j, suffixSuffix))
+                  gresConf[nodeName]['Nodes'].add(f'%s%0{5-len(prefix)}d%s%s%s' % (prefix, i, suffixPrefix, j, suffixSuffix))
+            elif(cluster == 'perceus-00'):
+              gresConf[nodeName]['Nodes'].add((nodeName.replace('[','')).replace(']',''))
+            else:
+              break
     return gresConf
 
 def findExpectedGpu(machineName):
@@ -139,20 +164,29 @@ def logGpuError(message):
   # Logs in syslog
   os.system('logger -p local0.error -t gpuError "%s"' % message)
 
+def findWorkingGPUs():
+  workingGPUs = os.popen('nvidia-smi --query-gpu=serial --format=csv').read().split('\n')
+  message = "     Working GPU serial number(s): "
+  for i in workingGPUs[:-1]:
+    if 'serial' not in i:
+      message = message + i
+      if( i != workingGPUs[-2]):
+        message = message + ', '
+  return message
+      
 def emailGpuError(message):
-  # Emails the error to the recipients in emailRecipients
-  # send-mail: Cannot open mail:25
-  # Check: node seems to have problem executing mailx.  ++FIXME++
-  os.system('echo "%s" | mailx -s "gpuOffline - %s" %s' % (message,message,emailRecipient) )
+  # writes error message to a text file. Email is handled by emailErrorBot.py
+  # content_of_email = f"gpuOffline - {message}"
+  # os.system(f'echo {content_of_email} > {EMAIL_CONTENT}/{content_of_email}.txt')
   pass
-
 
 ############################################################
 
 def main():
   bofhbot_lib.dbg(5, "bofhbot I am")
   vprint(2, "## checkGpuOnNode.py begin  ##")
-  machineName = socket.gethostname()
+  reg = r'^([\w]+\.[\w]+)'
+  machineName = re.match(reg, socket.gethostname()).group()
   devQueryFound = queryDevicePresent()
   gpuExpect = findExpectedGpu(machineName)
   osDevCount  = queryOsDevPresent()
@@ -169,10 +203,16 @@ def main():
   if ( errorState ):
     message = message + " == DISCREPANCY ==" 
     gpuErrorActions(message)
+    # send discrepant nodes to text file for use in rebooting procedure
+    os.system(f'echo {machineName} > {DISCREPANT_NODES}/{machineName}.txt')
+    os.system(f'echo "gpuOffline - {message}" > {EMAIL_CONTENT}/{machineName}.txt')
+    os.system(f'echo "{findWorkingGPUs()}" >> {EMAIL_CONTENT}/{machineName}.txt')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
-    exit(1)   # ssh is noisy in this case.  return doesn't set exit code :-\
+    exit(0)   # ssh is noisy in this case.  return doesn't set exit code :-\
   else :
+    # send working nodes to text file for use in rebooting procedure
+    os.system(f'echo "{machineName}" > {NON_DISCREPANT_NODES}/{machineName}.txt')
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")
     exit(0)
