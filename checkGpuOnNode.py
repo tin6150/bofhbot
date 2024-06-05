@@ -3,12 +3,15 @@
 ## #!/usr/bin/env python3
 ## root don't have access SMF
 
+## 2024.0304 update.  work around multi line gres.conf line, not best solution, good enough quick kludge for now
+
 ## run as (tin@master): 
 ## exp: 8 ## pdsh -w n0[143-145,174-176,258-261].savio3 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 ## exp: 4 ## pdsh -w n0[134-138,158-161].savio3 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 ## exp: 2 ## pdsh -w n0[209-217,262-264].savio3 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 ## exp: 2 ## pdsh -w n0[004-005].savio3 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 ## comb   ## pdsh -w n0[143-145,174-176,258-261].savio3,n0[134-138,158-161].savio3,n0[004-005,209-217,262-264].savio3,n0[012-026,223-226,298-302].savio2 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
+## PwrSav ## pdsh -w n0[143-145,174-176,258-261].savio3,n0[134-138,158-161].savio3,n0[004-005,209-217,262-264].savio3,n0[012-014,018-020,026,223-226,298-302].savio2 /global/home/users/tin/tin-gh/bofhbot/checkGpuOnNode.py   
 
 ## version/changes
 ## 0.1  Tin usable deviceQuery detection 
@@ -124,6 +127,13 @@ def findExpectedGpu(machineName):
     # use the current hostname (machineName could be passed as fn argument)
     # return how many gpu this machine should have
     # node that have no gpu should return 0
+    # parse ok:
+    # NodeName=n0[143-145,174-176].savio[3] Name=gpu Type=TITAN File=/dev/nvidia[0-7] Count=8
+    # Dont work when multiline gres
+    # NodeName=n0[120-145].savio[4] Name=gpu Type=A5000 File=/dev/nvidia[0-3] Count=4 COREs=0-15
+    # NodeName=n0[120-145].savio[4] Name=gpu Type=A5000 File=/dev/nvidia[4-7] Count=4 COREs=16-31
+    # slurmd -G still output 2 lines.  so gonna need to do some extra parsing and math 
+
     gresConf = parseGresConf()
     for nodeName in gresConf:
         if machineName in gresConf[nodeName]['Nodes']:
@@ -160,18 +170,26 @@ def main():
   #print( "host: %s ; deviceQuery found: %s ; gpuExpected: %s ; /dev/nvidia* count: %s"  % (machineName, devQueryFound, gpuExpect, osDevCount ) )
   #print( "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; deviceQuery found: %s"  % (machineName, gpuExpect, osDevCount, devQueryFound ) )    ## // old print by tin
 
-  errorState = False 
-  if( gpuExpect != osDevCount  or   gpuExpect != devQueryFound ):
-    errorState = True
   message =  "host: %s ; gpuExpected: %s ; /dev/nvidia* count: %s ; " \
              "deviceQuery found: %s" \
              % (machineName, gpuExpect, osDevCount, devQueryFound )
-  if ( errorState ):
+
+
+  errorState = False 
+  #if( gpuExpect != osDevCount  or   gpuExpect != devQueryFound ):
+  if( gpuExpect  > osDevCount  or   gpuExpect >   devQueryFound ):     # tmp hack, some gres split into 2 lines get 4 as gpuExpect , which is less than 8 it might find
+    errorState = True
     message = message + " == DISCREPANCY ==" 
+  if not ( devQueryFound != 8 or devQueryFound != 4 or devQueryFound != 2  ):   # 
+    checkState = True
+    message = message + " == _CHECK_ ==" 
+
+  if ( errorState ):
     gpuErrorActions(message)
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end (error) ##")
-    exit(1)   # ssh is noisy in this case.  return doesn't set exit code :-\
+    #exit(1)   # ssh is noisy in this case.  return doesn't set exit code :-\
+    exit(0)   # don't want exit code disturbing output in practice.  just read discrepancy line.
   else :
     vprint(1, message)
     vprint(2, "## checkGpuOnNode.py end ##")

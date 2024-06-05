@@ -1,8 +1,9 @@
+/global/software/sl-7.x86_64/modules/langs/python/3.6/bin/python3   bofhbot.py | tee bofhbot.BRC.2024.0203a
 
 # current config run cmd:
 
 module load python/3.6
-./bofhbot.py | tee bofhbot.brc.2018.1001.txt
+./bofhbot.py | tee bofhbot.BRC.2018.1001.txt
 
 ./bofhbot.py -ddd 
 ./bofhbot.py --ipmi -v 
@@ -13,7 +14,6 @@ module load python/3.6
 
 
 
-/global/software/sl-7.x86_64/modules/langs/python/3.6/bin/python3   bofhbot.py | tee bofhbot.brc.2018.1001.txt
 
 
 
