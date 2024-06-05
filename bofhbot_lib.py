@@ -48,6 +48,7 @@ def vprint( level, strg ):
 # return is just exit code of running the sinfo cmd.
 def generateSinfo() :
     # https://github.com/PySlurm/pyslurm  but then have to install python lib before being able to use script :-/
+    # actually pyslurm don't have any fn for sinfo 
     #sinfoRS = subprocess.run(['sinfo', '-R -S %E --format="%9u %19H %6t %N %E"'])
     #cmd = 'sinfo -R -S %E --format="%9u %19H %6t %N %E" ' + " > "  +  sinfoRSfile     # more human readable
     cmd = 'sinfo -N -R -S %E --format="%N %6t %19H %9u %E" ' + " > "  +  sinfoRSfile   # node first, one node per line :)
@@ -62,7 +63,9 @@ def generateSinfo() :
     #sinfoRS = open('sinfo-RSE-eg.txt.head5','r')
 #generateSinfo()-end
 
-#def getSinfo():
+# buildSinfoList() return an array of lines
+# each line is sanitized version of sinfo -RSE output line
+# ie, each record become an array entry
 def buildSinfoList():
 #def buildSinfoList(infoRS=sinfoRSfile):
     # sinfoRSfile is currently global, i guess OOP would be very similar...
@@ -118,6 +121,9 @@ def sinfoList2nodeList( sinfoList ):
 ## should just expect nodename from column 1 or some such
 ## TODO.  ie, relax it needing \d\d\d\d ... 
 ## do expect a cleansed file :)
+#### i typically return only one node, and probably indeed do only so now
+#### some sinfo -some-args return more than one node per line, maybe -RSE don't... 
+#### this is working for bofhbot.py... 
 def getNodeList( sinfoLine ) :
         line = sinfoLine
         nodeList = [ ]
@@ -295,6 +301,8 @@ red_bg = make_color(1, 41)
 green_bg = make_color(1, 42)
 gray = make_color(1, 30)
 
+# INPUT: data is ... ???
+# OUTPUT:  stdout, decorated/improved output of sinfo -RSE
 def processLine(data):
     node, line, color = data
     line = ' '.join(line.split(' ')[1:]) # Remove node name from beginning of line
@@ -318,6 +326,7 @@ def processLine(data):
         nodeFormatted = node
     skip = gray('(skip)') if color else '(skip)' 
 
+    #++ these checks should be read from  a .cfg file
     checks = [
         ('scratch', lambda: checkMountUsage(node, "/global/scratch")),
         ('software', lambda: checkMountUsage(node, "/global/software")),
