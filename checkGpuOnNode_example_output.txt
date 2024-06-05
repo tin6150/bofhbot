@@ -1,0 +1,83 @@
+( this is example output from running ./checkGpuOnNode_sav3.sh 2>&1 | tee checkGpuOnNode_example_output.txt  as a regular  user without root priviledge )
+
+Wed Jun  5 12:57:07 PDT 2024
+n0143.savio3: host: n0143.savio3 ; gpuExpected: 8 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0134.savio3: @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+n0134.savio3: @    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+n0134.savio3: @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+n0134.savio3: IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+n0134.savio3: Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+n0134.savio3: It is also possible that a host key has just been changed.
+n0134.savio3: The fingerprint for the ECDSA key sent by the remote host is
+n0134.savio3: SHA256:hUvl7RrOoo0MRUAg/xfKx9a4Laj3qvcM3WnMvgpS0Y4.
+n0134.savio3: Please contact your system administrator.
+n0134.savio3: Add correct host key in /global//home/users/tin/.ssh/known_hosts to get rid of this message.
+n0134.savio3: Offending ECDSA key in /global//home/users/tin/.ssh/known_hosts:1034
+n0134.savio3: Password authentication is disabled to avoid man-in-the-middle attacks.
+n0134.savio3: Keyboard-interactive authentication is disabled to avoid man-in-the-middle attacks.
+n0122.savio4: host: n0122.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0121.savio4: host: n0121.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0137.savio4: host: n0137.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0124.savio4: host: n0124.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0129.savio4: host: n0129.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0144.savio4: host: n0144.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0125.savio4: host: n0125.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0174.savio3: host: n0174.savio3 ; gpuExpected: 8 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0145.savio4: host: n0145.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0120.savio4: host: n0120.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0144.savio3: host: n0144.savio3 ; gpuExpected: 8 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0145.savio3: host: n0145.savio3 ; gpuExpected: 8 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0127.savio4: host: n0127.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0123.savio4: host: n0123.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0126.savio4: host: n0126.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0138.savio4: host: n0138.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0132.savio4: host: n0132.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0128.savio4: host: n0128.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0135.savio3: host: n0135.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0136.savio3: host: n0136.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0138.savio3: host: n0138.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0137.savio3: host: n0137.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0160.savio3: host: n0160.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0161.savio3: host: n0161.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0159.savio3: host: n0159.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0134.savio3: host: n0134.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0213.savio3: host: n0213.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0211.savio3: host: n0211.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0214.savio3: host: n0214.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0005.savio3: host: n0005.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0210.savio3: host: n0210.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0215.savio3: host: n0215.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0216.savio3: host: n0216.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0212.savio3: host: n0212.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0217.savio3: host: n0217.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0263.savio3: host: n0263.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0264.savio3: host: n0264.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0262.savio3: host: n0262.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0273.savio3: host: n0273.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0209.savio3: host: n0209.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0274.savio3: host: n0274.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0275.savio3: host: n0275.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0282.savio3: host: n0282.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0175.savio3: ssh: connect to host n0175.savio3 port 22: No route to host
+pdsh@master: n0175.savio3: ssh exited with exit code 255
+n0276.savio3: host: n0276.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0283.savio3: host: n0283.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0277.savio3: host: n0277.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0278.savio3: host: n0278.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0280.savio3: host: n0280.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0279.savio3: host: n0279.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0158.savio3: host: n0158.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0004.savio3: host: n0004.savio3 ; gpuExpected: 2 ; /dev/nvidia* count: 2 ; deviceQuery found: 2
+n0139.savio4: host: n0139.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0141.savio4: host: n0141.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0136.savio4: host: n0136.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0134.savio4: host: n0134.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0135.savio4: host: n0135.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0131.savio4: host: n0131.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0143.savio4: host: n0143.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0140.savio4: host: n0140.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0142.savio4: host: n0142.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0133.savio4: host: n0133.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0130.savio4: host: n0130.savio4 ; gpuExpected: 4 ; /dev/nvidia* count: 8 ; deviceQuery found: 8
+n0281.savio3: host: n0281.savio3 ; gpuExpected: 4 ; /dev/nvidia* count: 4 ; deviceQuery found: 4
+n0176.savio3: host: n0176.savio3 ; gpuExpected: 8 ; /dev/nvidia* count: 8 ; deviceQuery found: 7 == DISCREPANCY ==
