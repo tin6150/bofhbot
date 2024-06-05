@@ -1,8 +1,12 @@
 
-master: main branch, working bofhbot.py.  
+master: main branch, now just merge with whatever branch want to showcase with collaborator.
+        2024.0605: essentially checkGpu, with code that Henry wrote.  README reflects that.
 
+sn_master: working bofhbot.py by Tin.
 
-rest: developing botd, api server daemon with REST interface using FLASK
+checkGpu_sn: the simple checkGpuOnNode.py in active use to monitor savio gpu 
+
+rest: Nick's botd, api server daemon with REST interface using FLASK.  works, but running server was veto by other admin, so end up needing tunnel with a local browser.  Slurm has been updated and much of the error messages are no longer handled as of 2024.
 
 
 TBA:
